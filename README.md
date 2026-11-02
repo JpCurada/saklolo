@@ -29,9 +29,11 @@ never closes a case, and never tells a resident help is coming on its own.
 
 ## See it
 
-| How the agents decided | Resident phones (simulated) |
+| How the agents decided | Human review lane |
 |---|---|
-| <img src=".github/assets/agent-trace.webp" alt="The agent trace: every step, how long it took, which model it called, and what it decided"> | <img src=".github/assets/resident-phones.webp" alt="Three simulated phones for SMS, Telegram-style, and Messenger-style chats"> |
+| <img src=".github/assets/agent-trace.webp" alt="The agent trace: every step, how long it took, which model it called, and what it decided"> | <img src=".github/assets/review-lane.webp" alt="The human review lane: unsure cases waiting for a dispatcher"> |
+| **Map: OpenStreetMap with Project NOAH flood hazard** | **Resident phones: SMS, Telegram, Messenger** |
+| <img src=".github/assets/map.webp" alt="Marikina on OpenStreetMap with Project NOAH's flood-hazard layer and a P1 case pin"> | <img src=".github/assets/resident-phones.webp" alt="Resident phones for SMS, Telegram, and Messenger"> |
 
 ## What happens to a message
 
@@ -39,16 +41,18 @@ A resident writes by SMS, Telegram, or Messenger, for example *"nasa bubong na k
 5 kami, may lola"*. Each message runs through a **Strands Graph**
 ([`api/src/saklolo/agents/graph.py`](api/src/saklolo/agents/graph.py)):
 
-<img src=".github/assets/architecture.png" width="100%" alt="Saklolo architecture: residents and a dispatcher reach the Saklolo API and dashboard; the API calls Amazon Bedrock, Titan embeddings, Amazon Location, AgentCore Memory, and DynamoDB; Telegram, Messenger, Project NOAH, and OpenStreetMap are outside AWS">
+<img src=".github/assets/architecture.png" width="100%" alt="Saklolo architecture: residents write on Telegram, Messenger, or SMS to an API Lambda that queues messages in SQS; a worker Lambda runs Strands Agents with Bedrock, Titan, Amazon Location, DynamoDB, and AgentCore Memory; the dispatcher reaches the dashboard through CloudFront, S3, and Cognito">
 
-1. A resident writes on Telegram or Messenger (or a simulated phone), and the message reaches the Saklolo API.
-2. The dispatcher works in the dashboard, which polls the API every 2 seconds.
-3. The Strands Graph calls Amazon Nova Lite on Bedrock to extract details and set a priority. Unsure cases go to a Strands Swarm of three agents.
-4. Titan embeddings let dedupe merge reports of the same household.
-5. Amazon Location finds the barangay from landmarks, for geolocate and the Swarm's lookup tool.
-6. DynamoDB keeps cases, messages, and every dispatcher decision.
-7. AgentCore Memory stores dispatcher corrections. Only unsure cases search it.
-8. Replies go back through the app the resident used. Project NOAH's flood map and OpenStreetMap tiles appear on the dashboard map.
+1. A resident writes on Telegram, Messenger, or SMS.
+2. Each channel reaches the API, and replies go back on the same channel.
+3. The API Lambda queues new messages in Amazon SQS.
+4. The worker Lambda takes them one at a time and runs the Strands Agents: an 8-step Graph, and a 3-agent Swarm for unsure cases.
+5. Amazon Nova Lite on Bedrock extracts details and sets the priority.
+6. Titan embeddings let dedupe merge reports of one household, and Amazon Location finds the barangay from landmarks.
+7. DynamoDB keeps cases, and AgentCore Memory keeps dispatcher corrections. Only unsure cases search the memory.
+8. The API reads cases for the dashboard and records every dispatcher decision.
+9. The dispatcher opens the dashboard through CloudFront: the build comes from S3, and `/api/*` goes to the API Lambda. Lambda images live in Amazon ECR.
+10. The dispatcher signs in with Amazon Cognito. The map uses OpenStreetMap tiles and Project NOAH's flood hazard layer.
 
 
 | Step | What it does | Calls |
@@ -80,7 +84,7 @@ Promises enforced in code and tests:
 | Agents | Strands Graph with conditional edges; Strands Swarm escalation with typed tools; ask-back pause and resume across messages; AgentCore Memory of dispatcher corrections, consulted only for unsure cases | Escalation on conflicting reports; measuring whether corrections improve accuracy |
 | Verification | Recycled-post check (known old posts, past dates); sender-pattern check; Project NOAH flood-hazard map layer and context; Corroborated badge for 2+ senders | Flood-hazard plausibility flag (needs house-level locations) |
 | AWS services | Bedrock (Nova Lite, Titan Text Embeddings V2), Amazon Location Places, DynamoDB (cases, messages, decisions) | AgentCore Runtime and Observability; API Gateway, SQS, and Lambda intake; End User Messaging SMS |
-| Channels | Telegram (long polling), Messenger (signed webhook), and simulated resident phones for demos | Real SMS intake: no two-way SMS in the Philippines through AWS (ADR 0001) |
+| Channels | Telegram (long polling), Messenger (signed webhook), and a resident phone page for SMS | Real SMS intake: no two-way SMS in the Philippines through AWS  |
 | Dashboard | Queue, human review lane, case detail with map, agent trace, decision history, dispatcher on duty, design system with visual regression tests | Sign-in (Amazon Cognito); delivery receipts and team status updates |
 | Infra | Terraform for SQS and three DynamoDB tables | The rest of the deployment above |
 | Evaluation | Eval harness with domain metrics (Critical recall, dedupe precision and recall, cost per 10,000 messages) on a synthetic dev split | Human labels, a held-out eval split, and a tabletop drill; until then no results are reported |
