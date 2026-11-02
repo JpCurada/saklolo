@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <circle cx="32" cy="32" r="31" fill="{{canvas}}"/>
+  <clipPath id="disc"><circle cx="32" cy="32" r="31"/></clipPath>
+  <g clip-path="url(#disc)">
+    <circle cx="32" cy="26" r="15.5" fill="none" stroke="{{ink}}" stroke-width="9"/>
+    <circle cx="32" cy="26" r="15.5" fill="none" stroke="{{accent}}" stroke-width="9" stroke-dasharray="14.34 10" stroke-dashoffset="7.17"/>
+    <path d="M-2 45c6-6 11-6 17 0s11 6 17 0 11-6 17 0 11 6 17 0v22H-2z" fill="{{waterLight}}"/>
+    <path d="M-2 53c6-5 11-5 17 0s11 5 17 0 11-5 17 0 11 5 17 0v14H-2z" fill="{{water}}"/>
+  </g>
+</svg>

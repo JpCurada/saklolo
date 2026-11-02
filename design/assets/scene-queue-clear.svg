@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="{{storm}}"/><stop offset=".6" stop-color="{{waterLight}}"/><stop offset="1" stop-color="{{accent}}"/></linearGradient>
+    <radialGradient id="sun"><stop offset="0" stop-color="{{reward}}" stop-opacity=".9"/><stop offset="1" stop-color="{{reward}}" stop-opacity="0"/></radialGradient>
+    <linearGradient id="roof" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="{{roofLight}}"/><stop offset="1" stop-color="{{roof}}"/></linearGradient>
+    <linearGradient id="pool" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="{{waterLight}}"/><stop offset="1" stop-color="{{water}}"/></linearGradient>
+    <clipPath id="disc"><circle cx="400" cy="300" r="280"/></clipPath>
+    <g id="cloud"><ellipse cx="0" cy="0" rx="70" ry="20"/><ellipse cx="-24" cy="-14" rx="34" ry="22"/><ellipse cx="22" cy="-20" rx="42" ry="28"/></g>
+  </defs>
+  <g clip-path="url(#disc)">
+    <rect width="800" height="600" fill="url(#sky)"/>
+    <circle cx="540" cy="350" r="170" fill="url(#sun)"/>
+    <circle cx="540" cy="350" r="44" fill="{{reward}}"/>
+    <use href="#cloud" x="270" y="130" fill="{{stormLight}}"/>
+    <use href="#cloud" x="520" y="170" fill="{{stormLight}}" opacity=".6"/>
+    <path d="M100 400c80-70 150-90 230-60s150 20 230-30 120-30 160 0v290H100z" fill="{{earthLight}}"/>
+    <path d="M100 450c90-40 200-50 300-30s220 0 300-20v200H100z" fill="{{earth}}"/>
+    <rect x="285" y="330" width="240" height="170" fill="{{wall}}"/>
+    <rect x="285" y="440" width="240" height="60" fill="{{wallLight}}" opacity=".35"/>
+    <path d="M285 438h240" stroke="{{waterFoam}}" stroke-width="3" stroke-dasharray="14 6" opacity=".7"/>
+    <rect x="318" y="370" width="58" height="50" rx="4" fill="{{reward}}" opacity=".85"/>
+    <path d="M347 370v50M318 395h58" stroke="{{wall}}" stroke-width="4"/>
+    <rect x="432" y="378" width="56" height="122" rx="4" fill="{{stormDeep}}"/>
+    <circle cx="476" cy="442" r="4" fill="{{reward}}"/>
+    <path d="M250 336l155-112 155 112z" fill="url(#roof)"/>
+    <path d="M250 336l155-112 155 112" fill="none" stroke="{{ink-faint}}" stroke-width="5" stroke-linejoin="round"/>
+    <path d="M300 300h210M340 271h130" stroke="{{roof}}" stroke-width="3" opacity=".8"/>
+    <path d="M150 395v-80M240 370v-68" stroke="{{earth}}" stroke-width="7" stroke-linecap="round"/>
+    <path d="M150 322q46 22 90-16" fill="none" stroke="{{ink-faint}}" stroke-width="2"/>
+    <path d="M168 330l24 5-5 42-26-6z" fill="{{accent}}"/>
+    <path d="M204 332l24-6 6 38-24 6z" fill="{{waterFoam}}"/>
+    <path d="M100 505c120-20 240 10 340 0s170-22 260-8v110H100z" fill="url(#pool)"/>
+    <path d="M190 530h90M350 548h130M500 522h70M250 566h60" stroke="{{waterFoam}}" stroke-width="4" stroke-linecap="round" opacity=".6"/>
+    <path d="M522 512h36" stroke="{{reward}}" stroke-width="5" stroke-linecap="round" opacity=".7"/>
+    <path d="M330 170q12-10 22 0 10-10 22 0M430 130q9-8 17 0 8-8 17 0" fill="none" stroke="{{ink}}" stroke-width="3" stroke-linecap="round"/>
+  </g>
+</svg>

@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+  <defs>
+    <radialGradient id="halo"><stop offset="0" stop-color="{{stormLight}}" stop-opacity=".85"/><stop offset="1" stop-color="{{storm}}" stop-opacity="0"/></radialGradient>
+    <linearGradient id="hill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="{{earthLight}}"/><stop offset="1" stop-color="{{earth}}"/></linearGradient>
+    <g id="cloud"><ellipse cx="0" cy="0" rx="86" ry="24"/><ellipse cx="-30" cy="-16" rx="40" ry="26"/><ellipse cx="26" cy="-26" rx="50" ry="34"/></g>
+  </defs>
+  <circle cx="400" cy="300" r="280" fill="url(#halo)"/>
+  <use href="#cloud" x="205" y="150" fill="{{storm}}"/>
+  <use href="#cloud" x="590" y="118" fill="{{storm}}"/>
+  <use href="#cloud" x="640" y="176" fill="{{stormDeep}}"/>
+  <path d="M170 516c60-54 150-78 230-78s170 24 230 78q-230 56-460 0z" fill="url(#hill)"/>
+  <g fill="none" stroke="{{ink-muted}}" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M400 150L340 462M400 150l60 312"/>
+    <path d="M384 232h32M368 312h64M352 392h96" stroke-width="5"/>
+    <path d="M384 232l48 80-80 80M416 232l-48 80 80 80" stroke-width="3.5"/>
+  </g>
+  <circle cx="400" cy="140" r="17" fill="{{accent}}"/>
+  <circle cx="400" cy="140" r="7" fill="{{ink}}"/>
+  <g fill="none" stroke-width="9" stroke-linecap="round">
+    <path d="M452 96a70 70 0 0 1 0 88" stroke="{{ink-faint}}"/>
+    <path d="M348 96a70 70 0 0 0 0 88" stroke="{{ink-faint}}"/>
+    <path d="M498 62a122 122 0 0 1 22 84" stroke="{{stormLight}}" stroke-dasharray="26 22"/>
+    <path d="M302 62a122 122 0 0 0-22 84" stroke="{{stormLight}}" stroke-dasharray="26 22"/>
+  </g>
+  <path d="M566 118l-34 58h26l-14 50 50-72h-28l18-36z" fill="{{reward}}"/>
+  <g stroke="{{critical}}" stroke-width="8" stroke-linecap="round"><path d="M216 214l32 32M248 214l-32 32"/></g>
+  <g stroke="{{waterFoam}}" stroke-width="3" stroke-linecap="round" opacity=".55">
+    <path d="M190 260l-10 28M240 300l-10 28M170 340l-10 28M600 270l-10 28M640 330l-10 28M560 340l-10 28"/>
+  </g>
+</svg>

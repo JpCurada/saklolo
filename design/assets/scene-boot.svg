@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="{{stormDeep}}"/><stop offset=".65" stop-color="{{storm}}"/><stop offset="1" stop-color="{{stormLight}}"/></linearGradient>
+    <linearGradient id="river" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="{{waterFoam}}"/><stop offset=".3" stop-color="{{waterLight}}"/><stop offset="1" stop-color="{{water}}"/></linearGradient>
+    <radialGradient id="glow"><stop offset="0" stop-color="{{accent}}" stop-opacity=".95"/><stop offset=".35" stop-color="{{accent}}" stop-opacity=".35"/><stop offset="1" stop-color="{{accent}}" stop-opacity="0"/></radialGradient>
+    <clipPath id="frame"><rect width="800" height="600" rx="40"/></clipPath>
+    <g id="cloud"><ellipse cx="0" cy="0" rx="120" ry="30"/><ellipse cx="-44" cy="-22" rx="58" ry="36"/><ellipse cx="34" cy="-36" rx="70" ry="46"/><ellipse cx="88" cy="-12" rx="44" ry="26"/></g>
+    <g id="house"><rect x="-16" y="-16" width="32" height="20" fill="{{wall}}"/><path d="M-22-14L0-32l22 18z" fill="{{roof}}"/><rect x="-5" y="-11" width="9" height="8" fill="{{reward}}" opacity=".8"/></g>
+  </defs>
+  <g clip-path="url(#frame)">
+    <rect width="800" height="600" fill="url(#sky)"/>
+    <use href="#cloud" x="170" y="120" fill="{{stormLight}}"/>
+    <use href="#cloud" x="630" y="95" fill="{{stormLight}}"/>
+    <use href="#cloud" x="400" y="165" fill="{{storm}}"/>
+    <use href="#cloud" x="60" y="195" fill="{{stormDeep}}"/>
+    <use href="#cloud" x="760" y="200" fill="{{stormDeep}}"/>
+    <path d="M0 305c90-60 170-70 260-30s150 30 240-10 200-40 300 20v315H0z" fill="{{stormLight}}" opacity=".7"/>
+    <path d="M0 350c120-50 220-40 330-10s240 0 470-20v280H0z" fill="{{earthLight}}"/>
+    <path d="M0 425c150-30 240-70 345-82 40 10 60 16 90 18 120 8 240 30 365 40v199H0z" fill="{{earth}}"/>
+    <path d="M345 343c30 6 70 12 90 18-30 26-120 52-110 96 8 40 130 70 150 143H130c10-70-10-110 30-150 40-40 180-60 185-107z" fill="url(#river)"/>
+    <path d="M230 460c0 60 40 90 80 130M345 410c-30 30-40 60-20 90M400 372c-30 18-50 30-52 50" fill="none" stroke="{{waterFoam}}" stroke-width="4" stroke-linecap="round" stroke-dasharray="26 34" stroke-dashoffset="{{shimmer}}" opacity=".7"/>
+    <use href="#house" x="95" y="420"/><use href="#house" x="160" y="395"/><use href="#house" x="58" y="475"/>
+    <use href="#house" x="540" y="420"/><use href="#house" x="610" y="440"/><use href="#house" x="680" y="425"/><use href="#house" x="585" y="492"/><use href="#house" x="700" y="500"/>
+    <circle cx="664" cy="262" r="{{glowRadius}}" fill="url(#glow)" opacity="{{glowOpacity}}"/>
+    <path d="M652 356l10-92h4l10 92z" fill="{{ink-faint}}"/>
+    <path d="M655 330h18M658 302h12" stroke="{{storm}}" stroke-width="3"/>
+    <circle cx="664" cy="260" r="9" fill="{{accent}}"/>
+    <circle cx="664" cy="260" r="4" fill="{{ink}}"/>
+    <g stroke="{{waterFoam}}" stroke-width="2" stroke-linecap="round" opacity=".5">{{rain}}</g>
+  </g>
+</svg>
