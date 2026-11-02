@@ -68,6 +68,12 @@ const critical: CaseView = {
           detail: "P1: Infant and senior on the roof (0.88, confident)",
           service: "Bedrock · apac.amazon.nova-lite-v1:0",
         },
+        {
+          step: "escalate",
+          status: "skipped",
+          duration_ms: 0,
+          detail: "Not needed: triage was confident",
+        },
       ],
     },
     source("m2", "+639000000103", "pamilya ko sa malanday nasa bubong", "Family on the roof."),
@@ -96,6 +102,47 @@ const review: CaseView = {
     {
       ...source("m3", "+639000000104", "2nd floor kami sa tumana", "4 people on the 2nd floor."),
       priority: "P2",
+      // Shaped like a real run that went to the Swarm and back to a human.
+      trace: [
+        { step: "normalize", status: "ran", duration_ms: 2, detail: "Cleaned the text" },
+        { step: "prefilter", status: "ran", duration_ms: 1, detail: "Needs a model" },
+        {
+          step: "extract",
+          status: "ran",
+          duration_ms: 1310,
+          detail: "4 people; no one vulnerable mentioned; water: unknown",
+          service: "Bedrock · apac.amazon.nova-lite-v1:0",
+        },
+        {
+          step: "geolocate",
+          status: "ran",
+          duration_ms: 2,
+          detail: "Tumana, named in the message",
+        },
+        {
+          step: "dedupe",
+          status: "ran",
+          duration_ms: 290,
+          detail: "Opened case-0002",
+          service: "Titan embeddings",
+        },
+        {
+          step: "triage",
+          status: "ran",
+          duration_ms: 1020,
+          detail:
+            "P2: Trapped upstairs, water level unclear (0.55, below the review threshold: a human decides)",
+          service: "Bedrock · apac.amazon.nova-lite-v1:0",
+        },
+        {
+          step: "escalate",
+          status: "ran",
+          duration_ms: 6840,
+          detail:
+            "Reviewers suggested P3; kept P2 for a human to decide · triage_reviewer → conflict_resolver → triage_reviewer",
+          service: "Strands Swarm · Bedrock · apac.amazon.nova-lite-v1:0",
+        },
+      ],
     },
   ],
 };

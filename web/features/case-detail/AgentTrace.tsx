@@ -9,6 +9,7 @@ const STEP_LABEL: Record<string, string> = {
   geolocate: "Find the place",
   dedupe: "Match to a case",
   triage: "Set the priority",
+  escalate: "Second opinion (Swarm)",
   resume: "Resume after asking",
 };
 
@@ -25,7 +26,7 @@ export function AgentTrace({ trace, open = false }: AgentTraceProps) {
   if (trace.length === 0) return null;
   const ran = trace.filter((step) => step.status === "ran");
   const total = ran.reduce((sum, step) => sum + step.duration_ms, 0);
-  const modelCalls = ran.filter((step) => step.service?.startsWith("Bedrock")).length;
+  const modelCalls = ran.filter((step) => step.service?.includes("Bedrock")).length;
   return (
     <details data-testid="agent-trace" open={open} className="col-span-2">
       <summary className="cursor-pointer">

@@ -262,9 +262,24 @@ test("the case shows how the agents decided, step by step", async ({ page }) => 
   const trace = page.getByTestId("agent-trace");
   await expect(trace).toHaveCount(1);
   await expect(trace).toHaveAttribute("open", "");
-  await expect(trace.getByTestId("trace-step")).toHaveCount(6);
+  await expect(trace.getByTestId("trace-step")).toHaveCount(7);
+  await expect(trace.locator("[data-step=escalate]")).toHaveAttribute("data-status", "skipped");
   await expect(trace).toContainText("2 model calls");
   await expect(trace.locator("[data-step=dedupe]")).toContainText("Titan embeddings");
   await trace.scrollIntoViewIfNeeded();
   await capture(page, "dashboard-agent-trace");
+});
+
+test("an unsure case shows the Swarm that reviewed it", async ({ page }) => {
+  await mockApi(page);
+  await page.goto("/");
+  await page.getByTestId("queue-item").nth(1).click();
+  const escalate = page.getByTestId("agent-trace").locator("[data-step=escalate]");
+  await expect(escalate).toHaveAttribute("data-status", "ran");
+  await expect(escalate).toContainText("Second opinion (Swarm)");
+  await expect(escalate).toContainText("triage_reviewer → conflict_resolver → triage_reviewer");
+  await expect(escalate).toContainText("Strands Swarm");
+  await expect(page.getByTestId("agent-trace")).toContainText("3 model calls");
+  await page.getByTestId("agent-trace").scrollIntoViewIfNeeded();
+  await capture(page, "dashboard-swarm-review");
 });
