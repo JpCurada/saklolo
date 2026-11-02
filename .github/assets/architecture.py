@@ -86,8 +86,8 @@ def note(x, y, value, anchor="middle"):
 # --- People and channels, outside AWS
 icon("resource/Users.svg", 30, 320, 110)
 labels(85, 320, "Residents", "", 110)
-icon("resource/User.svg", 30, 795, 110)
-labels(85, 795, "Dispatcher", "Web browser", 110)
+icon("resource/User.svg", 30, 860, 110)
+labels(85, 860, "Dispatcher", "Web browser", 110)
 
 for top, logo, title, sub in [
     (120, "telegram-logo.png", "Telegram", "Bot API"),
@@ -105,7 +105,7 @@ for top, logo, title, sub in [
     labels(330, top, title, sub, 90)
 
 # --- AWS Cloud
-out.append(f'<rect x="500" y="40" width="1860" height="1040" fill="none" stroke="{LINE}" stroke-width="3"/>')
+out.append(f'<rect x="500" y="40" width="1860" height="1130" fill="none" stroke="{LINE}" stroke-width="3"/>')
 icon("architecture-group/AWSCloudlogo.svg", 500, 40, 56)
 text(576, 80, "AWS Cloud · ap-southeast-1", 27, 600, anchor="start")
 
@@ -160,80 +160,96 @@ for x0, x1 in [(1948, 1966), (2134, 2152)]:
     out.append(f'<line x1="{x0}" y1="624" x2="{x1}" y2="624" stroke="{LINE}" stroke-width="3"/>')
 text(2048, 676, "Still unsure: a human decides", 15, 400, MUTED, italic=True)
 
-service("architecture-service/AmazonCloudFront.svg", 720, 800, "Amazon CloudFront", "Dashboard and /api/*")
-service("architecture-service/AmazonSimpleStorageService.svg", 1010, 800, "Amazon S3", "Dashboard build")
-service("architecture-service/AmazonDynamoDB.svg", 1300, 800, "Amazon DynamoDB", "Cases, decisions")
+service("architecture-service/AmazonAPIGateway.svg", 720, 800, "Amazon API Gateway", "api.<domain>, throttled")
+service("architecture-service/AmazonDynamoDB.svg", 1300, 800, "Amazon DynamoDB", "Cases, decisions, outbox")
 service("architecture-service/AmazonBedrockAgentCore.svg", 1640, 800, "AgentCore Memory", "Corrections")
-service("architecture-service/AmazonCognito.svg", 1930, 800, "Amazon Cognito", "Dispatcher sign-in")
+icon("architecture-service/AmazonCloudFront.svg", 675, 990, 90)
+labels(720, 990, "Amazon CloudFront", "Dashboard", 90)
+icon("architecture-service/AmazonSimpleStorageService.svg", 965, 990, 90)
+labels(1010, 990, "Amazon S3", "Dashboard build", 90)
+
+# Shared services
+out.append('<rect x="1830" y="770" width="500" height="380" rx="10" fill="#ffffff" stroke="#aab7b8" stroke-width="2"/>')
+text(1850, 806, "Shared services", 22, 700, anchor="start")
+for i, (name, title, sub) in enumerate([
+    ("AmazonRoute53.svg", "Route 53", "Dashboard and API names"),
+    ("AWSCertificateManager.svg", "Certificate Manager", "TLS for both"),
+    ("AmazonCloudWatch.svg", "CloudWatch", "Lambda logs"),
+    ("AWSBudgets.svg", "AWS Budgets", "Cost alerts"),
+]):
+    x, y = 1850, 830 + i * 80
+    icon(f"architecture-service/{name}", x, y, 62)
+    text(x + 80, y + 28, title, 21, 600, anchor="start")
+    text(x + 80, y + 54, sub, 18, 400, MUTED, anchor="start", italic=True)
 
 # --- Outside AWS
-text(150, 1193, "Outside AWS", 27, 600)
+text(150, 1263, "Outside AWS", 27, 600)
 for x, logo, title, sub in [
     (500, None, "Project NOAH", "Flood hazard map (ODbL)"),
     (920, "osm.svg", "OpenStreetMap", "Map tiles"),
 ]:
-    out.append(f'<rect x="{x}" y="1130" width="380" height="110" rx="10" fill="#ffffff" stroke="#aab7b8" stroke-width="2"/>')
+    out.append(f'<rect x="{x}" y="1210" width="380" height="104" rx="10" fill="#ffffff" stroke="#aab7b8" stroke-width="2"/>')
     if logo:
-        picture(logo, x + 30, 1150, 70)
-        text(x + 120, 1178, title, 25, 600, anchor="start")
-        text(x + 120, 1214, sub, 21, 400, MUTED, anchor="start", italic=True)
+        picture(logo, x + 30, 1227, 70)
+        text(x + 120, 1255, title, 25, 600, anchor="start")
+        text(x + 120, 1291, sub, 21, 400, MUTED, anchor="start", italic=True)
     else:
-        text(x + 190, 1176, title, 25, 600)
-        text(x + 190, 1212, sub, 21, 400, MUTED, italic=True)
+        text(x + 190, 1253, title, 25, 600)
+        text(x + 190, 1289, sub, 21, 400, MUTED, italic=True)
 
 # --- Flows. Arrows end on a tile's edge, so each head touches what it points at.
 # 1 Residents write on any channel
 for y in (165, 375, 585):
     arrow([(140, 375), (215, 375), (215, y), (285, y)])
 badge(1, 175, 375)
-# 2 Channels reach the API; replies go back the same way
-arrow([(375, 165), (590, 165), (590, 215), (670, 215)], both=True)
-arrow([(375, 375), (615, 375), (615, 240), (670, 240)], both=True)
-arrow([(375, 585), (640, 585), (640, 265), (670, 265)], both=True)
+# 2 Channels call webhooks on API Gateway; replies go back the same way
+arrow([(375, 165), (640, 165), (640, 812), (670, 812)], both=True)
+arrow([(375, 375), (615, 375), (615, 834), (670, 834)], both=True)
+arrow([(375, 585), (590, 585), (590, 856), (670, 856)], both=True)
 badge(2, 530, 165)
+note(512, 205, "webhooks", "start")
 # Both Lambdas run as container images from ECR
 arrow([(1010, 119), (1010, 150), (720, 150), (720, 190)], dashed=True)
 arrow([(1010, 150), (1270, 150), (1270, 190)], dashed=True)
 note(865, 141, "images")
-# 3 The API queues new messages
+# 3 API Gateway invokes the API Lambda
+arrow([(770, 825), (860, 825), (860, 265), (770, 265)])
+badge(3, 860, 560)
+# 4 The API queues new messages
 arrow([(770, 220), (960, 220)])
-badge(3, 880, 220)
+badge(4, 880, 220)
 note(825, 204, "queued")
-# 4 The worker runs the agents
+# 5 The worker takes them in order
 arrow([(1060, 220), (1250, 220)])
-badge(4, 1155, 220)
+badge(5, 1155, 220)
 note(1155, 268, "one at a time")
-# 5 Bedrock for extract, triage, and the Swarm
+# 6 Bedrock for extract, triage, and the Swarm
 arrow([(1350, 220), (1590, 220)], both=True)
-badge(5, 1410, 220)
+badge(6, 1410, 220)
 note(1500, 204, "extract, triage")
-# 6 Embeddings and places
+# 7 Embeddings and places
 arrow([(1330, 190), (1330, 135), (1930, 135), (1930, 190)])
 arrow([(1930, 135), (2220, 135), (2220, 190)])
-badge(6, 1640, 135)
+badge(7, 1640, 135)
 note(1790, 122, "dedupe")
 note(2080, 122, "geolocate")
-# 7 The agents keep cases and read past corrections
+# 8 The agents keep cases and read past corrections
 arrow([(1325, 705), (1325, 800)])
-badge(7, 1325, 752)
+badge(8, 1325, 752)
 note(1349, 760, "cases", "start")
 arrow([(1640, 705), (1640, 800)], both=True)
 note(1660, 760, "corrections", "start")
-# 8 The API reads cases and records decisions
+# 9 The API reads cases and records decisions
 arrow([(770, 245), (900, 245), (900, 740), (1275, 740), (1275, 800)], both=True)
-badge(8, 1000, 740)
+badge(9, 1000, 740)
 note(1110, 768, "reads, decisions")
-# 9 The dispatcher opens the dashboard through CloudFront
-arrow([(140, 850), (670, 850)])
-badge(9, 420, 850)
-arrow([(770, 870), (960, 870)])
-note(865, 900, "dashboard")
-arrow([(770, 825), (860, 825), (860, 270), (770, 270)])
-note(850, 520, "/api/*", "end")
-# 10 Sign-in
-arrow([(140, 885), (210, 885), (210, 1040), (1800, 1040), (1800, 850), (1880, 850)])
-badge(10, 700, 1040)
-note(870, 1028, "sign in")
+# 10 The dispatcher loads the dashboard, then calls the API
+arrow([(140, 890), (300, 890), (300, 878), (670, 878)])
+note(470, 868, "API calls")
+arrow([(140, 935), (300, 935), (300, 1035), (675, 1035)])
+badge(10, 300, 1000)
+note(470, 1023, "dashboard")
+arrow([(765, 1035), (965, 1035)])
 
 head = (
     f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {WIDTH} {HEIGHT}" '

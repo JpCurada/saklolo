@@ -41,18 +41,18 @@ A resident writes by SMS, Telegram, or Messenger, for example *"nasa bubong na k
 5 kami, may lola"*. Each message runs through a **Strands Graph**
 ([`api/src/saklolo/agents/graph.py`](api/src/saklolo/agents/graph.py)):
 
-<img src=".github/assets/architecture.png" width="100%" alt="Saklolo architecture: residents write on Telegram, Messenger, or SMS to an API Lambda that queues messages in SQS; a worker Lambda runs Strands Agents with Bedrock, Titan, Amazon Location, DynamoDB, and AgentCore Memory; the dispatcher reaches the dashboard through CloudFront, S3, and Cognito">
+<img src=".github/assets/architecture.png" width="100%" alt="Saklolo architecture: residents write on Telegram, Messenger, or SMS; webhooks reach API Gateway and the API Lambda, which queues messages in SQS for a worker Lambda running Strands Agents with Bedrock, Titan, Amazon Location, DynamoDB, and AgentCore Memory; the dispatcher loads the dashboard from CloudFront and S3">
 
 1. A resident writes on Telegram, Messenger, or SMS.
-2. Each channel reaches the API, and replies go back on the same channel.
-3. The API Lambda queues new messages in Amazon SQS.
-4. The worker Lambda takes them one at a time and runs the Strands Agents: an 8-step Graph, and a 3-agent Swarm for unsure cases.
-5. Amazon Nova Lite on Bedrock extracts details and sets the priority.
-6. Titan embeddings let dedupe merge reports of one household, and Amazon Location finds the barangay from landmarks.
-7. DynamoDB keeps cases, and AgentCore Memory keeps dispatcher corrections. Only unsure cases search the memory.
-8. The API reads cases for the dashboard and records every dispatcher decision.
-9. The dispatcher opens the dashboard through CloudFront: the build comes from S3, and `/api/*` goes to the API Lambda. Lambda images live in Amazon ECR.
-10. The dispatcher signs in with Amazon Cognito. The map uses OpenStreetMap tiles and Project NOAH's flood hazard layer.
+2. Each channel calls a webhook on Amazon API Gateway, and replies go back on the same channel.
+3. API Gateway invokes the API Lambda. Both Lambdas run as container images from Amazon ECR.
+4. The API Lambda queues new messages in an Amazon SQS FIFO queue.
+5. The worker Lambda takes them in order and runs the Strands Agents: an 8-step Graph, and a 3-agent Swarm for unsure cases.
+6. Amazon Nova Lite on Bedrock extracts details and sets the priority.
+7. Titan embeddings let dedupe merge reports of one household, and Amazon Location finds the barangay from landmarks.
+8. The agents keep cases in DynamoDB and read past dispatcher corrections from AgentCore Memory.
+9. The API reads cases for the dashboard and records every dispatcher decision.
+10. The dispatcher loads the dashboard from CloudFront and S3, then calls the API through API Gateway. Route 53 and Certificate Manager serve both addresses, CloudWatch keeps the logs, and AWS Budgets alerts on cost. The map uses OpenStreetMap tiles and Project NOAH's flood hazard layer.
 
 
 | Step | What it does | Calls |
