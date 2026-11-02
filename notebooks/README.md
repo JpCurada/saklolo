@@ -5,6 +5,7 @@ Agent experiments: model comparisons, threshold sweeps, prompt variants.
 
 | Notebook | Question it answers |
 |---|---|
+| `00-walkthrough.ipynb` | How does the Strands agent handle a storm? 19 scenarios with their traces, a scorecard computed from the runs, and results against a keyword baseline. Outputs are kept so it reads on GitHub |
 | `01-model-comparison.ipynb` | Which Bedrock model should the fast path use? |
 | `02-dedupe-threshold-sweep.ipynb` | Which similarity threshold merges duplicates without merging neighbors? |
 | `03-prompt-variants.ipynb` | Does a prompt change improve triage without losing Critical recall? |
@@ -25,7 +26,7 @@ In VS Code, open a notebook and pick the kernel `api/.venv`. The notebooks read
   notebook after changing only a threshold or a plot costs nothing. Delete the
   cache to force fresh calls.
 - **Mind the bill.** Nova models are billed as Bedrock (usually covered by AWS
-  credits). Claude on Bedrock is billed through AWS Marketplace and may not be.
+  credits). Marketplace models may be billed separately and may not be.
 - **Numbers stay provisional** until the dev split has human labels; `lab`
   prints a warning when it falls back to generator intent.
 - **Clear outputs before committing** so diffs stay readable and no long
