@@ -1,0 +1,6 @@
+#!/bin/sh
+# Blocks commits that change UI unless `npm run ui:check` passes.
+# Enable once per clone with `make hooks`.
+if git diff --cached --name-only | grep -qE '^(web|design)/'; then
+  cd web && npm run -s ui:check
+fi

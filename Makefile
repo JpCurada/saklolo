@@ -1,4 +1,4 @@
-.PHONY: help install fmt lint test eval demo plan api-types notebooks video-capture
+.PHONY: help install fmt lint test eval demo demo-web plan api-types tokens ui-check hooks notebooks video-capture
 
 API := api
 WEB := web
@@ -33,9 +33,21 @@ eval: ## Run evals against Bedrock (costs money)
 demo: ## Local demo API on :8000 (cached model calls); POST /replay to load the dev split
 	cd $(API) && uv run python -m saklolo.handlers.demo_api --call-cache
 
+demo-web: ## Dashboard on :3000 with the demo tools (replay, /resident phones)
+	cd $(WEB) && NEXT_PUBLIC_DEMO_MODE=true npm run build && npx next start --port 3000
+
 plan: ## terraform plan for infra/
 	terraform -chdir=$(INFRA) init -backend-config=backend.hcl
 	terraform -chdir=$(INFRA) plan -var-file=terraform.tfvars
+
+ui-check: ## Lint, types, tokens, build, screenshots, visual regression
+	cd $(WEB) && npm run ui:check
+
+hooks: ## Enable the repo's git hooks in this clone
+	git config core.hooksPath .githooks
+
+tokens: ## Build design tokens and check WCAG AA contrast
+	cd $(WEB) && npm run tokens
 
 api-types: ## Regenerate the web client's types from the API schema
 	cd $(API) && uv run python -m saklolo.handlers.openapi_export ../$(WEB)/lib/api/openapi.json

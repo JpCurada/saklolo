@@ -11,7 +11,10 @@
     "format": "prettier --write .",
     "gen:api": "openapi-typescript lib/api/openapi.json -o lib/api/schema.d.ts",
     "predev": "node scripts/copy-map-worker.mjs",
-    "prebuild": "node scripts/copy-map-worker.mjs"
+    "prebuild": "node scripts/copy-map-worker.mjs",
+    "tokens": "node --experimental-strip-types --no-warnings scripts/build-tokens.ts",
+    "ui:check": "node scripts/ui-check.mjs",
+    "assets": "node scripts/build-assets.mjs"
   },
   "dependencies": {
     "maplibre-gl": "^6.16.0",
@@ -20,6 +23,7 @@
     "react-dom": "19.3.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.64.1",
     "@tailwindcss/turbopack": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
@@ -28,6 +32,7 @@
     "eslint-config-next": "16.4.3",
     "openapi-typescript": "^7.13.0",
     "prettier": "^3.9.10",
+    "sharp": "0.35.5",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

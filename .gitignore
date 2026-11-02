@@ -30,6 +30,7 @@ crash.log
 backend.hcl
 
 # Video renders and Playwright artifacts
+web/test-results/
 video/out/
 video/test-results/
 video/playwright-report/
@@ -38,6 +39,10 @@ video/playwright-report/
 eval/runs/
 # Cached model and embedding calls from experiments
 eval/cache/
+# Working screenshots from the ui-* skills
+eval/screenshots/
+# Latest ui:check screenshots, rewritten every run (baselines stay tracked)
+design/screenshots/*.png
 
 # Claude Code personal settings
 .claude/settings.local.json
