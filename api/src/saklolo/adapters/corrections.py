@@ -21,6 +21,8 @@ logger = logging.getLogger(__name__)
 
 NAMESPACE = "/dispatcher-corrections"
 WORD = re.compile(r"[^\W_]+")
+# In a live test, the right match scored 0.43 and unrelated records 0.375 or less.
+MIN_SCORE = 0.40
 
 
 def _to_text(correction: PastCorrection) -> str:
@@ -97,5 +99,6 @@ class AgentCoreCorrectionMemory:
         corrections = [
             _from_text(item.get("content", {}).get("text", ""))
             for item in found.get("memoryRecordSummaries", [])
+            if item.get("score", 0) >= MIN_SCORE
         ]
         return [item for item in corrections if item is not None]

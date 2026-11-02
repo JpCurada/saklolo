@@ -55,3 +55,6 @@ Thumbs.db
 
 # Agent worktrees
 .claude/worktrees/
+
+# Local Terraform state until the S3 backend exists
+infra/backend_override.tf

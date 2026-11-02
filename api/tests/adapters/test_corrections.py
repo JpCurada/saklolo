@@ -57,7 +57,11 @@ def test_a_correction_round_trips_through_agentcore_records() -> None:
     assert call["memoryId"] == "mem-1"
     assert record["namespaces"] == [NAMESPACE]
     assert record["memoryStrategyId"] == "strategy-1"
-    client.records = [{"content": record["content"]}, {"content": {"text": "not json"}}]
+    client.records = [
+        {"content": record["content"], "score": 0.43},
+        {"content": record["content"], "score": 0.37},  # unrelated: below the cutoff
+        {"content": {"text": "not json"}, "score": 0.9},
+    ]
     assert memory.similar("Family on a roof") == [ROOF]
     assert client.searches[0]["searchCriteria"]["topK"] == 3
     assert json.loads(record["content"]["text"])["corrected"] == "P2"

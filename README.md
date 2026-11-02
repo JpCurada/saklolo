@@ -46,7 +46,7 @@ Promises enforced in code and tests:
 
 | Area | Built | Planned |
 |---|---|---|
-| Agents | Strands Graph with conditional edges; Strands Swarm escalation with typed tools; ask-back pause and resume across messages | Escalation on conflicting reports; calibration from dispatcher overrides with AgentCore Memory |
+| Agents | Strands Graph with conditional edges; Strands Swarm escalation with typed tools; ask-back pause and resume across messages; AgentCore Memory of dispatcher corrections, consulted only for unsure cases | Escalation on conflicting reports; measuring whether corrections improve accuracy |
 | Verification | Recycled-post check (known old posts, past dates); sender-pattern check; Project NOAH flood-hazard map layer and context; Corroborated badge for 2+ senders | Flood-hazard plausibility flag (needs house-level locations) |
 | AWS services | Bedrock (Nova Lite, Titan Text Embeddings V2), Amazon Location Places, DynamoDB (cases, messages, decisions) | AgentCore Runtime and Observability; API Gateway, SQS, and Lambda intake; End User Messaging SMS |
 | Channels | Telegram (long polling), Messenger (signed webhook), and simulated resident phones for demos | Real SMS intake: no two-way SMS in the Philippines through AWS (ADR 0001) |
