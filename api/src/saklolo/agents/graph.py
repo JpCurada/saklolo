@@ -26,6 +26,7 @@ from saklolo.agents.nodes.normalize import normalize
 from saklolo.agents.nodes.prefilter import needs_model, prefilter
 from saklolo.agents.nodes.triage import triage
 from saklolo.agents.state import STATE_KEY, PipelineState, pipeline_state
+from saklolo.agents.trace import record, with_skipped
 from saklolo.domain.errors import PipelineError
 from saklolo.domain.models import InboundMessage
 
@@ -39,18 +40,22 @@ GRAPH_TIMEOUT_S = 120.0
 class StepNode(MultiAgentBase):
     """A Graph node that runs one step on the shared PipelineState."""
 
-    def __init__(self, node_id: str, step: Step) -> None:
+    def __init__(self, node_id: str, step: Step, deps: PipelineDeps) -> None:
         super().__init__()
         self.id = node_id
         self._step = step
+        self._deps = deps
 
     async def invoke_async(
         self, task: MultiAgentInput, invocation_state: dict[str, Any] | None = None, **kwargs: Any
     ) -> MultiAgentResult:
+        state = pipeline_state(invocation_state)
+        model_calls = len(state.usage)
         started = time.perf_counter()
         # Steps may call a model synchronously; keep that off the event loop.
-        await asyncio.to_thread(self._step, pipeline_state(invocation_state))
+        await asyncio.to_thread(self._step, state)
         elapsed_ms = round((time.perf_counter() - started) * 1000)
+        record(self.id, state, self._deps, elapsed_ms, model_calls)
         return MultiAgentResult(status=Status.COMPLETED, execution_time=elapsed_ms)
 
 
@@ -69,7 +74,7 @@ def build_triage_graph(deps: PipelineDeps) -> Graph:
     }
     builder = GraphBuilder()
     for node_id, step in steps.items():
-        builder.add_node(StepNode(node_id, step), node_id)
+        builder.add_node(StepNode(node_id, step, deps), node_id)
     builder.add_edge("normalize", "prefilter")
     builder.add_edge("prefilter", "extract", condition=_passes_prefilter)
     builder.add_edge("extract", "geolocate")
@@ -88,4 +93,5 @@ def run_pipeline(message: InboundMessage, deps: PipelineDeps) -> PipelineState:
     result = build_triage_graph(deps)("triage message", invocation_state={STATE_KEY: state})
     if result.status != Status.COMPLETED:
         raise PipelineError(f"graph finished with status {result.status.value}")
+    state.trace = with_skipped(state)
     return state

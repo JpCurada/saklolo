@@ -16,3 +16,5 @@ class PipelineDeps:
     dedupe: DedupePolicy
     escalation_threshold: float
     prompts: PromptSet = field(default_factory=PromptSet.default)
+    # Shown in the agent trace next to steps that called the model.
+    model_id: str = ""

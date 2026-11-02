@@ -11,6 +11,7 @@ from saklolo.domain.models import (
     Location,
     StatusUpdateKind,
     SuspicionReason,
+    TraceStep,
     TriageDecision,
     TriageOutcome,
     WaterLevel,
@@ -45,6 +46,9 @@ class PipelineState:
     case_id: str | None = None
     decision: TriageDecision | None = None
     usage: list[ModelUsage] = field(default_factory=list)
+    dedupe_similarity: float | None = None  # set when merged into an existing case
+    dedupe_same_sender: bool = False
+    trace: list[TraceStep] = field(default_factory=list)
 
     def outcome(self, escalation_threshold: float) -> TriageOutcome:
         suspicious = self.verdict == PrefilterVerdict.SPAM or self.injection_suspected

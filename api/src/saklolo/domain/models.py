@@ -64,6 +64,7 @@ class SuspicionReason(StrEnum):
 class Channel(StrEnum):
     SMS = "sms"
     MESSENGER = "messenger"
+    TELEGRAM = "telegram"
     WEB = "web"
 
 
@@ -139,6 +140,22 @@ class TriageDecision(BaseModel):
 
     def needs_escalation(self, threshold: float) -> bool:
         return self.confidence < threshold
+
+
+class TraceStatus(StrEnum):
+    RAN = "ran"
+    SKIPPED = "skipped"
+
+
+class TraceStep(BaseModel):
+    """One Graph step's work on one message, shown to the dispatcher."""
+
+    step: str
+    status: TraceStatus
+    duration_ms: int
+    detail: str
+    # The model or AWS service the step called, if any.
+    service: str | None = None
 
 
 class TriageOutcome(BaseModel):

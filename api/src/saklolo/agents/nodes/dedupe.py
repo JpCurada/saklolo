@@ -31,6 +31,9 @@ def dedupe(state: PipelineState, deps: PipelineDeps) -> None:
         now,
         deps.dedupe,
     )
+    if match:
+        state.dedupe_similarity = match.similarity
+        state.dedupe_same_sender = match.same_sender
     case = _merge(match.case, state) if match else _open(state, embedding, deps)
     if extraction.status_update_kind == StatusUpdateKind.RESCUED:
         case.reported_safe = True
