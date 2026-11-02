@@ -106,8 +106,7 @@ for top, logo, title, sub in [
 
 # --- AWS Cloud
 out.append(f'<rect x="500" y="40" width="1860" height="1040" fill="none" stroke="{LINE}" stroke-width="3"/>')
-out.append(f'<rect x="500" y="40" width="56" height="56" fill="{LINE}"/>')
-text(528, 78, "aws", 22, 700, "#ffffff")
+icon("architecture-group/AWSCloudlogo.svg", 500, 40, 56)
 text(576, 80, "AWS Cloud · ap-southeast-1", 27, 600, anchor="start")
 
 # Container images for both Lambdas
