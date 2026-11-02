@@ -17,6 +17,11 @@ dev = [
   "ruff>=0.6",
   "mypy>=1.11",
 ]
+notebooks = [
+    "ipykernel>=7.4.0",
+    "matplotlib>=3.11.2",
+    "pandas>=3.1.0",
+]
 
 [build-system]
 requires = ["hatchling"]
@@ -49,6 +54,6 @@ ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-pythonpath = ["src"]
+pythonpath = ["src", "."]
 markers = ["integration: talks to real AWS services (skipped by default)"]
 addopts = "-m 'not integration'"

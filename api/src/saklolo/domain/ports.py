@@ -1,8 +1,13 @@
 """Interfaces the domain and agents depend on. Adapters implement them."""
 
+from dataclasses import dataclass
+from datetime import datetime
 from typing import Protocol
 
-from saklolo.domain.models import InboundMessage
+from pydantic import BaseModel
+
+from saklolo.domain.cases import Case
+from saklolo.domain.models import InboundMessage, Location
 
 
 class MessageQueue(Protocol):
@@ -11,3 +16,43 @@ class MessageQueue(Protocol):
 
 class Notifier(Protocol):
     def send_text(self, recipient: str, body: str) -> None: ...
+
+
+@dataclass(frozen=True)
+class ModelUsage:
+    input_tokens: int
+    output_tokens: int
+
+
+@dataclass(frozen=True)
+class ModelCall[OutputT: BaseModel]:
+    output: OutputT
+    usage: ModelUsage
+
+
+class StructuredModel(Protocol):
+    """One model call that must return a validated instance of `output_type`."""
+
+    def generate[OutputT: BaseModel](
+        self, system_prompt: str, prompt: str, output_type: type[OutputT]
+    ) -> ModelCall[OutputT]: ...
+
+
+class Geocoder(Protocol):
+    def geocode(self, query: str) -> Location | None:
+        """A Marikina location for the place words, or None if it can't be placed."""
+        ...
+
+
+class Embedder(Protocol):
+    def embed(self, text: str) -> list[float]: ...
+
+
+class CaseStore(Protocol):
+    def open_cases(self, since: datetime) -> list[Case]: ...
+
+    def get(self, case_id: str) -> Case | None: ...
+
+    def save(self, case: Case) -> None: ...
+
+    def next_id(self) -> str: ...

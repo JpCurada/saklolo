@@ -3,7 +3,7 @@
 from datetime import datetime
 from enum import StrEnum
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 class Priority(StrEnum):
@@ -38,12 +38,60 @@ class VerificationStatus(StrEnum):
     SUSPICIOUS = "suspicious"
 
 
+class MessageType(StrEnum):
+    RESCUE = "rescue"
+    STATUS_UPDATE = "status_update"
+    DUPLICATE = "duplicate"
+    RELIEF_INFO = "relief_info"
+    VAGUE_LOCATION = "vague_location"
+    RECYCLED = "recycled"
+    SPAM = "spam"
+
+
+class StatusUpdateKind(StrEnum):
+    RESCUED = "rescued"
+    WORSENING = "worsening"
+    IMPROVING = "improving"
+    OTHER = "other"
+
+
+class SuspicionReason(StrEnum):
+    RECYCLED = "recycled"
+    IMPLAUSIBLE_LOCATION = "implausible_location"
+    SPAM_PATTERN = "spam_pattern"
+
+
+class Channel(StrEnum):
+    SMS = "sms"
+    MESSENGER = "messenger"
+    WEB = "web"
+
+
+class LocationSource(StrEnum):
+    TEXT = "text"  # the message names the barangay
+    GEOCODER = "geocoder"  # Amazon Location resolved the place words
+    REPLY = "reply"  # the resident answered the ask-back question
+    UNKNOWN = "unknown"
+
+
+class Location(BaseModel):
+    model_config = ConfigDict(frozen=True)
+
+    barangay: str | None
+    lat: float | None = None
+    lng: float | None = None
+    source: LocationSource = LocationSource.UNKNOWN
+
+
+UNKNOWN_LOCATION = Location(barangay=None)
+
+
 class InboundMessage(BaseModel):
     """What every channel adapter sends to intake (ADR 0001)."""
 
     sender: str
     text: str
-    channel: str
+    channel: Channel
     received_at: datetime
 
 
@@ -52,13 +100,26 @@ class ExtractedRequest(BaseModel):
 
     is_rescue_request: bool
     is_status_update: bool
+    status_update_kind: StatusUpdateKind | None = None
     people_count: int | None = Field(default=None, ge=0)
     vulnerable: list[Vulnerability] = Field(default_factory=list)
     water_level: WaterLevel = WaterLevel.UNKNOWN
     medical_emergency: bool = False
     location_text: str | None = None
+    barangay: str | None = Field(default=None, description="Marikina barangay named in the text")
     english_summary: str
     confidence: float = Field(ge=0.0, le=1.0)
+
+    @field_validator("vulnerable", mode="before")
+    @classmethod
+    def _null_means_none_listed(cls, value: object) -> object:
+        # Some models send null for "nobody vulnerable"; rejecting it causes retry loops.
+        return [] if value is None else value
+
+    @field_validator("water_level", mode="before")
+    @classmethod
+    def _null_means_unknown(cls, value: object) -> object:
+        return WaterLevel.UNKNOWN if value is None else value
 
 
 class TriageDecision(BaseModel):
@@ -70,3 +131,18 @@ class TriageDecision(BaseModel):
 
     def needs_escalation(self, threshold: float) -> bool:
         return self.confidence < threshold
+
+
+class TriageOutcome(BaseModel):
+    """What the pipeline hands to the dispatch queue for one message."""
+
+    priority: Priority | None = Field(description="None when the message closes a case or is spam")
+    is_suspicious: bool
+    suspicion_reasons: list[SuspicionReason] = Field(default_factory=list)
+    case_id: str | None = Field(description="None for messages that aren't about a household")
+    location: Location
+    ask_back_question: str | None = Field(description="Set when the location must be asked")
+    english_summary: str | None
+    reason: str
+    confidence: float = Field(ge=0.0, le=1.0)
+    needs_escalation: bool
