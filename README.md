@@ -52,7 +52,7 @@ A resident writes by SMS, Telegram, or Messenger, for example *"nasa bubong na k
 7. Titan embeddings let dedupe merge reports of one household, and Amazon Location finds the barangay from landmarks.
 8. The agents keep cases in DynamoDB and read past dispatcher corrections from AgentCore Memory.
 9. The API reads cases for the dashboard and records every dispatcher decision.
-10. The dispatcher loads the dashboard from CloudFront and S3, then calls the API through API Gateway. Route 53 and Certificate Manager serve both addresses, CloudWatch keeps the logs, and AWS Budgets alerts on cost. The map uses OpenStreetMap tiles and Project NOAH's flood hazard layer.
+10. The dispatcher signs in with Amazon Cognito, loads the dashboard from CloudFront and S3, and calls the API through API Gateway with the access token. Route 53 and Certificate Manager serve both addresses, CloudWatch keeps the logs, and AWS Budgets alerts on cost. The map uses OpenStreetMap tiles and Project NOAH's flood hazard layer.
 
 
 | Step | What it does | Calls |
@@ -85,7 +85,7 @@ Promises enforced in code and tests:
 | Verification | Recycled-post check (known old posts, past dates); sender-pattern check; Project NOAH flood-hazard map layer and context; Corroborated badge for 2+ senders | Flood-hazard plausibility flag (needs house-level locations) |
 | AWS services | Bedrock (Nova Lite, Titan Text Embeddings V2), Amazon Location Places, DynamoDB (cases, messages, decisions) | AgentCore Runtime and Observability; API Gateway, SQS, and Lambda intake; End User Messaging SMS |
 | Channels | Telegram (long polling), Messenger (signed webhook), and a resident phone page for SMS | Real SMS intake: no two-way SMS in the Philippines through AWS  |
-| Dashboard | Queue, human review lane, case detail with map, agent trace, decision history, dispatcher on duty, design system with visual regression tests | Sign-in (Amazon Cognito); delivery receipts and team status updates |
+| Dashboard | Queue, human review lane, case detail with map, agent trace, decision history, dispatcher sign-in with Amazon Cognito (invite-only; the history records the signed-in account), design system with visual regression tests | Delivery receipts and team status updates |
 | Infra | Terraform for SQS and three DynamoDB tables | The rest of the deployment above |
 | Evaluation | Eval harness with domain metrics (Critical recall, dedupe precision and recall, cost per 10,000 messages) on a synthetic dev split | Human labels, a held-out eval split, and a tabletop drill; until then no results are reported |
 

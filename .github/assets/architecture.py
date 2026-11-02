@@ -176,11 +176,12 @@ for i, (name, title, sub) in enumerate([
     ("AWSCertificateManager.svg", "Certificate Manager", "TLS for both"),
     ("AmazonCloudWatch.svg", "CloudWatch", "Lambda logs"),
     ("AWSBudgets.svg", "AWS Budgets", "Cost alerts"),
+    ("AmazonCognito.svg", "Amazon Cognito", "Dispatcher sign-in"),
 ]):
-    x, y = 1850, 830 + i * 80
-    icon(f"architecture-service/{name}", x, y, 62)
-    text(x + 80, y + 28, title, 21, 600, anchor="start")
-    text(x + 80, y + 54, sub, 18, 400, MUTED, anchor="start", italic=True)
+    x, y = 1850, 828 + i * 63
+    icon(f"architecture-service/{name}", x, y, 52)
+    text(x + 70, y + 24, title, 21, 600, anchor="start")
+    text(x + 70, y + 47, sub, 17, 400, MUTED, anchor="start", italic=True)
 
 # --- Outside AWS
 text(150, 1263, "Outside AWS", 27, 600)
@@ -245,7 +246,7 @@ badge(9, 1000, 740)
 note(1110, 768, "reads, decisions")
 # 10 The dispatcher loads the dashboard, then calls the API
 arrow([(140, 890), (300, 890), (300, 878), (670, 878)])
-note(470, 868, "API calls")
+note(470, 868, "API calls, signed in")
 arrow([(140, 935), (300, 935), (300, 1035), (675, 1035)])
 badge(10, 300, 1000)
 note(470, 1023, "dashboard")
