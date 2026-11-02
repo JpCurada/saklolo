@@ -13,7 +13,7 @@ import logging
 
 from saklolo.agents.deps import PipelineDeps
 from saklolo.agents.nodes.extract import message_block
-from saklolo.agents.state import PipelineState
+from saklolo.agents.state import EscalationOutcome, PipelineState
 from saklolo.domain.models import LocationSource, TriageDecision
 from saklolo.domain.ports import PlaceLookup
 
@@ -28,13 +28,16 @@ def escalate(state: PipelineState, deps: PipelineDeps) -> None:
     current = state.decision
     if current is None:
         return
+    state.first_decision = current
     if deps.escalation is None:
+        state.escalation_outcome = EscalationOutcome.NOT_CONFIGURED
         state.escalation_note = "No reviewers configured: a human decides"
         return
     try:
         review = deps.escalation.review(brief(state, current))
     except Exception as error:  # a reviewer outage must never lose the message
         logger.warning("escalation failed: %s", type(error).__name__)
+        state.escalation_outcome = EscalationOutcome.UNAVAILABLE
         state.escalation_note = "Reviewers unavailable: a human decides"
         return
 
@@ -44,13 +47,20 @@ def escalate(state: PipelineState, deps: PipelineDeps) -> None:
     _adopt_found_location(state, review.lookups, deps)
     proposed = review.decision
     if proposed is None:
+        state.escalation_outcome = EscalationOutcome.UNDECIDED
         state.escalation_note = "Reviewers couldn't agree: a human decides"
     elif _less_urgent(proposed, current):
+        state.escalation_outcome = EscalationOutcome.REFUSED
         state.escalation_note = (
             f"Reviewers suggested {proposed.priority.value}; kept {current.priority.value} "
             "for a human to decide"
         )
     else:
+        state.escalation_outcome = (
+            EscalationOutcome.CONFIRMED
+            if proposed.priority == current.priority
+            else EscalationOutcome.RAISED
+        )
         state.decision = proposed
         verdict = (
             "still unsure: a human decides"

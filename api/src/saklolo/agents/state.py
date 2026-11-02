@@ -31,6 +31,17 @@ class PrefilterVerdict(StrEnum):
     SPAM = "spam"  # flagged and shown in the suspicious lane, never deleted
 
 
+class EscalationOutcome(StrEnum):
+    """What the Swarm did with a low-confidence triage."""
+
+    CONFIRMED = "confirmed"  # same priority
+    RAISED = "raised"  # a more urgent priority
+    REFUSED = "refused"  # suggested a lower priority; the original was kept
+    UNDECIDED = "undecided"  # no verdict submitted
+    UNAVAILABLE = "unavailable"  # the Swarm failed
+    NOT_CONFIGURED = "not_configured"  # no reviewers wired in
+
+
 @dataclass
 class PipelineState:
     message: InboundMessage
@@ -53,6 +64,8 @@ class PipelineState:
     escalation_agents: list[str] = field(default_factory=list)
     escalation_note: str = ""
     escalation_lookups: list[str] = field(default_factory=list)
+    first_decision: TriageDecision | None = None  # triage's own, before any Swarm review
+    escalation_outcome: EscalationOutcome | None = None  # None: never escalated
     trace: list[TraceStep] = field(default_factory=list)
 
     def outcome(self, escalation_threshold: float) -> TriageOutcome:

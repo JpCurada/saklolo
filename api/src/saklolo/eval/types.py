@@ -36,6 +36,16 @@ class Prediction(BaseModel):
     cost_usd: float = Field(ge=0)
     # Set when the predictor failed on this message; it is then scored as a miss.
     error: str | None = None
+    # Swarm escalation (graph predictor only). escalation_outcome is None when the
+    # message never escalated; see agents.state.EscalationOutcome for the values.
+    escalation_outcome: str | None = None
+    escalation_agents: list[str] = Field(default_factory=list)
+    first_priority: Priority | None = None
+    first_confidence: float | None = None
+
+    @property
+    def escalated(self) -> bool:
+        return self.escalation_outcome is not None
 
 
 class GroundTruth(BaseModel):

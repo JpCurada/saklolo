@@ -5,6 +5,8 @@ Populations:
   (those are scored by the verification metrics instead).
 - Dedupe and barangay: messages that belong to a real household.
 - False-flag rate: real messages (not recycled, not spam).
+- Swarm metrics: every message for the escalation rate; escalated messages for the
+  rest. Outcome counts are counts, not rates.
 """
 
 import math
@@ -12,6 +14,7 @@ from collections.abc import Callable, Iterable
 from dataclasses import dataclass
 from itertools import combinations
 
+from saklolo.agents.state import EscalationOutcome
 from saklolo.domain.models import MessageType, Priority
 from saklolo.eval.types import GroundTruth, Prediction
 
@@ -47,6 +50,9 @@ def compute_metrics(truths: list[GroundTruth], predictions: list[Prediction]) ->
         recycled_flagged_rate(pairs),
         p95_latency(predictions),
         cost_per_10k(predictions),
+        escalation_rate(predictions),
+        swarm_changed_rate(predictions),
+        *swarm_outcome_counts(predictions),
     ]
 
 
@@ -107,6 +113,28 @@ def cost_per_10k(predictions: list[Prediction]) -> Metric:
     total = sum(p.cost_usd for p in predictions)
     value = total / len(predictions) * 10_000 if predictions else None
     return Metric("Cost per 10k messages (USD)", value, len(predictions))
+
+
+def escalation_rate(predictions: list[Prediction]) -> Metric:
+    return _rate("Escalation rate", [p.escalated for p in predictions])
+
+
+def swarm_changed_rate(predictions: list[Prediction]) -> Metric:
+    """Among escalated messages: how often the final priority differs from triage's."""
+    escalated = [p for p in predictions if p.escalated]
+    return _rate("Swarm changed priority", [p.priority != p.first_priority for p in escalated])
+
+
+def swarm_outcome_counts(predictions: list[Prediction]) -> list[Metric]:
+    escalated = [p for p in predictions if p.escalated]
+    return [
+        Metric(
+            f"Swarm {outcome.value}",
+            float(sum(p.escalation_outcome == outcome for p in escalated)),
+            len(escalated),
+        )
+        for outcome in EscalationOutcome
+    ]
 
 
 def _join(truths: list[GroundTruth], predictions: list[Prediction]) -> list[Pair]:
