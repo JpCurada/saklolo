@@ -1,0 +1,3 @@
+# A dispatch tool for responders, not a public site: keep it out of search engines.
+User-agent: *
+Disallow: /

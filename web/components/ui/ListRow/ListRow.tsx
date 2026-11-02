@@ -30,7 +30,7 @@ export function ListRow({
 }: ListRowProps) {
   const body = (
     <>
-      <div className="flex items-center gap-(--sk-space-2)">
+      <div className="flex min-w-0 flex-wrap items-center gap-(--sk-space-2)">
         {meta}
         {trailing && <span className="ml-auto">{trailing}</span>}
       </div>

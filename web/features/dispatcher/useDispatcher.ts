@@ -2,6 +2,8 @@
 
 import { useCallback, useSyncExternalStore } from "react";
 
+import { useSignedIn } from "../auth/AuthGate";
+
 const KEY = "saklolo.dispatcher";
 const listeners = new Set<() => void>();
 
@@ -24,10 +26,11 @@ function subscribe(listener: () => void) {
 }
 
 /**
- * The dispatcher on duty in this browser. A name, not a login: it labels every
- * decision in the case history. Remembered per browser; the server render has none.
+ * The dispatcher on duty. Signed in with Cognito, it's the account's username. On an
+ * open local API it's a typed name, remembered per browser; the server render has none.
  */
 export function useDispatcher(): [string | undefined, (name: string | undefined) => void] {
+  const signedIn = useSignedIn();
   const name = useSyncExternalStore(subscribe, read, () => undefined);
 
   const change = useCallback((next: string | undefined) => {
@@ -41,5 +44,6 @@ export function useDispatcher(): [string | undefined, (name: string | undefined)
     listeners.forEach((listener) => listener());
   }, []);
 
-  return [name, change];
+  // Signed in, the account is the name: it can't be typed or changed here.
+  return signedIn ? [signedIn.username, change] : [name, change];
 }

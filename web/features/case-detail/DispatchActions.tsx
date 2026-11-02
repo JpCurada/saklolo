@@ -134,7 +134,7 @@ export function DispatchActions({ item, dispatcher, onChanged, onClosed }: Dispa
           if (saved) setReason("");
         }}
       >
-        <div className="flex gap-2">
+        <div className="sk-dispatch-override flex gap-2">
           <label className="sr-only" htmlFor="override-priority">
             New priority
           </label>

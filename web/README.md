@@ -21,7 +21,12 @@ can fail to start (exit code `0xc0000142`), and the production build avoids that
 
 ## Deploy
 
-Settings are read at build time; copy `.env.example` to `.env.local`.
+`make deploy` from the repo root builds a static export (`STATIC_EXPORT=true`) and
+serves it from S3 through CloudFront; see `infra/README.md`. CloudFront sends the
+security headers that `next.config.ts` sends under `next start`.
+
+To run it on a Node host instead, settings are read at build time; copy
+`.env.example` to `.env.local`.
 
 | Variable | Deployment value |
 |---|---|
@@ -48,7 +53,7 @@ is in. A Content Security Policy still needs to be written and tested against th
 ## Layout
 
 ```
-app/          routes (/, /resident in demo mode), robots, icon, security headers
+app/          routes (/, /resident in demo mode), icon
 components/ui/  the design system's components
 features/     dashboard, queue, case-detail, dispatcher, simulator, replay, feed
 lib/api/      typed client; types generated from the API schema

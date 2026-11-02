@@ -28,6 +28,7 @@ export const LOCATION_SOURCE_LABEL: Record<string, string> = {
   text: "named in the message",
   geocoder: "found by Amazon Location",
   reply: "from the resident's reply",
+  reviewer: "a reviewers' landmark match, awaiting the resident",
   unknown: "unknown",
 };
 

@@ -78,7 +78,7 @@ export function Dashboard() {
           </Text>
         </div>
         {cases.data && <StatsBar cases={cases.data} />}
-        <div className="ml-auto flex items-center gap-4">
+        <div className="sk-header-actions">
           <DispatcherPicker name={dispatcher} onChange={setDispatcher} />
           {DEMO_MODE && (
             <>

@@ -39,7 +39,7 @@ export function ReplayControls({ onTick }: { onTick: () => void }) {
   return (
     <div data-testid="replay-controls" className="sk-replay">
       <Badge tone="none" testId="sped-up-label">
-        Replay · sped up · synthetic data
+        Replay · sped up
       </Badge>
       <label className="sr-only" htmlFor="replay-speed">
         Replay speed

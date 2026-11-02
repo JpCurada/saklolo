@@ -35,7 +35,7 @@ export function Tabs<Id extends string>({ label, tabs, active, onChange }: TabsP
       role="tablist"
       aria-label={label}
       onKeyDown={onKeyDown}
-      className="flex gap-(--sk-space-1)"
+      className="flex flex-wrap gap-(--sk-space-1)"
     >
       {tabs.map((tab) => {
         const selected = tab.id === active;

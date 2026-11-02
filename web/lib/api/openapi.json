@@ -73,7 +73,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ReceiveResult"
+                  "$ref": "#/components/schemas/ReceiveAck"
                 }
               }
             }
@@ -804,6 +804,7 @@
           "text",
           "geocoder",
           "reply",
+          "reviewer",
           "unknown"
         ],
         "title": "LocationSource"
@@ -972,6 +973,21 @@
         ],
         "title": "Priority"
       },
+      "ReceiveAck": {
+        "properties": {
+          "received_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Received At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "received_at"
+        ],
+        "title": "ReceiveAck",
+        "description": "The intake has the message. Triage may still be running."
+      },
       "ReceiveKind": {
         "type": "string",
         "enum": [
@@ -979,26 +995,6 @@
           "location_reply"
         ],
         "title": "ReceiveKind"
-      },
-      "ReceiveResult": {
-        "properties": {
-          "record": {
-            "$ref": "#/components/schemas/MessageRecord"
-          },
-          "replies": {
-            "items": {
-              "$ref": "#/components/schemas/OutboundMessage"
-            },
-            "type": "array",
-            "title": "Replies"
-          }
-        },
-        "type": "object",
-        "required": [
-          "record",
-          "replies"
-        ],
-        "title": "ReceiveResult"
       },
       "ReplayIn": {
         "properties": {

@@ -1,4 +1,4 @@
-import { Icon, type IconName, Text } from "@/components/ui";
+import { Disclosure, Icon, type IconName, Text } from "@/components/ui";
 import type { CaseEvent } from "@/lib/api/types";
 import { clockTime } from "@/lib/format";
 
@@ -18,10 +18,7 @@ const ICON: Record<CaseEvent["action"], IconName> = {
 export function CaseHistory({ events }: { events: CaseEvent[] }) {
   if (events.length === 0) return null;
   return (
-    <div className="space-y-2">
-      <h3>
-        <Text variant="body-bold">Decisions ({events.length})</Text>
-      </h3>
+    <Disclosure title="Decisions" meta={`(${events.length})`} defaultOpen>
       <ol data-testid="case-history" className="space-y-1">
         {events.map((event, index) => (
           <li
@@ -40,6 +37,6 @@ export function CaseHistory({ events }: { events: CaseEvent[] }) {
           </li>
         ))}
       </ol>
-    </div>
+    </Disclosure>
   );
 }

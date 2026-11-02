@@ -82,7 +82,7 @@ export function PhoneSimulator({ channel, testId, defaultSender, onSent }: Phone
       const result = await api.send({ sender, text, channel });
       setSent((previous) => [
         ...previous,
-        { direction: "out", body: text, at: result.record.message.received_at },
+        { direction: "out", body: text, at: result.received_at },
       ]);
       setDraft("");
       setError(undefined);

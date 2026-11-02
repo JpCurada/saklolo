@@ -6,12 +6,14 @@ import { AgentTrace } from "./AgentTrace";
 
 /** Every message merged into the case: the resident's words next to the English reading. */
 export function SourceList({ sources }: { sources: SourceView[] }) {
-  // The newest message with a trace is open; older ones stay one click away.
-  const newestTraced = sources.findLastIndex((source) => (source.trace ?? []).length > 0);
   return (
     <ol data-testid="source-list" className="space-y-2">
-      {sources.map((source, index) => (
-        <li key={source.message_id} data-testid="source-item" className="grid grid-cols-2 gap-2">
+      {sources.map((source) => (
+        <li
+          key={source.message_id}
+          data-testid="source-item"
+          className="sk-source-item grid grid-cols-2 gap-2"
+        >
           <Tile
             label={`Original · ${shortSender(source.sender)} · ${CHANNEL_LABEL[source.channel]} · ${clockTime(source.received_at)}`}
           >
@@ -27,7 +29,7 @@ export function SourceList({ sources }: { sources: SourceView[] }) {
               </span>
             </span>
           </Tile>
-          <AgentTrace trace={source.trace ?? []} open={index === newestTraced} />
+          <AgentTrace trace={source.trace ?? []} />
         </li>
       ))}
     </ol>

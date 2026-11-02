@@ -14,7 +14,9 @@ async function mockApi(page: Page, cases: unknown = CASES, dispatcher: string | 
   await page.route(`${API}/messages`, (route) => route.fulfill(json(MESSAGES)));
   await page.route(`${API}/replay`, (route) => route.fulfill(json(REPLAY)));
   await page.route(`${API}/outbox*`, (route) => route.fulfill(json([])));
-  await page.route("https://tile.openstreetmap.org/**", (route) => route.abort());
+  // The map's tiles and style come from the network; the map is masked in screenshots.
+  await page.route("https://tiles.openfreemap.org/**", (route) => route.abort());
+  await page.route("https://elevation-tiles-prod.s3.amazonaws.com/**", (route) => route.abort());
 }
 
 /** Saves the current image for people, then compares it with the baseline. */
@@ -26,23 +28,81 @@ async function capture(page: Page, name: string) {
   await expect(page).toHaveScreenshot(`${name}.png`, { mask });
 }
 
+/** Full-page captures show how the dispatch workspace stacks at smaller widths. */
+async function captureResponsive(page: Page, name: string) {
+  const map = page.getByTestId("case-map");
+  const options = {
+    fullPage: true,
+    mask: (await map.count()) > 0 ? [map] : [],
+    maskColor: "#f0f0f0",
+  };
+  await page.waitForFunction(() => [...document.images].every((image) => image.complete));
+  await page.screenshot({ path: `${SCREENSHOTS}/${name}.png`, ...options });
+  await expect(page).toHaveScreenshot(`${name}.png`, options);
+}
+
 test("queue with a selected case", async ({ page }) => {
   await mockApi(page);
-  await page.goto("/");
+  await page.goto("/dispatch");
   await page.getByTestId("queue-item").first().waitFor();
   await capture(page, "dashboard-queue");
 });
 
+test("dropdowns and case sections work with keyboard and pointer", async ({ page }) => {
+  await mockApi(page);
+  await page.goto("/dispatch");
+  await page.getByTestId("queue-item").first().waitFor();
+
+  await page.getByTestId("replay-speed").selectOption("600");
+  await expect(page.getByTestId("replay-speed")).toHaveValue("600");
+  await page.getByTestId("override-priority").selectOption("P2");
+  await expect(page.getByTestId("override-priority")).toHaveValue("P2");
+
+  const messages = page.getByTestId("case-messages");
+  const messagesHeader = messages.locator(":scope > summary");
+  await messagesHeader.click();
+  await expect(messages).not.toHaveAttribute("open", "");
+  await messagesHeader.focus();
+  await page.keyboard.press("Enter");
+  await expect(messages).toHaveAttribute("open", "");
+
+  const trace = page.getByTestId("agent-trace");
+  await trace.locator("summary").click();
+  await expect(trace).toHaveAttribute("open", "");
+});
+
+for (const [name, viewport] of [
+  ["dashboard-tablet", { width: 1024, height: 768 }],
+  ["dashboard-phone", { width: 390, height: 844 }],
+] as const) {
+  test(`${name} layout`, async ({ page }) => {
+    await page.setViewportSize(viewport);
+    await mockApi(page);
+    await page.goto("/dispatch");
+    await page.getByTestId("queue-item").first().waitFor();
+    await expect(page.getByTestId("case-detail")).toBeVisible();
+    await captureResponsive(page, name);
+  });
+}
+
+test("resident phones stack on a phone", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await mockApi(page);
+  await page.goto("/resident");
+  await expect(page.getByTestId("phone-messenger")).toBeVisible();
+  await captureResponsive(page, "resident-phones-phone");
+});
+
 test("second case selected", async ({ page }) => {
   await mockApi(page);
-  await page.goto("/");
+  await page.goto("/dispatch");
   await page.getByTestId("queue-item").nth(1).click();
   await capture(page, "dashboard-case");
 });
 
 test("human review lane", async ({ page }) => {
   await mockApi(page);
-  await page.goto("/");
+  await page.goto("/dispatch");
   await page.getByTestId("review-tab").click();
   await page.getByTestId("review-lane").waitFor();
   await capture(page, "dashboard-review");
@@ -50,7 +110,7 @@ test("human review lane", async ({ page }) => {
 
 test("empty queue", async ({ page }) => {
   await mockApi(page, []);
-  await page.goto("/");
+  await page.goto("/dispatch");
   await page.getByText("No open cases").waitFor();
   await capture(page, "dashboard-empty");
 });
@@ -58,7 +118,7 @@ test("empty queue", async ({ page }) => {
 test("API unavailable", async ({ page }) => {
   await mockApi(page);
   await page.route(`${API}/cases*`, (route) => route.abort());
-  await page.goto("/");
+  await page.goto("/dispatch");
   await page.getByTestId("api-error").waitFor();
   await capture(page, "dashboard-api-error");
 });
@@ -66,7 +126,7 @@ test("API unavailable", async ({ page }) => {
 test("boot screen until the first response", async ({ page }) => {
   await mockApi(page);
   await page.route(`${API}/cases*`, () => {}); // never answers
-  await page.goto("/");
+  await page.goto("/dispatch");
   await page.getByTestId("boot-screen").waitFor();
   await capture(page, "dashboard-boot");
 });
@@ -78,7 +138,7 @@ test("closing a case takes a deliberate second click", async ({ page }) => {
     closed += 1;
     return route.fulfill({ json: CASES[0], headers: { "access-control-allow-origin": "*" } });
   });
-  await page.goto("/");
+  await page.goto("/dispatch");
   const close = page.getByTestId("confirm-safe-button");
   await close.click();
   await expect(close).toHaveText("Confirm close");
@@ -97,7 +157,7 @@ test("empty review lane", async ({ page }) => {
     page,
     CASES.filter((item) => !item.badges.includes("needs_review")),
   );
-  await page.goto("/");
+  await page.goto("/dispatch");
   await page.getByTestId("review-tab").click();
   await page.getByText("Nothing needs review").waitFor();
   await capture(page, "dashboard-review-empty");
@@ -124,7 +184,7 @@ test("resident phones: an SMS thread with a reply", async ({ page }) => {
   );
   await page.route(`${API}/messages`, (route) =>
     route.request().method() === "POST"
-      ? route.fulfill({ headers, json: { record: MESSAGES[0], replies: [] } })
+      ? route.fulfill({ headers, json: { received_at: "2026-11-10T01:30:00Z" } })
       : route.fallback(),
   );
   await page.goto("/resident");
@@ -143,7 +203,7 @@ test("a keyboard double press never closes a case", async ({ page }) => {
     closed += 1;
     return route.fulfill({ json: CASES[0], headers: { "access-control-allow-origin": "*" } });
   });
-  await page.goto("/");
+  await page.goto("/dispatch");
   const close = page.getByTestId("confirm-safe-button");
   await close.focus();
   await page.keyboard.press("Enter");
@@ -173,7 +233,7 @@ test("a closed case leaves a record that a person closed it", async ({ page }) =
     cases = [];
     return route.fulfill({ json: CASES[0], headers: { "access-control-allow-origin": "*" } });
   });
-  await page.goto("/");
+  await page.goto("/dispatch");
   const close = page.getByTestId("confirm-safe-button");
   await close.click();
   await expect(close).toHaveText("Confirm close");
@@ -191,7 +251,7 @@ test("a failed poll keeps the rows and shows no illustration", async ({ page }) 
       ? route.abort()
       : route.fulfill({ json: CASES, headers: { "access-control-allow-origin": "*" } }),
   );
-  await page.goto("/");
+  await page.goto("/dispatch");
   await page.getByTestId("queue-item").first().waitFor();
   down = true;
   await page.getByTestId("api-error").waitFor();
@@ -207,7 +267,7 @@ test("no decisions until a dispatcher starts a shift", async ({ page }) => {
     bodies.push(route.request().postDataJSON());
     return route.fulfill({ json: CASES[0], headers: { "access-control-allow-origin": "*" } });
   });
-  await page.goto("/");
+  await page.goto("/dispatch");
   await page.getByTestId("dispatcher-needed").waitFor();
   await expect(page.getByTestId("assign-button")).toBeDisabled();
   await expect(page.getByTestId("confirm-safe-button")).toBeDisabled();
@@ -226,7 +286,7 @@ test("no decisions until a dispatcher starts a shift", async ({ page }) => {
 
 test("case history names who decided", async ({ page }) => {
   await mockApi(page);
-  await page.goto("/");
+  await page.goto("/dispatch");
   await page.getByTestId("queue-item").nth(1).click();
   await expect(page.getByTestId("history-item")).toHaveCount(1);
   await expect(page.getByTestId("history-item")).toContainText("Ana");
@@ -240,7 +300,7 @@ test("each simulated phone sends on its own channel", async ({ page }) => {
     sent.push(route.request().postDataJSON());
     return route.fulfill({
       headers: { "access-control-allow-origin": "*" },
-      json: { record: MESSAGES[0], replies: [] },
+      json: { received_at: "2026-11-10T01:30:00Z" },
     });
   });
   await page.goto("/resident");
@@ -258,9 +318,12 @@ test("each simulated phone sends on its own channel", async ({ page }) => {
 
 test("the case shows how the agents decided, step by step", async ({ page }) => {
   await mockApi(page);
-  await page.goto("/");
+  await page.goto("/dispatch");
   const trace = page.getByTestId("agent-trace");
   await expect(trace).toHaveCount(1);
+  // Folded until asked for: the case reads top-down without it.
+  await expect(trace).not.toHaveAttribute("open", "");
+  await trace.locator("summary").click();
   await expect(trace).toHaveAttribute("open", "");
   await expect(trace.getByTestId("trace-step")).toHaveCount(8);
   await expect(trace.locator("[data-step=verify]")).toContainText("Check for old posts");
@@ -273,8 +336,9 @@ test("the case shows how the agents decided, step by step", async ({ page }) => 
 
 test("an unsure case shows the Swarm that reviewed it", async ({ page }) => {
   await mockApi(page);
-  await page.goto("/");
+  await page.goto("/dispatch");
   await page.getByTestId("queue-item").nth(1).click();
+  await page.getByTestId("agent-trace").locator("summary").click();
   const escalate = page.getByTestId("agent-trace").locator("[data-step=escalate]");
   await expect(escalate).toHaveAttribute("data-status", "ran");
   await expect(escalate).toContainText("Second opinion (Swarm)");

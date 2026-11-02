@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 
 import {
+  Disclosure,
   EmptyState,
   Icon,
   type IconName,
@@ -82,7 +83,7 @@ function Detail({ item, dispatcher, onChanged, onClosed }: CaseDetailProps & { i
         )}
       </div>
 
-      <div data-testid="case-facts" className="grid grid-cols-4 gap-2">
+      <div data-testid="case-facts" className="sk-case-facts grid grid-cols-4 gap-2">
         <Fact label="People" icon="users">
           {item.people_count?.toString() ?? "Unknown"}
         </Fact>
@@ -97,7 +98,7 @@ function Detail({ item, dispatcher, onChanged, onClosed }: CaseDetailProps & { i
         </Fact>
       </div>
 
-      <p data-testid="case-location" className="flex items-center gap-1">
+      <p data-testid="case-location" className="flex flex-wrap items-center gap-1">
         <Icon name="map-pin" />
         <Text tone="muted">Location: </Text>
         <Text>
@@ -115,12 +116,15 @@ function Detail({ item, dispatcher, onChanged, onClosed }: CaseDetailProps & { i
 
       <CaseHistory events={item.history} />
 
-      <div className="space-y-2">
-        <h3>
-          <Text variant="body-bold">Messages in this case ({item.sources.length})</Text>
-        </h3>
+      {/* Open: the resident's own words stay beside the summary where a case is decided (R16). */}
+      <Disclosure
+        title="Messages in this case"
+        meta={`(${item.sources.length})`}
+        defaultOpen
+        testId="case-messages"
+      >
         <SourceList sources={item.sources} />
-      </div>
+      </Disclosure>
     </div>
   );
 }

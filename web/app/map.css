@@ -82,3 +82,69 @@
 .sk-map-swatch-high {
   background: var(--sk-color-map-hazard-high);
 }
+
+/* The selected case's card on the map. MapLibre builds the popup outside React. */
+.sk-map-card .maplibregl-popup-content {
+  width: calc(var(--sk-space-16) * 4);
+  padding: var(--sk-space-3);
+  border-radius: var(--sk-radius-tile);
+  background: var(--sk-color-canvas);
+  box-shadow: var(--sk-elevation-sheet);
+  color: var(--sk-color-ink);
+  animation: sk-enter var(--sk-motion-base) var(--sk-motion-enter);
+}
+
+.sk-map-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sk-space-1);
+}
+
+.sk-map-card .maplibregl-popup-tip {
+  border-top-color: var(--sk-color-canvas);
+}
+
+.sk-map-card p {
+  margin: 0;
+}
+
+.sk-map-card-priority {
+  align-self: flex-start;
+  padding: 0 var(--sk-space-2);
+  border-radius: var(--sk-radius-pill);
+  background: var(--sk-color-status-info);
+  color: var(--sk-color-ink-on-status);
+  font-size: var(--sk-text-caption-bold-size);
+  font-weight: var(--sk-text-caption-bold-weight);
+  line-height: var(--sk-text-caption-bold-line-height);
+}
+
+.sk-map-card-priority[data-priority="P1"] {
+  background: var(--sk-color-status-critical);
+}
+
+.sk-map-card-priority[data-priority="P2"] {
+  background: var(--sk-color-status-high);
+}
+
+.sk-map-card-priority[data-priority="P3"] {
+  background: var(--sk-color-status-moderate);
+}
+
+.sk-map-card-summary {
+  font-size: var(--sk-text-body-bold-size);
+  font-weight: var(--sk-text-body-bold-weight);
+  line-height: var(--sk-text-body-bold-line-height);
+}
+
+.sk-map-card-meta {
+  color: var(--sk-color-ink-muted);
+  font-size: var(--sk-text-caption-size);
+  line-height: var(--sk-text-caption-line-height);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sk-map-card .maplibregl-popup-content {
+    animation: none;
+  }
+}

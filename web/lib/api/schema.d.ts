@@ -293,7 +293,7 @@ export interface components {
          * LocationSource
          * @enum {string}
          */
-        LocationSource: "text" | "geocoder" | "reply" | "unknown";
+        LocationSource: "text" | "geocoder" | "reply" | "reviewer" | "unknown";
         /** MessageIn */
         MessageIn: {
             /** Sender */
@@ -357,16 +357,21 @@ export interface components {
          */
         Priority: "P1" | "P2" | "P3" | "P4";
         /**
+         * ReceiveAck
+         * @description The intake has the message. Triage may still be running.
+         */
+        ReceiveAck: {
+            /**
+             * Received At
+             * Format: date-time
+             */
+            received_at: string;
+        };
+        /**
          * ReceiveKind
          * @enum {string}
          */
         ReceiveKind: "triaged" | "location_reply";
-        /** ReceiveResult */
-        ReceiveResult: {
-            record: components["schemas"]["MessageRecord"];
-            /** Replies */
-            replies: components["schemas"]["OutboundMessage"][];
-        };
         /** ReplayIn */
         ReplayIn: {
             /**
@@ -585,7 +590,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ReceiveResult"];
+                    "application/json": components["schemas"]["ReceiveAck"];
                 };
             };
             /** @description Validation Error */

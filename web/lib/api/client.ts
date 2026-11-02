@@ -5,7 +5,7 @@ import type {
   MessageRecord,
   OutboundMessage,
   Priority,
-  ReceiveResult,
+  ReceiveAck,
   ReplayIn,
   ReplayStatus,
 } from "./types";
@@ -21,11 +21,29 @@ export class ApiError extends Error {
   }
 }
 
+// Set by the sign-in gate (features/auth); null on an open local API.
+let accessToken: string | null = null;
+const unauthorized = new Set<() => void>();
+
+export function setAccessToken(token: string | null): void {
+  accessToken = token;
+}
+
+/** Called when the API refuses the token, so the dashboard can ask to sign in again. */
+export function onUnauthorized(listener: () => void): () => void {
+  unauthorized.add(listener);
+  return () => unauthorized.delete(listener);
+}
+
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
+  const auth: Record<string, string> = accessToken
+    ? { authorization: `Bearer ${accessToken}` }
+    : {};
   const response = await fetch(`${API_URL}${path}`, {
     ...init,
-    headers: { "content-type": "application/json", ...init?.headers },
+    headers: { "content-type": "application/json", ...auth, ...init?.headers },
   });
+  if (response.status === 401) unauthorized.forEach((listener) => listener());
   if (!response.ok) {
     const detail = await response.text();
     throw new ApiError(response.status, detail || response.statusText);
@@ -41,7 +59,7 @@ export const api = {
   messages: () => request<MessageRecord[]>("/messages"),
   outbox: (recipient: string) =>
     request<OutboundMessage[]>(`/outbox?recipient=${encodeURIComponent(recipient)}`),
-  send: (message: MessageIn) => post<ReceiveResult>("/messages", message),
+  send: (message: MessageIn) => post<ReceiveAck>("/messages", message),
   // Every decision names the dispatcher who made it; the API records it in the case history.
   assign: (caseId: string, team: string, dispatcher: string) =>
     post<CaseView>(`/cases/${caseId}/assign`, { team, dispatcher }),

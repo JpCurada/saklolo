@@ -18,7 +18,7 @@ const seconds = (ms: number) => (ms < 1000 ? `${ms} ms` : `${(ms / 1000).toFixed
 
 interface AgentTraceProps {
   trace: TraceStep[];
-  /** Open by default: the newest message's trace. */
+  /** Folded by default: it's the longest part of a case, one click away. */
   open?: boolean;
 }
 
@@ -29,13 +29,18 @@ export function AgentTrace({ trace, open = false }: AgentTraceProps) {
   const total = ran.reduce((sum, step) => sum + step.duration_ms, 0);
   const modelCalls = ran.filter((step) => step.service?.includes("Bedrock")).length;
   return (
-    <details data-testid="agent-trace" open={open} className="col-span-2">
-      <summary className="cursor-pointer">
-        <Text variant="caption-bold">How the agents decided</Text>{" "}
-        <Text variant="caption" tone="muted">
-          · {ran.length} of {trace.length} steps · {modelCalls} model{" "}
-          {modelCalls === 1 ? "call" : "calls"} · {seconds(total)}
-        </Text>
+    <details data-testid="agent-trace" open={open} className="group/trace sk-agent-trace">
+      <summary className="flex min-h-(--sk-space-10) cursor-pointer list-none items-center gap-(--sk-space-2) rounded-(--sk-radius-tile) px-(--sk-space-2) py-(--sk-space-1) hover:bg-(--sk-color-canvas) focus-visible:outline-(length:--sk-stroke-2) focus-visible:outline-(--sk-color-accent)">
+        <span className="shrink-0 transition-transform duration-(--sk-motion-fast) group-open/trace:rotate-90 motion-reduce:transition-none">
+          <Icon name="chevron-right" />
+        </span>
+        <span className="flex min-w-0 flex-1 flex-wrap items-center gap-x-(--sk-space-1)">
+          <Text variant="caption-bold">How the agents decided</Text>
+          <Text variant="caption" tone="muted">
+            · {ran.length} of {trace.length} steps · {modelCalls} model{" "}
+            {modelCalls === 1 ? "call" : "calls"} · {seconds(total)}
+          </Text>
+        </span>
       </summary>
       <ol className="mt-2 space-y-1">
         {trace.map((step) => (

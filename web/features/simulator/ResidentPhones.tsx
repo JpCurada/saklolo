@@ -21,7 +21,7 @@ export function ResidentPhones() {
         <span data-testid="simulated-label">
           <Badge tone="none">Demo phones · messages go through the real Saklolo pipeline</Badge>
         </span>
-        <Link href="/" className="ml-auto" data-testid="open-dispatch">
+        <Link href="/dispatch" className="ml-auto" data-testid="open-dispatch">
           <Text variant="body-bold">Open dispatch</Text>
         </Link>
       </header>
