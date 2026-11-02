@@ -146,6 +146,20 @@ async function main() {
     ANIMATED_LIMIT,
   );
   writeFileSync(`${OUT}/scene-boot-animated.webp`, buffer);
+
+  // The Builder Center cover: 1200×675, no text.
+  const cover = await sharp(
+    Buffer.from(fill(read("scene-boot"), { ...PALETTE, ...bootValues(0) })),
+    {
+      density: 216,
+    },
+  )
+    .resize(1200, 675, { fit: "cover" })
+    .flatten({ background: PALETTE.stormDeep })
+    .webp({ quality: 85 })
+    .toBuffer();
+  writeFileSync("../docs/cover.webp", cover);
+  console.log(`cover.webp ${cover.length} bytes`);
   console.log(`scene-boot-animated.webp q${quality} ${buffer.length} bytes`);
 }
 
