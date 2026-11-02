@@ -2,7 +2,7 @@
 
 Usage:
   uv run python -m saklolo.eval --split dev [--predictor keyword]
-      [--ground-truth labels|intent] [--compare RUN_DIR]
+      [--ground-truth labels|intent] [--compare RUN_DIR] [--call-cache]
 
 Writes eval/runs/<timestamp>-<predictor>-<split>/ with predictions.jsonl,
 metrics.json, and report.md, and prints the report.
@@ -19,7 +19,7 @@ from saklolo.config import REPO_ROOT
 from saklolo.dataset.io import load_dataset
 from saklolo.eval.ground_truth import GroundTruthSource, MissingLabelsError
 from saklolo.eval.metrics import Metric
-from saklolo.eval.predictors import PREDICTORS
+from saklolo.eval.predictors import PREDICTORS, PredictorOptions
 from saklolo.eval.report import render_comparison, render_run
 from saklolo.eval.runner import EvalRun, evaluate
 from saklolo.eval.types import Prediction
@@ -43,6 +43,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--data-dir", type=Path, default=REPO_ROOT / "data")
     parser.add_argument("--out", type=Path, default=REPO_ROOT / "eval" / "runs")
     parser.add_argument("--compare", type=Path, help="An earlier run directory to compare with")
+    parser.add_argument(
+        "--call-cache",
+        action="store_true",
+        help="Reuse cached model and embedding calls from eval/cache (costs nothing on a hit)",
+    )
     return parser.parse_args()
 
 
@@ -54,7 +59,8 @@ def main() -> int:
         return 1
 
     try:
-        run = evaluate(dataset, args.split, PREDICTORS[args.predictor](), args.ground_truth)
+        predictor = PREDICTORS[args.predictor](predictor_options(args))
+        run = evaluate(dataset, args.split, predictor, args.ground_truth)
     except MissingLabelsError as error:
         print(error, file=sys.stderr)
         return 1
@@ -70,6 +76,11 @@ def main() -> int:
     print(report)
     print(f"Wrote {run_dir}")
     return 0
+
+
+def predictor_options(args: argparse.Namespace) -> PredictorOptions:
+    cache_dir = REPO_ROOT / "eval" / "cache" if args.call_cache else None
+    return PredictorOptions(call_cache_dir=cache_dir)
 
 
 def run_notes(run: EvalRun) -> list[str]:

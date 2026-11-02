@@ -3,6 +3,7 @@
 import time
 from collections.abc import Sequence
 from datetime import datetime, timedelta, timezone
+from pathlib import Path
 
 from saklolo.agents.ask_back import apply_reply
 from saklolo.agents.deps import PipelineDeps
@@ -94,7 +95,8 @@ def _failed(message: EvalMessage, error: Exception, elapsed: float) -> Predictio
     )
 
 
-def build_graph_predictor() -> GraphPredictor:
+def build_graph_predictor(call_cache_dir: Path | None = None) -> GraphPredictor:
     """Composition root for evals: real AWS services, fresh in-memory case store."""
     settings = get_settings()
-    return GraphPredictor(build_pipeline_deps(settings), settings)
+    deps = build_pipeline_deps(settings, call_cache_dir=call_cache_dir)
+    return GraphPredictor(deps, settings)
