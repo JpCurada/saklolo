@@ -45,6 +45,10 @@ class GraphPredictor:
             asked_back=asked_back,
             latency_s=time.perf_counter() - started,
             cost_usd=self._cost(state.usage),
+            escalation_outcome=state.escalation_outcome,
+            escalation_agents=state.escalation_agents,
+            first_priority=state.first_decision.priority if state.first_decision else None,
+            first_confidence=state.first_decision.confidence if state.first_decision else None,
         )
 
     def _resume_if_asked(

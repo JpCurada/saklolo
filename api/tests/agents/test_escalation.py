@@ -4,7 +4,7 @@ from dataclasses import dataclass, field, replace
 
 from saklolo.agents.escalation import review_tools
 from saklolo.agents.graph import run_pipeline
-from saklolo.agents.state import PipelineState
+from saklolo.agents.state import EscalationOutcome, PipelineState
 from saklolo.domain.errors import ServiceUnavailableError
 from saklolo.domain.models import (
     ExtractedRequest,
@@ -234,3 +234,25 @@ def test_find_place_refuses_a_repeated_search() -> None:
 
     assert again["status"] == "already_tried"
     assert len(lookups) == 1
+
+
+def test_the_outcome_and_first_triage_are_kept_for_evals() -> None:
+    raised = TriageDecision(priority=Priority.CRITICAL, reason="Water rising fast", confidence=0.8)
+    unsure_p2 = TriageDecision(priority=Priority.HIGH, reason="Trapped upstairs", confidence=0.5)
+    lower = TriageDecision(priority=Priority.MODERATE, reason="Can still move", confidence=0.9)
+
+    state = run("tumataas tubig", unsure_p2, FakeEscalation(decision=raised))
+    refused = run("nasa bubong na kami", UNSURE, FakeEscalation(decision=lower))
+    down = run("nasa bubong na kami", UNSURE, FakeEscalation(decision=None, fail=True))
+
+    assert state.escalation_outcome == EscalationOutcome.RAISED
+    assert state.first_decision == unsure_p2
+    assert refused.escalation_outcome == EscalationOutcome.REFUSED
+    assert down.escalation_outcome == EscalationOutcome.UNAVAILABLE
+
+
+def test_a_confident_triage_has_no_escalation_outcome() -> None:
+    state = run("nasa bubong na kami", CRITICAL, FakeEscalation(decision=CRITICAL))
+
+    assert state.escalation_outcome is None
+    assert state.first_decision is None

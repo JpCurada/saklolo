@@ -11,6 +11,8 @@ PERCENT_METRICS = {
     "Recycled flagged %",
     "Dedupe precision",
     "Dedupe recall",
+    "Escalation rate",
+    "Swarm changed priority",
 }
 
 
@@ -21,6 +23,8 @@ def format_value(metric: Metric) -> str:
         return f"{metric.value:.1%}"
     if metric.name.startswith("Cost"):
         return f"${metric.value:.2f}"
+    if metric.name.startswith("Swarm ") and metric.name not in PERCENT_METRICS:
+        return f"{metric.value:.0f}"  # outcome counts
     return f"{metric.value:.3f}"
 
 

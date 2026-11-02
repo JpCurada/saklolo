@@ -102,3 +102,41 @@ def test_cost_and_latency_use_every_prediction() -> None:
 
     assert metric(metrics, "p95 latency (s)").value == 9
     assert metric(metrics, "Cost per 10k messages (USD)").value == 10.0
+
+
+def escalated(message_id: str, outcome: str, first: Priority, final: Priority) -> Prediction:
+    return prediction(message_id, final).model_copy(
+        update={
+            "escalation_outcome": outcome,
+            "escalation_agents": ["triage_reviewer"],
+            "first_priority": first,
+            "first_confidence": 0.5,
+        }
+    )
+
+
+def test_swarm_metrics_count_escalations_and_changed_priorities() -> None:
+    truths = [truth(f"m{i}", Priority.HIGH) for i in range(5)]
+    predictions = [
+        escalated("m0", "confirmed", Priority.HIGH, Priority.HIGH),
+        escalated("m1", "raised", Priority.HIGH, Priority.CRITICAL),
+        escalated("m2", "refused", Priority.HIGH, Priority.HIGH),
+        prediction("m3", Priority.HIGH),
+        prediction("m4", Priority.HIGH),
+    ]
+
+    metrics = compute_metrics(truths, predictions)
+
+    assert metric(metrics, "Escalation rate") == Metric("Escalation rate", 0.6, 5)
+    assert metric(metrics, "Swarm changed priority").value == 1 / 3
+    assert metric(metrics, "Swarm confirmed") == Metric("Swarm confirmed", 1.0, 3)
+    assert metric(metrics, "Swarm raised").value == 1.0
+    assert metric(metrics, "Swarm refused").value == 1.0
+    assert metric(metrics, "Swarm unavailable").value == 0.0
+
+
+def test_swarm_metrics_are_undefined_without_escalations() -> None:
+    metrics = compute_metrics([truth("m0", Priority.HIGH)], [prediction("m0", Priority.HIGH)])
+
+    assert metric(metrics, "Escalation rate").value == 0.0
+    assert metric(metrics, "Swarm changed priority").value is None
