@@ -1,0 +1,76 @@
+message_id,received,channel,sender,text
+msg-0001,Nov 10 01:00,web,+639000000118,test
+msg-0005,Nov 10 05:00,sms,+639000000092,saan po ang evacuation center na pinakamalapit sa nangka?
+msg-0006,Nov 10 05:30,messenger,+639000000119,gm po sa lahat 🌞
+msg-0007,Nov 10 06:00,sms,+639000000091,san po pwede kumuha ng tubig at pagkain dito sa concepcion uno? wla na kami supply
+msg-0010,Nov 10 07:00,sms,+639000000042,"tumana po hanggang tuhod na sa kalsada, gusto na namin lumikas pero walang masakyan, 4 kami"
+msg-0011,Nov 10 07:00,sms,+639000000048,"malanday gusto na po namin lumikas bago lumala, 4 kami walang bata"
+msg-0013,Nov 10 07:30,sms,+639000000055,"Tumana purok 3, 7 kami magpapasundo na po, hanggang tuhod pa lang"
+msg-0014,Nov 10 08:00,sms,+639000000020,"may senior kami 75 dito malanday pero hanggang tuhod pa lang, baka po pwede ilikas na kami bago lumala"
+msg-0015,Nov 10 08:00,sms,+639000000044,"nangka purok 1 hanggang tuhod pa lang pero lumalalim, 5 kami pwede na po ba kami sunduin"
+msg-0017,Nov 10 08:00,sms,+639000000053,"jdp 5 kami gusto na lumikas, ok pa naman kami"
+msg-0019,Nov 10 08:30,sms,+639000000051,"barangka riverbanks area knee deep na sa kalye, 2 kami, need ng sundo papunta evacuation center"
+msg-0020,Nov 10 08:30,sms,+639000000072,"gusto na namin lumikas, dito lang kami sa may bakery"
+msg-0021,Nov 10 09:00,sms,+639000000001,HELP PO tumana purok 4 malapit tumana bridge 6 kami may lola 85 bedridden hanggang dibdib na tubig 09000000001
+msg-0022,Nov 10 09:00,sms,+639000000019,"trapped kami sa 2nd floor tumana purok 2, 4 kami ok pa naman pero di makababa"
+msg-0027,Nov 10 09:00,sms,+639000000052,"calumpang 4 kami pa-evacuate sana, tuhod lang tubig"
+msg-0030,Nov 10 09:00,sms,+639000000042,"tumana po kami ulit, pa-sundo na sana 4 kami"
+msg-0031,Nov 10 09:00,sms,+639000000085,taga nangka purok 1 kapitbahay ko 5 sila gusto lumikas
+msg-0032,Nov 10 09:00,sms,+639000000088,"tumana purok 3, 8 kami pala kasama pinsan, pasundo po"
+msg-0037,Nov 10 09:30,messenger,+639000000063,"dito sa amin malapit sa ilog, may baby kami, hanggang dibdib na"
+msg-0041,Nov 10 10:00,sms,+639000000013,"help po lola ko 78 nadulas may sugat sa binti, nasa ibabaw kami ng mesa hanggang dibdib na tubig, tumana malapit health center"
+msg-0043,Nov 10 10:00,messenger,+639000000030,"Tumana purok 5, trapped kami sa ikalawang palapag, 5 katao, ok pa"
+msg-0045,Nov 10 10:00,web,+639000000045,"marikina heights malapit sa main road, baha na sa daan, 2 kami gusto lumikas"
+msg-0046,Nov 10 10:00,web,+639000000054,"sta elena po near shoe museum, tuhod deep sa kalye, pa-assist po papunta evacuation"
+msg-0048,Nov 10 10:00,sms,+639000000065,"nasa bubong kami 4 tao, banda sa may tulay pa-ilog, wala na signal"
+msg-0049,Nov 10 10:00,sms,+639000000070,"may baby kami, malapit sa covered court, tuhod pa lang tubig"
+msg-0051,Nov 10 10:00,sms,+639000000080,tumana purok 2 po yung pamilya ng kaibigan ko 4 sila trapped 2nd floor
+msg-0052,Nov 10 10:00,sms,+639000000087,kapatid ko sa barangka malapit riverbanks 2 sila need sundo
+msg-0054,Nov 10 10:30,sms,+639000000002,"pls help po malanday likod ng kapilya sa jp rizal, 5 kami may baby 4 months at lolo ko 81. nasa bubong na kami di na kaya umakyat pa"
+msg-0055,Nov 10 10:30,sms,+639000000057,"IVC 4 kami need sundo papunta evac, baha na sa labas"
+msg-0057,Nov 10 10:30,messenger,+639000000106,"URGENT!!! Tumana area 3 families nasa bubong na, may mga bata at senior. Nov 12 2020 #RescuePH #UlyssesPH"
+msg-0058,Nov 10 11:00,messenger,+639000000003,URGENT nangka purok 6 asawa ko buntis 8 months hanggang leeg na tubig sa loob ng bahay pls rescue 09000000003
+msg-0066,Nov 10 11:00,sms,+639000000062,"likod ng simbahan po kami, lola ko 80 hanggang leeg na tubig PLS"
+msg-0068,Nov 10 11:00,messenger,+639000000076,"pls help mama ko si Nena Dizon sa malanday likod ng kapilya, 5 sila may baby at si lolo, nasa bubong na raw. hindi na makontak"
+msg-0079,Nov 10 11:30,web,+639000000006,"My parents are trapped in Jesus dela Peña near the chapel, both seniors, papa is on a wheelchair. Water is neck level inside. Please help. 09000000006"
+msg-0082,Nov 10 11:30,sms,+639000000074,"parang tumataas na tubig dito sa subdivision, pa evacuate po kami"
+msg-0083,Nov 10 11:30,messenger,+639000000077,"PAKI-SHARE: pls help po malanday likod ng kapilya sa jp rizal, 5 kami may baby 4 months at lolo ko 81. nasa bubong na kami"
+msg-0085,Nov 10 11:30,sms,+639000000109,"repost lang po: Nangka purok 5, may bedridden na lola, hanggang leeg na tubig. PAKI SHARE"
+msg-0086,Nov 10 12:00,sms,+639000000004,nasa bubong na po kami 7 katao may 2 bata isa sanggol. sto nino likod ng sports center. wala na kami makapitan
+msg-0087,Nov 10 12:00,sms,+639000000010,"san roque po malapit brgy hall, may 1 yr old kami, hanggang dibdib na at tumataas pa. 2loy2 ulan"
+msg-0088,Nov 10 12:00,web,+639000000018,"Calumpang, same spot nung Ulysses, lola and me on the roof now. please send boat 09000000018"
+msg-0090,Nov 10 12:00,messenger,+639000000027,"JDP 7 kami trapped, waist level sa baba, safe pa sa taas"
+msg-0093,Nov 10 12:00,sms,+639000000059,"taga parang po kami 2 tao, gusto na po lumikas"
+msg-0097,Nov 10 12:00,web,+639000000054,sta elena near shoe museum follow up 3 kami
+msg-0098,Nov 10 12:00,sms,+639000000042,"nakalikas na po kami tumana, nasa evacuation center na"
+msg-0099,Nov 10 12:00,sms,+639000000020,malanday nakalikas na kami ni lola
+msg-0100,Nov 10 12:00,messenger,+639000000108,"[screenshot] Sto. Niño near the river, elderly couple trapped, water above 2nd floor. Please share! 11/12/2020"
+msg-0102,Nov 10 12:30,messenger,+639000000014,"parang ulysses na naman 😭 nasa bubong na kami sto nino purok 1 tabi ilog, 4 kami may senior"
+msg-0103,Nov 10 12:30,sms,+639000000037,"barangka, buntis asawa ko 7 months, hanggang bewang na sa labas, nasa taas kami"
+msg-0105,Nov 10 12:30,sms,+639000000078,"yung kapitbahay namin sa likod ng sports center sto nino, 6 sila nasa bubong may sanggol"
+msg-0106,Nov 10 12:30,web,+639000000006,"Follow up po sa parents ko sa Jesus dela Peña, wheelchair si papa, hanggang dibdib na raw ang tubig"
+msg-0108,Nov 10 12:30,messenger,+639000000110,"Barangka, 10 people trapped, 2 infants, water rising fast #RescuePH Nov 12"
+msg-0109,Nov 10 13:00,sms,+639000000011,"barangka near riverbanks 6 kami nasa bubong na, wala na kami madaanan. pls"
+msg-0110,Nov 10 13:00,sms,+639000000016,"JDP po kami malapit sa daan papuntang barangka, buntis ate ko manganganak na ata, hanggang dibdib tubig. 6 kami may baby din"
+msg-0111,Nov 10 13:00,sms,+639000000025,"san roque 4 kami sa 2nd floor hanggang bewang ung baha sa baba, stable naman, pero brownout at walang signal minsan"
+msg-0112,Nov 10 13:00,messenger,+639000000036,"brgy parang po kami, trapped sa 2nd floor pero baha lang sa baba, 4 kami"
+msg-0113,Nov 10 13:00,sms,+639000000019,ok na po kami tumana purok 2 nakababa na kami sa bangka
+msg-0118,Nov 10 13:30,sms,+639000000041,"malanday likod din ng kapilya, ibang pamilya po kami sa nauna, 8 kami trapped sa 2 storey ng tito ko"
+msg-0119,Nov 10 13:30,messenger,+639000000115,"Donate po para sa flood victims, send sa GCash 09000000115 (Marikina Relief Ops)"
+msg-0121,Nov 10 14:00,sms,+639000000021,"nangka 6 kami nasa taas ng bahay, hanggang bewang sa baba hindi na tumataas, pero wala na kami pagkain"
+msg-0123,Nov 10 14:00,sms,+639000000037,"barangka asawa ko buntis 7 months follow up po, nasa taas pa rin"
+msg-0128,Nov 10 14:30,messenger,+639000000104,"may volunteer po kami 5 tao may bangka, saan kami pwede tumulong?"
+msg-0129,Nov 10 15:00,sms,+639000000039,"calumpang 6 kami nasa second floor, hindi na tumataas tubig, waist level sa baba"
+msg-0130,Nov 10 15:00,sms,+639000000002,SALAMAT PO nasundo na kami malanday kapilya 🙏
+msg-0131,Nov 10 15:00,web,+639000000006,"My parents have been rescued, thank you so much"
+msg-0132,Nov 10 15:00,sms,+639000000025,"san roque ubos na tubig inumin namin, may lagnat na bata"
+msg-0134,Nov 10 16:00,sms,+639000000001,"na rescue na po kami salamat sa team, tumana purok 4"
+msg-0135,Nov 10 16:00,messenger,+639000000003,"nasundo na kami nangka, salamat po"
+msg-0136,Nov 10 16:00,sms,+639000000021,"nangka ulit, tumataas na ulit tubig, umaabot na sa 2nd floor"
+msg-0138,Nov 10 17:00,sms,+639000000011,barangka riverbanks rescued na kami salamat
+msg-0139,Nov 10 17:00,messenger,+639000000036,"brgy parang humupa na po, pwede na kami bumaba mag isa"
+msg-0141,Nov 10 18:00,sms,+639000000039,"calumpang bumaba na ung tubig, ok na kami pero kailangan ng pagkain"
+msg-0143,Nov 10 19:00,messenger,+639000000093,may relief po ba sa marikina sports center ngayon?
+msg-0144,Nov 10 20:00,sms,+639000000094,"need po namin ng diapers at gatas para sa baby, nasa evac kami sa malanday"
+msg-0148,Nov 11 00:00,sms,+639000000100,"wala na kaming tubig inumin dito sa parang, may water station po ba?"
+msg-0150,Nov 11 04:00,sms,+639000000102,kailan po babalik ang kuryente sa san roque?
