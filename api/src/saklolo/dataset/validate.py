@@ -121,7 +121,7 @@ def _message_problems(
         ("labels", message.labels),
     ):
         if labels is not None:
-            problems += [f"{name}: {p}" for p in _label_problems(kind, labels)]
+            problems += [f"{name}: {p}" for p in label_problems(kind, labels)]
     return [f"{message.id}: {p}" for p in problems]
 
 
@@ -164,7 +164,7 @@ def _phone_problems(message: DatasetMessage) -> list[str]:
     return [f"phone-like numbers outside the fake range: {unfaked}"] if unfaked else []
 
 
-def _label_problems(kind: MessageType, labels: Labels) -> list[str]:
+def label_problems(kind: MessageType, labels: Labels) -> list[str]:
     closes_case = labels.status_update_kind == StatusUpdateKind.RESCUED
     may_lack_priority = kind == MessageType.SPAM or closes_case
     problems = []
