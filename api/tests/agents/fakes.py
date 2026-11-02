@@ -24,16 +24,20 @@ class RecordedCall:
 
 @dataclass
 class FakeStructuredModel:
-    """Returns a canned output per output type and records every call."""
+    """Returns a canned output per output type and records every call.
 
-    outputs: dict[type[BaseModel], BaseModel]
+    An output may also be a function of the prompt, to answer per message.
+    """
+
+    outputs: dict[type[BaseModel], BaseModel | Callable[[str], BaseModel]]
     calls: list[RecordedCall] = field(default_factory=list)
 
     def generate[OutputT: BaseModel](
         self, system_prompt: str, prompt: str, output_type: type[OutputT]
     ) -> ModelCall[OutputT]:
         self.calls.append(RecordedCall(system_prompt, prompt, output_type))
-        output = self.outputs[output_type]
+        canned = self.outputs[output_type]
+        output = canned if isinstance(canned, BaseModel) else canned(prompt)
         assert isinstance(output, output_type)
         return ModelCall(output=output, usage=ModelUsage(input_tokens=100, output_tokens=20))
 

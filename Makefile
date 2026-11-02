@@ -30,8 +30,8 @@ test: ## Unit tests (no network, no AWS)
 eval: ## Run evals against Bedrock (costs money)
 	cd $(API) && uv run python -m saklolo.eval --split eval --out ../eval/runs
 
-demo: ## Local end-to-end demo with synthetic data
-	cd $(API) && uv run python -m saklolo.demo
+demo: ## Local demo API on :8000 (cached model calls); POST /replay to load the dev split
+	cd $(API) && uv run python -m saklolo.handlers.demo_api --call-cache
 
 plan: ## terraform plan for infra/
 	terraform -chdir=$(INFRA) init -backend-config=backend.hcl

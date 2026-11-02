@@ -95,6 +95,14 @@ class InboundMessage(BaseModel):
     received_at: datetime
 
 
+class OutboundMessage(BaseModel):
+    """A text sent to a resident (through the Notifier port)."""
+
+    recipient: str
+    body: str
+    sent_at: datetime
+
+
 class ExtractedRequest(BaseModel):
     """Structured output of the extract node."""
 
@@ -143,6 +151,11 @@ class TriageOutcome(BaseModel):
     location: Location
     ask_back_question: str | None = Field(description="Set when the location must be asked")
     english_summary: str | None
+    people_count: int | None = None
+    vulnerable: list[Vulnerability] = Field(default_factory=list)
+    water_level: WaterLevel = WaterLevel.UNKNOWN
+    medical_emergency: bool = False
+    reports_safe: bool = False
     reason: str
     confidence: float = Field(ge=0.0, le=1.0)
     needs_escalation: bool

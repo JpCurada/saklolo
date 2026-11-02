@@ -2,20 +2,17 @@
 
 import time
 from collections.abc import Sequence
-from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from saklolo.agents.ask_back import apply_reply
 from saklolo.agents.deps import PipelineDeps
 from saklolo.agents.graph import run_pipeline
 from saklolo.config import Settings, get_settings
+from saklolo.dataset.scenario import scenario_time
 from saklolo.domain.models import InboundMessage, TriageOutcome
 from saklolo.domain.ports import ModelUsage
 from saklolo.eval.types import EvalMessage, Prediction
 from saklolo.handlers.wiring import build_pipeline_deps
-
-# Hour 0 of the synthetic storm (docs/dataset-spec.md §2), Philippine time.
-SCENARIO_START = datetime(2026, 11, 10, tzinfo=timezone(timedelta(hours=8)))
 
 
 class GraphPredictor:
@@ -78,7 +75,7 @@ def to_inbound(message: EvalMessage) -> InboundMessage:
         sender=message.sender,
         text=message.text,
         channel=message.channel,
-        received_at=SCENARIO_START + timedelta(hours=message.scenario_hour),
+        received_at=scenario_time(message.scenario_hour),
     )
 
 

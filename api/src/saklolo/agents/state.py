@@ -9,9 +9,11 @@ from saklolo.domain.models import (
     ExtractedRequest,
     InboundMessage,
     Location,
+    StatusUpdateKind,
     SuspicionReason,
     TriageDecision,
     TriageOutcome,
+    WaterLevel,
 )
 from saklolo.domain.ports import ModelUsage
 
@@ -47,6 +49,7 @@ class PipelineState:
     def outcome(self, escalation_threshold: float) -> TriageOutcome:
         suspicious = self.verdict == PrefilterVerdict.SPAM or self.injection_suspected
         decision = self.decision
+        extraction = self.extraction
         return TriageOutcome(
             priority=decision.priority if decision else None,
             is_suspicious=suspicious,
@@ -54,7 +57,14 @@ class PipelineState:
             case_id=self.case_id,
             location=self.location,
             ask_back_question=ASK_BACK_QUESTION if self.asks_location else None,
-            english_summary=self.extraction.english_summary if self.extraction else None,
+            english_summary=extraction.english_summary if extraction else None,
+            people_count=extraction.people_count if extraction else None,
+            vulnerable=extraction.vulnerable if extraction else [],
+            water_level=extraction.water_level if extraction else WaterLevel.UNKNOWN,
+            medical_emergency=extraction.medical_emergency if extraction else False,
+            reports_safe=bool(
+                extraction and extraction.status_update_kind == StatusUpdateKind.RESCUED
+            ),
             reason=decision.reason if decision else self.verdict_reason,
             confidence=decision.confidence if decision else 1.0,
             needs_escalation=decision.needs_escalation(escalation_threshold) if decision else False,
