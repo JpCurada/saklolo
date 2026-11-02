@@ -11,6 +11,7 @@ Curated results for the article and video. Copied from a run in `eval/runs/`
 | Dedupe P / R | TODO | |
 | Correct barangay % | TODO | |
 | False-flag rate | TODO | |
+| Recycled flagged % | TODO | |
 | p95 latency (s) | TODO | |
 | Cost per 10k messages (USD) | TODO | |
 
