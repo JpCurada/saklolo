@@ -73,6 +73,8 @@ class LocationSource(StrEnum):
     TEXT = "text"  # the message names the barangay
     GEOCODER = "geocoder"  # Amazon Location resolved the place words
     REPLY = "reply"  # the resident answered the ask-back question
+    # The reviewers' lookup of a landmark, still waiting for the resident's answer.
+    REVIEWER = "reviewer"
     UNKNOWN = "unknown"
 
 

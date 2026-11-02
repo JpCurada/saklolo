@@ -15,3 +15,7 @@ class ModelOutputError(SakloloError):
 
 class PipelineError(SakloloError):
     """The triage pipeline did not complete for a message."""
+
+
+class CaseClosedError(SakloloError):
+    """A dispatcher closed the case while this update was being worked on."""

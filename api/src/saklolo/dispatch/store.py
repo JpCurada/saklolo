@@ -8,6 +8,8 @@ from saklolo.dispatch.models import DispatchRecord, MessageRecord
 class DispatchStore(Protocol):
     def add_message(self, record: MessageRecord) -> None: ...
 
+    def has_message(self, message_id: str) -> bool: ...
+
     def messages(self) -> list[MessageRecord]:
         """Every received message, oldest first."""
         ...
@@ -28,6 +30,9 @@ class InMemoryDispatchStore:
 
     def add_message(self, record: MessageRecord) -> None:
         self._messages.append(record)
+
+    def has_message(self, message_id: str) -> bool:
+        return any(m.message_id == message_id for m in self._messages)
 
     def messages(self) -> list[MessageRecord]:
         return list(self._messages)

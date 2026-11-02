@@ -10,7 +10,7 @@ from collections.abc import Callable, Mapping
 
 import httpx
 
-from saklolo.adapters.outbox import InMemoryOutbox
+from saklolo.adapters.outbox import Outbox
 from saklolo.domain.errors import SakloloError
 from saklolo.domain.models import Channel
 
@@ -57,7 +57,7 @@ Send = Callable[[str, str], None]
 class ChannelNotifier:
     """Notifier that keeps every reply in the outbox and forwards chat-app replies."""
 
-    def __init__(self, outbox: InMemoryOutbox, senders: Mapping[Channel, Send]) -> None:
+    def __init__(self, outbox: Outbox, senders: Mapping[Channel, Send]) -> None:
         self._outbox = outbox
         self._senders = {channel.value: send for channel, send in senders.items()}
 

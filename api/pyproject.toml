@@ -12,6 +12,7 @@ dependencies = [
   "fastapi>=0.162.0",
   "uvicorn>=0.54.0",
   "httpx>=0.28.1",
+  "mangum>=0.19",
 ]
 
 [dependency-groups]

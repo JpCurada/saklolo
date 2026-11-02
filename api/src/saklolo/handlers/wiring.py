@@ -10,7 +10,12 @@ from saklolo.adapters.amazon_location import AmazonLocationGeocoder
 from saklolo.adapters.archive import JsonlPostArchive
 from saklolo.adapters.call_cache import CachingEmbedder, CachingStructuredModel, JsonlCache
 from saklolo.adapters.corrections import AgentCoreCorrectionMemory, InMemoryCorrectionMemory
-from saklolo.adapters.dynamodb import DynamoCaseStore, DynamoDispatchStore
+from saklolo.adapters.dynamodb import (
+    DynamoCaseStore,
+    DynamoDispatchStore,
+    DynamoOutbox,
+    DynamoReplayState,
+)
 from saklolo.adapters.geocode_cache import CachedGeocoder
 from saklolo.adapters.hazard import GeoJsonFloodMap
 from saklolo.adapters.memory import InMemoryCaseStore
@@ -109,6 +114,19 @@ def dynamo_stores(settings: Settings) -> tuple[DynamoCaseStore, DynamoDispatchSt
     dynamodb = session.resource("dynamodb")
     cases, messages, dispatch = (dynamodb.Table(name) for name in tables)
     return DynamoCaseStore(cases), DynamoDispatchStore(messages, dispatch)
+
+
+def deployed_stores(
+    settings: Settings,
+) -> tuple[DynamoCaseStore, DynamoDispatchStore, DynamoOutbox, DynamoReplayState]:
+    """Everything the deployed API and worker share. Neither runs without these."""
+    stores = dynamo_stores(settings)
+    if stores is None or not settings.outbox_table or not settings.intake_queue_url:
+        raise ValueError("Deployed handlers need the four tables and the intake queue.")
+    session = boto3.Session(profile_name=settings.aws_profile, region_name=settings.aws_region)
+    dynamodb = session.resource("dynamodb")
+    outbox = DynamoOutbox(dynamodb.Table(settings.outbox_table))
+    return (*stores, outbox, DynamoReplayState(dynamodb.Table(settings.cases_table)))
 
 
 def recorded_deps(

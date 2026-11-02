@@ -4,7 +4,7 @@ import math
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 
-from saklolo.domain.models import Location
+from saklolo.domain.models import Location, LocationSource
 
 
 @dataclass
@@ -21,7 +21,8 @@ class Case:
 
     @property
     def awaiting_location(self) -> bool:
-        return self.location.barangay is None
+        # A reviewers' landmark match is a guess: the resident's answer still replaces it.
+        return self.location.barangay is None or self.location.source == LocationSource.REVIEWER
 
 
 @dataclass(frozen=True)

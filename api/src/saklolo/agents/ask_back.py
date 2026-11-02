@@ -12,7 +12,8 @@ from saklolo.domain.ports import CaseStore, Geocoder
 
 
 def apply_reply(case_id: str, reply: str, cases: CaseStore, geocoder: Geocoder) -> Location:
-    """Update the case's location from the reply; returns the case's location afterwards."""
+    """Update the case's location from the reply. A location without a barangay means
+    the reply didn't name a place, and the case is unchanged."""
     case = cases.get(case_id)
     if case is None:
         raise KeyError(f"unknown case {case_id}")
@@ -20,7 +21,8 @@ def apply_reply(case_id: str, reply: str, cases: CaseStore, geocoder: Geocoder) 
         return case.location  # nothing to resume: don't pay for a geocode
     text = mask_phones(clean(reply))
     location = resolve_location(None, text, text, geocoder)
-    if location.barangay is not None:
-        case.location = location.model_copy(update={"source": LocationSource.REPLY})
-        cases.save(case)
+    if location.barangay is None:
+        return location
+    case.location = location.model_copy(update={"source": LocationSource.REPLY})
+    cases.save(case)
     return case.location

@@ -3,6 +3,7 @@
 from dataclasses import dataclass, field, replace
 
 from saklolo.adapters.corrections import InMemoryCorrectionMemory
+from saklolo.agents.ask_back import apply_reply
 from saklolo.agents.escalation import review_tools
 from saklolo.agents.graph import run_pipeline
 from saklolo.agents.state import EscalationOutcome, PipelineState
@@ -196,6 +197,7 @@ def test_a_place_the_reviewers_found_locates_the_case_and_shows_in_the_trace() -
     stored = deps.cases.get(state.case_id)
     assert stored is not None and stored.location.barangay == "Malanday"
     assert state.asks_location  # the resident can still correct a landmark match
+    assert stored.awaiting_location
     assert escalate_step(state).detail.endswith(
         'Looked up "simbahan sa palengke" → not found; "tapat ng simbahan Malanday" → Malanday'
     )
@@ -312,3 +314,27 @@ def test_a_memory_outage_changes_nothing() -> None:
 
     assert escalation.briefs and "<past_corrections>" not in escalation.briefs[0]
     assert state.decision == CRITICAL
+
+
+def test_the_residents_answer_replaces_the_reviewers_landmark_match() -> None:
+    model = fake_model(NO_PLACE)
+    model.outputs[TriageDecision] = UNSURE
+    lookups = (PlaceLookup(query="tapat ng simbahan", location=MALANDAY),)
+    barangka = Location(barangay="Barangka", lat=14.63, lng=121.08, source=LocationSource.GEOCODER)
+    geocoder = FakeGeocoder(places={"Barangka po": barangka})
+    deps = replace(
+        fake_deps(model),
+        geocoder=geocoder,
+        escalation=FakeEscalation(decision=CRITICAL, lookups=lookups),
+    )
+    state = run_pipeline(message("nasa bubong kami tapat ng simbahan"), deps)
+    assert state.case_id is not None
+
+    nothing = apply_reply(state.case_id, "salamat po", deps.cases, geocoder)
+    answered = apply_reply(state.case_id, "Barangka po", deps.cases, geocoder)
+
+    assert nothing.barangay is None  # not a place: the guess stays, still awaiting
+    assert answered.barangay == "Barangka"
+    stored = deps.cases.get(state.case_id)
+    assert stored is not None and not stored.awaiting_location
+    assert stored.location.source == LocationSource.REPLY

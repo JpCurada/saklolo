@@ -47,6 +47,9 @@ class Settings(BaseSettings):
     cases_table: str = ""
     messages_table: str = ""
     dispatch_table: str = ""
+    # Deployed only: the API and worker are separate processes, so the replies the
+    # phones poll for live in a table.
+    outbox_table: str = ""
 
     # AgentCore Memory from `terraform output`. Empty: corrections stay in memory.
     memory_id: str = ""

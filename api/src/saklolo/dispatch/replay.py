@@ -9,11 +9,11 @@ shortly after, so replays exercise ask-back too.
 import heapq
 import threading
 from dataclasses import dataclass, field
-
-from pydantic import BaseModel
+from typing import Protocol
 
 from saklolo.dataset.io import Dataset
 from saklolo.dataset.scenario import scenario_time
+from saklolo.dispatch.models import ReplayStatus
 from saklolo.dispatch.service import DispatchService
 from saklolo.domain.errors import SakloloError
 from saklolo.domain.models import Channel, InboundMessage
@@ -25,13 +25,6 @@ class ReplayBusyError(SakloloError):
     """A replay is already running."""
 
 
-class ReplayStatus(BaseModel):
-    running: bool
-    split: str | None
-    sent: int
-    total: int
-
-
 @dataclass(order=True)
 class _Scheduled:
     hour: float
@@ -40,6 +33,14 @@ class _Scheduled:
     text: str = field(compare=False)
     channel: Channel = field(compare=False)
     reply_if_asked: str | None = field(compare=False, default=None)
+
+
+class ReplayControl(Protocol):
+    def start(self, split: str, speed: float, max_delay_s: float) -> ReplayStatus: ...
+
+    def stop(self) -> ReplayStatus: ...
+
+    def status(self) -> ReplayStatus: ...
 
 
 class Replayer:

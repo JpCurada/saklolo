@@ -14,7 +14,7 @@ uv run pytest    # unit tests
 | `saklolo/agents/` | Strands Graph, Swarm, nodes, prompts |
 | `saklolo/adapters/` | AWS implementations of ports |
 | `saklolo/dispatch/` | Application layer: runs the pipeline per message, keeps the dispatcher's view |
-| `saklolo/handlers/` | Entrypoints: demo API, Lambda, AgentCore |
+| `saklolo/handlers/` | Entrypoints: demo API, and the deployed API and worker Lambdas (`lambda_api.py`, `lambda_worker.py`) |
 
 ## Demo API
 

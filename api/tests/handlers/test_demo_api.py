@@ -5,6 +5,7 @@ from fastapi.testclient import TestClient
 from saklolo.dataset.io import Dataset
 from saklolo.dataset.schema import DatasetMessage
 from saklolo.dispatch.replay import Replayer
+from saklolo.domain.models import InboundMessage
 from saklolo.handlers.demo_api import create_app
 from tests.dispatch.test_service import make_service
 
@@ -107,3 +108,21 @@ def test_decisions_need_a_dispatcher_name() -> None:
     assert nameless.status_code == 422
     assert blank.status_code == 422
     assert named.json()["history"][0]["dispatcher"] == "Ana"
+
+
+def test_with_a_queue_the_message_waits_for_the_worker() -> None:
+    service, outbox = make_service()
+    taken: list[InboundMessage] = []
+
+    class Queue:
+        def enqueue(self, message: InboundMessage) -> None:
+            taken.append(message)
+
+    replayer = Replayer(service, Dataset(households=[], messages=[], archive=[]))
+    client = TestClient(create_app(service, replayer, outbox, queue=Queue()))
+
+    posted = client.post("/messages", json={"sender": "+639000000001", "text": "nasa bubong kami"})
+
+    assert posted.status_code == 201
+    assert [m.text for m in taken] == ["nasa bubong kami"]
+    assert client.get("/cases").json() == []

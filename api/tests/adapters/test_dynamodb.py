@@ -8,7 +8,12 @@ import boto3
 import pytest
 from moto import mock_aws
 
-from saklolo.adapters.dynamodb import DynamoCaseStore, DynamoDispatchStore
+from saklolo.adapters.dynamodb import (
+    DynamoCaseStore,
+    DynamoDispatchStore,
+    DynamoOutbox,
+    DynamoReplayState,
+)
 from saklolo.adapters.outbox import InMemoryOutbox
 from saklolo.config import Settings
 from saklolo.dispatch.models import (
@@ -21,6 +26,7 @@ from saklolo.dispatch.models import (
 )
 from saklolo.dispatch.service import DispatchService
 from saklolo.domain.cases import Case
+from saklolo.domain.errors import CaseClosedError
 from saklolo.domain.models import (
     Channel,
     ExtractedRequest,
@@ -174,3 +180,74 @@ def test_tables_are_all_or_nothing() -> None:
     assert dynamo_stores(Settings(cases_table="", messages_table="", dispatch_table="")) is None
     with pytest.raises(ValueError, match="all of"):
         dynamo_stores(Settings(cases_table="c", messages_table="", dispatch_table=""))
+
+
+def test_a_save_cannot_reopen_a_closed_case(dynamodb: Any) -> None:
+    store = DynamoCaseStore(dynamodb.Table("cases"))
+    store.save(case("case-0001"))
+    stale = store.get("case-0001")
+    assert stale is not None
+
+    store.close("case-0001")
+
+    with pytest.raises(CaseClosedError):
+        store.save(stale)
+    closed = store.get("case-0001")
+    assert closed is not None and closed.closed
+    assert store.open_cases(since=NOW - timedelta(hours=1)) == []
+
+
+def test_the_outbox_filters_by_recipient_in_order(dynamodb: Any) -> None:
+    dynamodb.create_table(
+        TableName="outbox",
+        KeySchema=[{"AttributeName": "outbox_id", "KeyType": "HASH"}],
+        AttributeDefinitions=[{"AttributeName": "outbox_id", "AttributeType": "S"}],
+        BillingMode="PAY_PER_REQUEST",
+    )
+    outbox = DynamoOutbox(dynamodb.Table("outbox"))
+
+    outbox.send_text("a", "first")
+    outbox.send_text("b", "other")
+    outbox.send_text("a", "second")
+
+    assert [m.body for m in outbox.sent("a")] == ["first", "second"]
+    assert len(outbox.sent()) == 3
+
+
+def test_replay_state_counts_and_stops(dynamodb: Any) -> None:
+    state = DynamoReplayState(dynamodb.Table("cases"))
+    assert state.status().running is False
+
+    state.begin("run-1", "dev", 2)
+    state.add(sent=1, total=1)
+
+    assert state.status().model_dump() == {"running": True, "split": "dev", "sent": 1, "total": 3}
+    assert state.is_active("run-1")
+    state.stop()
+    assert not state.is_active("run-1")
+    assert state.status().running is False
+
+
+def test_the_replay_item_is_never_read_as_a_case(dynamodb: Any) -> None:
+    store = DynamoCaseStore(dynamodb.Table("cases"))
+    DynamoReplayState(dynamodb.Table("cases")).begin("run-1", "dev", 1)
+
+    assert store.open_cases(since=NOW - timedelta(hours=1)) == []
+
+
+def test_a_message_id_is_known_once_stored(dynamodb: Any) -> None:
+    store = DynamoDispatchStore(dynamodb.Table("messages"), dynamodb.Table("dispatch"))
+    record = MessageRecord(
+        message_id="m-1",
+        message=InboundMessage(
+            sender="+639000000002", text="tulong", channel=Channel.SMS, received_at=NOW
+        ),
+        kind=ReceiveKind.TRIAGED,
+        outcome=None,
+        case_id=None,
+    )
+
+    store.add_message(record)
+
+    assert store.has_message("m-1")
+    assert not store.has_message("m-2")

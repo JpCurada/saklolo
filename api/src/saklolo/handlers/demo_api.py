@@ -13,21 +13,23 @@ from typing import Annotated
 
 import httpx
 import uvicorn
-from fastapi import APIRouter, BackgroundTasks, FastAPI, HTTPException, Query, Request
+from fastapi import APIRouter, BackgroundTasks, Depends, FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import PlainTextResponse
 from pydantic import BaseModel, Field, StringConstraints
 
 from saklolo.adapters.channels import ChannelNotifier, Send
 from saklolo.adapters.messenger import MessengerClient, parse_webhook, signature_ok
-from saklolo.adapters.outbox import InMemoryOutbox
+from saklolo.adapters.outbox import InMemoryOutbox, Outbox
 from saklolo.adapters.telegram import TelegramBot, TelegramPoller
+from saklolo.auth import AuthSettings, Dispatcher, TokenDecoder, acting_name, dispatcher_dependency
 from saklolo.config import REPO_ROOT, ChannelSettings, get_settings
 from saklolo.dataset.io import load_dataset
-from saklolo.dispatch.models import CaseView, MessageRecord, ReceiveResult
-from saklolo.dispatch.replay import ReplayBusyError, Replayer, ReplayStatus
+from saklolo.dispatch.models import CaseView, MessageRecord, ReceiveAck, ReplayStatus
+from saklolo.dispatch.replay import ReplayBusyError, ReplayControl, Replayer
 from saklolo.dispatch.service import CaseStateError, DispatchService
 from saklolo.domain.models import Channel, InboundMessage, OutboundMessage, Priority
+from saklolo.domain.ports import MessageQueue
 from saklolo.handlers.wiring import build_offline_deps, build_pipeline_deps, dynamo_stores
 
 Text = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=1600)]
@@ -62,11 +64,25 @@ class ReplayIn(BaseModel):
 
 def create_app(
     service: DispatchService,
-    replayer: Replayer,
-    outbox: InMemoryOutbox,
+    replayer: ReplayControl,
+    outbox: Outbox,
     channels: ChannelSettings | None = None,
     origins: list[str] | None = None,
+    queue: MessageQueue | None = None,
+    auth: AuthSettings | None = None,
+    decoder: TokenDecoder | None = None,
 ) -> FastAPI:
+    """With a queue, the worker triages messages; without one, the request does.
+
+    Dispatcher routes need a signed-in dispatcher when Cognito is configured (saklolo.auth).
+    """
+
+    def intake(message: InboundMessage) -> None:
+        if queue is not None:
+            queue.enqueue(message)
+        else:
+            service.receive(message)
+
     app = FastAPI(title="Saklolo demo API", version="0.1.0")
     app.add_middleware(
         CORSMiddleware,
@@ -79,24 +95,29 @@ def create_app(
     def health() -> dict[str, str]:
         return {"status": "ok"}
 
-    app.include_router(_message_routes(service, outbox))
-    app.include_router(_case_routes(service))
-    app.include_router(_replay_routes(replayer))
+    require = dispatcher_dependency(auth or AuthSettings(), decoder)
+    signed_in = [Depends(require)]
+    app.include_router(_message_routes(service, intake, outbox), dependencies=signed_in)
+    app.include_router(_case_routes(service, require), dependencies=signed_in)
+    app.include_router(_replay_routes(replayer), dependencies=signed_in)
     if channels is not None and channels.messenger_ready:
-        app.include_router(_messenger_routes(service, channels))
+        app.include_router(_messenger_routes(intake, channels))
     return app
 
 
-def _message_routes(service: DispatchService, outbox: InMemoryOutbox) -> APIRouter:
+def _message_routes(
+    service: DispatchService, intake: Callable[[InboundMessage], object], outbox: Outbox
+) -> APIRouter:
     router = APIRouter(tags=["messages"])
 
     @router.post("/messages", status_code=201)
-    def receive(body: MessageIn) -> ReceiveResult:
+    def receive(body: MessageIn) -> ReceiveAck:
         received_at = body.received_at or datetime.now(UTC)
         message = InboundMessage(
             sender=body.sender, text=body.text, channel=body.channel, received_at=received_at
         )
-        return service.receive(message)
+        intake(message)
+        return ReceiveAck(received_at=received_at)
 
     @router.get("/messages")
     def messages() -> list[MessageRecord]:
@@ -109,8 +130,10 @@ def _message_routes(service: DispatchService, outbox: InMemoryOutbox) -> APIRout
     return router
 
 
-def _case_routes(service: DispatchService) -> APIRouter:
+def _case_routes(service: DispatchService, require: Callable[..., Dispatcher]) -> APIRouter:
     router = APIRouter(prefix="/cases", tags=["cases"])
+    # The history records the signed-in dispatcher, whatever name the body carries.
+    acting = Depends(require)
 
     @router.get("")
     def cases(include_closed: bool = False) -> list[CaseView]:
@@ -121,23 +144,24 @@ def _case_routes(service: DispatchService) -> APIRouter:
         return _or_404(lambda: service.case(case_id))
 
     @router.post("/{case_id}/assign")
-    def assign(case_id: str, body: AssignIn) -> CaseView:
-        return _or_404(lambda: service.assign(case_id, body.team, body.dispatcher))
+    def assign(case_id: str, body: AssignIn, who: Dispatcher = acting) -> CaseView:
+        name = acting_name(who, body.dispatcher)
+        return _or_404(lambda: service.assign(case_id, body.team, name))
 
     @router.post("/{case_id}/override")
-    def override(case_id: str, body: OverrideIn) -> CaseView:
-        return _or_404(
-            lambda: service.override(case_id, body.priority, body.reason, body.dispatcher)
-        )
+    def override(case_id: str, body: OverrideIn, who: Dispatcher = acting) -> CaseView:
+        name = acting_name(who, body.dispatcher)
+        return _or_404(lambda: service.override(case_id, body.priority, body.reason, name))
 
     @router.post("/{case_id}/confirm-safe")
-    def confirm_safe(case_id: str, body: DispatcherIn) -> CaseView:
-        return _or_404(lambda: service.confirm_safe(case_id, body.dispatcher))
+    def confirm_safe(case_id: str, body: DispatcherIn, who: Dispatcher = acting) -> CaseView:
+        name = acting_name(who, body.dispatcher)
+        return _or_404(lambda: service.confirm_safe(case_id, name))
 
     return router
 
 
-def _replay_routes(replayer: Replayer) -> APIRouter:
+def _replay_routes(replayer: ReplayControl) -> APIRouter:
     router = APIRouter(prefix="/replay", tags=["replay"])
 
     @router.post("", status_code=202)
@@ -167,7 +191,9 @@ def _or_404(action: Callable[[], CaseView]) -> CaseView:
         raise HTTPException(409, str(error)) from error
 
 
-def _messenger_routes(service: DispatchService, channels: ChannelSettings) -> APIRouter:
+def _messenger_routes(
+    intake: Callable[[InboundMessage], object], channels: ChannelSettings
+) -> APIRouter:
     router = APIRouter(prefix="/webhooks/messenger", tags=["channels"])
     if not (channels.messenger_app_secret and channels.messenger_verify_token):
         raise ValueError("Messenger needs an app secret and a verify token")
@@ -192,14 +218,14 @@ def _messenger_routes(service: DispatchService, channels: ChannelSettings) -> AP
             raise HTTPException(403, "bad signature")
         # Answer Meta at once; the pipeline takes seconds per message.
         for message in parse_webhook(json.loads(body)):
-            background.add_task(service.receive, message)
+            background.add_task(intake, message)
         return {"status": "received"}
 
     return router
 
 
 def build_notifier(
-    outbox: InMemoryOutbox, channels: ChannelSettings, http: httpx.Client
+    outbox: Outbox, channels: ChannelSettings, http: httpx.Client
 ) -> tuple[ChannelNotifier, TelegramBot | None]:
     senders: dict[Channel, Send] = {}
     bot = None

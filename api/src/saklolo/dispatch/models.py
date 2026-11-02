@@ -90,6 +90,21 @@ class ReceiveResult(BaseModel):
     replies: list[OutboundMessage]
 
 
+class ReceiveAck(BaseModel):
+    """The intake has the message. Triage may still be running."""
+
+    received_at: datetime
+
+
+class QueuedMessage(BaseModel):
+    """One message on the intake queue. The ID is set at intake, so a retry is detectable."""
+
+    message_id: str
+    message: InboundMessage
+    replay_run: str | None = None
+    reply_if_asked: str | None = None
+
+
 class SourceView(BaseModel):
     message_id: str
     sender: str
@@ -119,3 +134,10 @@ class CaseView(BaseModel):
     last_seen: datetime
     sources: list[SourceView]
     history: list[CaseEvent]
+
+
+class ReplayStatus(BaseModel):
+    running: bool
+    split: str | None
+    sent: int
+    total: int

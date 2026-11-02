@@ -33,7 +33,7 @@ from saklolo.dispatch.models import (
 )
 from saklolo.dispatch.store import DispatchStore, InMemoryDispatchStore
 from saklolo.domain.cases import Case
-from saklolo.domain.errors import SakloloError
+from saklolo.domain.errors import CaseClosedError, SakloloError
 from saklolo.domain.models import (
     InboundMessage,
     OutboundMessage,
@@ -66,8 +66,19 @@ class DispatchService:
         self._lock = threading.RLock()
 
     def receive(self, message: InboundMessage) -> ReceiveResult:
+        return self._receive(message, uuid.uuid4().hex[:12])
+
+    def receive_once(self, message: InboundMessage, message_id: str) -> ReceiveResult | None:
+        """For an at-least-once queue: a redelivered message is skipped, not triaged twice."""
+        if self._store.has_message(message_id):
+            return None
+        return self._receive(message, message_id)
+
+    def _receive(self, message: InboundMessage, message_id: str) -> ReceiveResult:
         with self._lock:
-            record = self._as_location_reply(message) or self._triage(message)
+            record = self._as_location_reply(message, message_id) or self._triage(
+                message, message_id
+            )
             self._store.add_message(record)
             if record.case_id is not None and self._store.record(record.case_id) is None:
                 self._store.save_record(record.case_id, DispatchRecord())
@@ -114,9 +125,8 @@ class DispatchService:
 
     def confirm_safe(self, case_id: str, dispatcher: str) -> CaseView:
         with self._lock:
-            case, record = self._case(case_id)
-            case.closed = True
-            self._deps.cases.save(case)
+            _, record = self._case(case_id)
+            self._deps.cases.close(case_id)
             record.status = CaseStatus.CLOSED
             _log(record, CaseAction.CLOSED, dispatcher, "Confirmed safe")
             self._store.save_record(case_id, record)
@@ -138,7 +148,7 @@ class DispatchService:
         except Exception as error:
             logger.warning("correction not remembered: %s", type(error).__name__)
 
-    def _as_location_reply(self, message: InboundMessage) -> MessageRecord | None:
+    def _as_location_reply(self, message: InboundMessage, message_id: str) -> MessageRecord | None:
         """Resume a case waiting for its location, if this message answers the question."""
         if len(message.text.split()) > MAX_LOCATION_REPLY_WORDS:
             return None
@@ -146,7 +156,12 @@ class DispatchService:
         if waiting is None:
             return None
         started = time.perf_counter()
-        location = apply_reply(waiting.case_id, message.text, self._deps.cases, self._deps.geocoder)
+        try:
+            location = apply_reply(
+                waiting.case_id, message.text, self._deps.cases, self._deps.geocoder
+            )
+        except CaseClosedError:
+            return None  # a dispatcher closed it meanwhile: read the message as new
         if location.barangay is None:
             return None  # not a location after all: let the pipeline read it
         resumed = TraceStep(
@@ -159,7 +174,11 @@ class DispatchService:
             ),
         )
         return self._record(
-            message, ReceiveKind.LOCATION_REPLY, case_id=waiting.case_id, trace=[resumed]
+            message,
+            message_id,
+            ReceiveKind.LOCATION_REPLY,
+            case_id=waiting.case_id,
+            trace=[resumed],
         )
 
     def _senders_case_awaiting_location(self, message: InboundMessage) -> Case | None:
@@ -171,15 +190,18 @@ class DispatchService:
         ]
         return max(own, key=lambda c: c.last_seen, default=None)
 
-    def _triage(self, message: InboundMessage) -> MessageRecord:
+    def _triage(self, message: InboundMessage, message_id: str) -> MessageRecord:
         try:
             state = run_pipeline(message, self._deps)
         except Exception as error:  # keep the message for a human; never drop it
             logger.exception("pipeline failed; message kept for review")
-            return self._record(message, ReceiveKind.TRIAGED, error=f"{type(error).__name__}")
+            return self._record(
+                message, message_id, ReceiveKind.TRIAGED, error=f"{type(error).__name__}"
+            )
         outcome = state.outcome(self._deps.escalation_threshold)
         return self._record(
             message,
+            message_id,
             ReceiveKind.TRIAGED,
             case_id=outcome.case_id,
             outcome=outcome,
@@ -189,6 +211,7 @@ class DispatchService:
     def _record(
         self,
         message: InboundMessage,
+        message_id: str,
         kind: ReceiveKind,
         case_id: str | None = None,
         outcome: TriageOutcome | None = None,
@@ -196,7 +219,7 @@ class DispatchService:
         trace: list[TraceStep] | None = None,
     ) -> MessageRecord:
         return MessageRecord(
-            message_id=uuid.uuid4().hex[:12],
+            message_id=message_id,
             message=message,
             kind=kind,
             outcome=outcome,

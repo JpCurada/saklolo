@@ -1,4 +1,4 @@
-.PHONY: help install fmt lint test eval demo demo-offline demo-web plan api-types tokens ui-check hooks notebooks
+.PHONY: help install fmt lint test eval demo demo-offline demo-web plan deploy destroy api-types tokens ui-check hooks notebooks
 
 API := api
 WEB := web
@@ -41,6 +41,12 @@ demo-web: ## Dashboard on :3000 with the demo tools (replay, /resident phones)
 plan: ## terraform plan for infra/
 	terraform -chdir=$(INFRA) init -backend-config=backend.hcl
 	terraform -chdir=$(INFRA) plan -var-file=terraform.tfvars
+
+deploy: ## Deploy to AWS: infra, API and worker Lambdas, dashboard (costs money)
+	bash infra/deploy.sh
+
+destroy: ## Delete everything deploy created, tables and all
+	terraform -chdir=$(INFRA) destroy
 
 ui-check: ## Lint, types, tokens, build, screenshots, visual regression
 	cd $(WEB) && npm run ui:check

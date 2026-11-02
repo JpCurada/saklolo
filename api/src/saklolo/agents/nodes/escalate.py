@@ -1,8 +1,8 @@
 """Low-confidence triage gets a second opinion from a Swarm.
 
 A barangay the reviewers found with the geocoder replaces an unknown location: it is
-the geocoder's answer, not the model's words. The ask-back still goes out, so the
-resident can correct a landmark match.
+the geocoder's answer, not the model's words. It's still a landmark guess, so the
+ask-back goes out and the case waits for the resident's answer, which replaces it.
 
 The Swarm may confirm or raise a priority. It never lowers one on its own: a lower
 suggestion keeps the original priority and leaves the case to a human, because a
@@ -143,7 +143,7 @@ def _adopt_found_location(
     found = [lookup.location for lookup in lookups if lookup.location and lookup.location.barangay]
     if not found or state.location.barangay is not None:
         return
-    state.location = found[-1].model_copy(update={"source": LocationSource.GEOCODER})
+    state.location = found[-1].model_copy(update={"source": LocationSource.REVIEWER})
     case = deps.cases.get(state.case_id) if state.case_id else None
     if case is not None and case.location.barangay is None:
         case.location = state.location

@@ -4,8 +4,15 @@ AWS End User Messaging replaces it for real SMS.
 """
 
 from datetime import UTC, datetime
+from typing import Protocol
 
 from saklolo.domain.models import OutboundMessage
+
+
+class Outbox(Protocol):
+    def send_text(self, recipient: str, body: str) -> None: ...
+
+    def sent(self, recipient: str | None = None) -> list[OutboundMessage]: ...
 
 
 class InMemoryOutbox:
