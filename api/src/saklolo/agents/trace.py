@@ -151,6 +151,8 @@ def _escalate(state: PipelineState, _: PipelineDeps) -> Described:
         parts.append(" → ".join(state.escalation_agents))
     if state.escalation_lookups:
         parts.append("Looked up " + "; ".join(state.escalation_lookups))
+    if state.correction_note:
+        parts.append(state.correction_note)
     return " · ".join(parts), None
 
 

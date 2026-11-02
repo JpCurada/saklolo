@@ -55,6 +55,7 @@ class PipelineState:
     recycled_note: str = ""
     sender_note: str = ""
     flood_note: str = ""
+    correction_note: str = ""
     extraction: ExtractedRequest | None = None
     location: Location = UNKNOWN_LOCATION
     asks_location: bool = False

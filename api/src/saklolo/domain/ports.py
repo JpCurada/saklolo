@@ -7,7 +7,7 @@ from typing import Protocol
 from pydantic import BaseModel
 
 from saklolo.domain.cases import Case
-from saklolo.domain.models import InboundMessage, Location, TriageDecision
+from saklolo.domain.models import InboundMessage, Location, Priority, TriageDecision
 
 
 class MessageQueue(Protocol):
@@ -98,3 +98,19 @@ class FloodHazardMap(Protocol):
     def level_at(self, lat: float, lng: float) -> int | None:
         """0 none, 1 low, 2 medium, 3 high; None outside the map."""
         ...
+
+
+@dataclass(frozen=True)
+class PastCorrection:
+    """A dispatcher changed a priority: what the case was, and what they decided."""
+
+    summary: str
+    first_priority: Priority
+    corrected_priority: Priority
+    reason: str
+
+
+class CorrectionMemory(Protocol):
+    def remember(self, correction: PastCorrection) -> None: ...
+
+    def similar(self, summary: str, limit: int = 3) -> list[PastCorrection]: ...

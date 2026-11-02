@@ -2,6 +2,7 @@
 
 from dataclasses import dataclass, field, replace
 
+from saklolo.adapters.corrections import InMemoryCorrectionMemory
 from saklolo.agents.escalation import review_tools
 from saklolo.agents.graph import run_pipeline
 from saklolo.agents.state import EscalationOutcome, PipelineState
@@ -15,7 +16,7 @@ from saklolo.domain.models import (
     TriageDecision,
     WaterLevel,
 )
-from saklolo.domain.ports import EscalationReview, ModelUsage, PlaceLookup
+from saklolo.domain.ports import EscalationReview, ModelUsage, PastCorrection, PlaceLookup
 from tests.agents.fakes import FakeGeocoder, fake_deps
 from tests.agents.test_graph import CRITICAL, fake_model, message
 
@@ -256,3 +257,58 @@ def test_a_confident_triage_has_no_escalation_outcome() -> None:
 
     assert state.escalation_outcome is None
     assert state.first_decision is None
+
+
+class FailingMemory:
+    def similar(self, summary: str, limit: int = 3) -> list[PastCorrection]:
+        raise ServiceUnavailableError("down")
+
+    def remember(self, correction: PastCorrection) -> None:
+        raise ServiceUnavailableError("down")
+
+
+def test_reviewers_get_similar_corrections_and_the_trace_says_so() -> None:
+    memory = InMemoryCorrectionMemory()
+    memory.remember(
+        PastCorrection("5 people on the roof", Priority.CRITICAL, Priority.HIGH, "Safe roof deck")
+    )
+    escalation = FakeEscalation(decision=CRITICAL)
+    model = fake_model()
+    model.outputs[TriageDecision] = UNSURE
+    deps = replace(fake_deps(model), escalation=escalation, corrections=memory)
+
+    state = run_pipeline(message("nasa bubong na kami"), deps)
+
+    assert "P1 changed to P2. Dispatcher's reason: Safe roof deck" in escalation.briefs[0]
+    assert "Consulted 1 past dispatcher correction(s)" in escalate_step(state).detail
+
+
+def test_confident_cases_never_read_the_memory() -> None:
+    class Counting(InMemoryCorrectionMemory):
+        calls = 0
+
+        def similar(self, summary: str, limit: int = 3) -> list[PastCorrection]:
+            Counting.calls += 1
+            return []
+
+    deps = replace(
+        fake_deps(fake_model()),
+        escalation=FakeEscalation(decision=CRITICAL),
+        corrections=Counting(),
+    )
+
+    run_pipeline(message("nasa bubong na kami"), deps)
+
+    assert Counting.calls == 0
+
+
+def test_a_memory_outage_changes_nothing() -> None:
+    escalation = FakeEscalation(decision=CRITICAL)
+    model = fake_model()
+    model.outputs[TriageDecision] = UNSURE
+    deps = replace(fake_deps(model), escalation=escalation, corrections=FailingMemory())
+
+    state = run_pipeline(message("nasa bubong na kami"), deps)
+
+    assert escalation.briefs and "<past_corrections>" not in escalation.briefs[0]
+    assert state.decision == CRITICAL

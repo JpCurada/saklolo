@@ -6,6 +6,7 @@ from saklolo.agents.prompts import PromptSet
 from saklolo.domain.cases import DedupePolicy
 from saklolo.domain.ports import (
     CaseStore,
+    CorrectionMemory,
     Embedder,
     Escalation,
     FloodHazardMap,
@@ -33,3 +34,5 @@ class PipelineDeps:
     archive: PostArchive | None = None
     # Project NOAH's flood map: context for the dispatcher, never a flag.
     flood_map: FloodHazardMap | None = None
+    # Past dispatcher corrections, consulted only for unsure cases.
+    corrections: CorrectionMemory | None = None

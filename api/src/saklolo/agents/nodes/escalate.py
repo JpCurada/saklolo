@@ -15,7 +15,7 @@ from saklolo.agents.deps import PipelineDeps
 from saklolo.agents.nodes.extract import message_block
 from saklolo.agents.state import EscalationOutcome, PipelineState
 from saklolo.domain.models import LocationSource, TriageDecision
-from saklolo.domain.ports import PlaceLookup
+from saklolo.domain.ports import PastCorrection, PlaceLookup
 
 logger = logging.getLogger(__name__)
 
@@ -33,8 +33,9 @@ def escalate(state: PipelineState, deps: PipelineDeps) -> None:
         state.escalation_outcome = EscalationOutcome.NOT_CONFIGURED
         state.escalation_note = "No reviewers configured: a human decides"
         return
+    past = _past_corrections(state, deps)
     try:
-        review = deps.escalation.review(brief(state, current))
+        review = deps.escalation.review(brief(state, current, past))
     except Exception as error:  # a reviewer outage must never lose the message
         logger.warning("escalation failed: %s", type(error).__name__)
         state.escalation_outcome = EscalationOutcome.UNAVAILABLE
@@ -72,7 +73,24 @@ def escalate(state: PipelineState, deps: PipelineDeps) -> None:
         )
 
 
-def brief(state: PipelineState, decision: TriageDecision) -> str:
+def _past_corrections(state: PipelineState, deps: PipelineDeps) -> list[PastCorrection]:
+    """Similar cases dispatchers corrected. Reviewers can use them; an outage changes nothing."""
+    summary = state.extraction.english_summary if state.extraction else ""
+    if deps.corrections is None or not summary:
+        return []
+    try:
+        past = deps.corrections.similar(summary)
+    except Exception as error:  # memory is advice: never lose a message over it
+        logger.warning("correction memory failed: %s", type(error).__name__)
+        return []
+    if past:
+        state.correction_note = f"Consulted {len(past)} past dispatcher correction(s)"
+    return past
+
+
+def brief(
+    state: PipelineState, decision: TriageDecision, past: list[PastCorrection] | None = None
+) -> str:
     """Everything the reviewers need. The resident's words stay inside <message> tags."""
     extraction = state.extraction
     facts = extraction.model_dump_json(exclude={"confidence"}) if extraction else "{}"
@@ -88,7 +106,19 @@ def brief(state: PipelineState, decision: TriageDecision) -> str:
         f"old post check: {state.recycled_note or 'no sign of an old post'}\n"
         f"sender check: {state.sender_note or 'nothing unusual'}\n</facts>\n"
         f"<first_triage>\n{decision.model_dump_json()}\n</first_triage>"
+        f"{_corrections_block(past or [])}"
     )
+
+
+def _corrections_block(past: list[PastCorrection]) -> str:
+    if not past:
+        return ""
+    lines = [
+        f"- {item.summary}: {item.first_priority.value} changed to "
+        f"{item.corrected_priority.value}. Dispatcher's reason: {item.reason}"
+        for item in past
+    ]
+    return "\n<past_corrections>\n" + "\n".join(lines) + "\n</past_corrections>"
 
 
 def _less_urgent(proposed: TriageDecision, current: TriageDecision) -> bool:

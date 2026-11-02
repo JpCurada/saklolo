@@ -1,11 +1,14 @@
+from dataclasses import replace
 from datetime import UTC, datetime, timedelta
 
 import pytest
 
+from saklolo.adapters.corrections import InMemoryCorrectionMemory
 from saklolo.adapters.outbox import InMemoryOutbox
 from saklolo.dispatch import replies
 from saklolo.dispatch.models import Badge, CaseAction, CaseStatus, ReceiveKind
 from saklolo.dispatch.service import CaseStateError, DispatchService
+from saklolo.domain.errors import ServiceUnavailableError
 from saklolo.domain.models import (
     Channel,
     ExtractedRequest,
@@ -14,6 +17,7 @@ from saklolo.domain.models import (
     TriageDecision,
     WaterLevel,
 )
+from saklolo.domain.ports import PastCorrection
 from tests.agents.fakes import FakeStructuredModel, fake_deps
 
 T0 = datetime(2026, 11, 10, 9, tzinfo=UTC)
@@ -198,3 +202,53 @@ def test_every_decision_is_recorded_with_who_made_it() -> None:
         (CaseAction.ASSIGNED, "Ben", "Team Bravo"),
         (CaseAction.CLOSED, "Ana", "Confirmed safe"),
     ]
+
+
+def test_an_override_is_remembered_without_phone_numbers() -> None:
+    memory = InMemoryCorrectionMemory()
+    service = DispatchService(
+        replace(
+            fake_deps(
+                FakeStructuredModel(
+                    {ExtractedRequest: extraction_for, TriageDecision: decision_for}
+                )
+            ),
+            corrections=memory,
+        ),
+        InMemoryOutbox(),
+    )
+    service.receive(message("nasa bubong kami"))
+    [case] = service.cases()
+
+    service.override(case.case_id, Priority.HIGH, "Called 09170000000, safe deck", "Ana")
+
+    [remembered] = memory.similar("5 people on the roof")
+    assert (remembered.first_priority, remembered.corrected_priority) == (
+        Priority.CRITICAL,
+        Priority.HIGH,
+    )
+    assert "09170000000" not in remembered.reason
+
+
+def test_a_memory_failure_never_blocks_the_dispatcher() -> None:
+    class Down(InMemoryCorrectionMemory):
+        def remember(self, correction: PastCorrection) -> None:
+            raise ServiceUnavailableError("down")
+
+    service = DispatchService(
+        replace(
+            fake_deps(
+                FakeStructuredModel(
+                    {ExtractedRequest: extraction_for, TriageDecision: decision_for}
+                )
+            ),
+            corrections=Down(),
+        ),
+        InMemoryOutbox(),
+    )
+    service.receive(message("nasa bubong kami"))
+    [case] = service.cases()
+
+    updated = service.override(case.case_id, Priority.HIGH, "Safe deck", "Ana")
+
+    assert updated.priority == Priority.HIGH

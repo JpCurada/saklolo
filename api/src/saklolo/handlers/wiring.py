@@ -9,6 +9,7 @@ import boto3
 from saklolo.adapters.amazon_location import AmazonLocationGeocoder
 from saklolo.adapters.archive import JsonlPostArchive
 from saklolo.adapters.call_cache import CachingEmbedder, CachingStructuredModel, JsonlCache
+from saklolo.adapters.corrections import AgentCoreCorrectionMemory, InMemoryCorrectionMemory
 from saklolo.adapters.dynamodb import DynamoCaseStore, DynamoDispatchStore
 from saklolo.adapters.geocode_cache import CachedGeocoder
 from saklolo.adapters.hazard import GeoJsonFloodMap
@@ -22,7 +23,7 @@ from saklolo.agents.prompts import PromptSet
 from saklolo.config import REPO_ROOT, Settings
 from saklolo.domain.cases import DedupePolicy
 from saklolo.domain.models import Location
-from saklolo.domain.ports import CaseStore, Embedder, StructuredModel
+from saklolo.domain.ports import CaseStore, CorrectionMemory, Embedder, StructuredModel
 
 MODEL_CALLS_FILE = "model_calls.jsonl"
 EMBEDDINGS_FILE = "embeddings.jsonl"
@@ -67,6 +68,13 @@ def build_pipeline_deps(
         AmazonLocationGeocoder(session.client("geo-places", region_name=settings.location_region)),
         geocode_store,
     )
+    corrections: CorrectionMemory = InMemoryCorrectionMemory()
+    if settings.memory_id:
+        corrections = AgentCoreCorrectionMemory(
+            session.client("bedrock-agentcore"),
+            settings.memory_id,
+            settings.memory_strategy_id or None,
+        )
     # The Swarm uses the strong model when one is set (ADR 0002), else the fast one.
     escalation_model_id = settings.strong_model_id or settings.fast_model_id
     escalation = StrandsSwarmEscalation(bedrock_model(settings, escalation_model_id), geocoder)
@@ -80,6 +88,7 @@ def build_pipeline_deps(
         prompts=prompts or PromptSet.default(),
         model_id=settings.fast_model_id,
         escalation=escalation,
+        corrections=corrections,
         escalation_model_id=escalation_model_id,
         archive=JsonlPostArchive(REPO_ROOT / "data" / "archive.jsonl"),
         flood_map=GeoJsonFloodMap(FLOOD_MAP),

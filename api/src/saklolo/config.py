@@ -48,6 +48,10 @@ class Settings(BaseSettings):
     messages_table: str = ""
     dispatch_table: str = ""
 
+    # AgentCore Memory from `terraform output`. Empty: corrections stay in memory.
+    memory_id: str = ""
+    memory_strategy_id: str = ""
+
 
 class ChannelSettings(BaseSettings):
     """Chat-app channels. Each is on only when its secrets are set (docs/channels.md)."""

@@ -17,3 +17,13 @@ output "cases_table_name" {
   description = "Cases table name (SAKLOLO_CASES_TABLE)."
   value       = module.cases_table.name
 }
+
+output "memory_id" {
+  description = "AgentCore Memory ID for dispatcher corrections (SAKLOLO_MEMORY_ID)."
+  value       = aws_bedrockagentcore_memory.corrections.id
+}
+
+output "memory_strategy_id" {
+  description = "Semantic strategy ID (SAKLOLO_MEMORY_STRATEGY_ID)."
+  value       = aws_bedrockagentcore_memory_strategy.corrections.memory_strategy_id
+}

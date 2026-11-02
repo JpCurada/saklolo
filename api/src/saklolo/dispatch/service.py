@@ -17,6 +17,7 @@ from datetime import UTC, datetime
 from saklolo.agents.ask_back import apply_reply
 from saklolo.agents.deps import PipelineDeps
 from saklolo.agents.graph import run_pipeline
+from saklolo.agents.nodes.normalize import mask_phones
 from saklolo.dispatch import replies
 from saklolo.dispatch.case_view import build_case_view
 from saklolo.dispatch.models import (
@@ -41,7 +42,7 @@ from saklolo.domain.models import (
     TraceStep,
     TriageOutcome,
 )
-from saklolo.domain.ports import Notifier
+from saklolo.domain.ports import Notifier, PastCorrection
 
 logger = logging.getLogger(__name__)
 
@@ -103,10 +104,12 @@ class DispatchService:
     def override(self, case_id: str, priority: Priority, reason: str, dispatcher: str) -> CaseView:
         with self._lock:
             _, record = self._case(case_id)
+            before = self._view(case_id)
             record.override = priority
             record.override_reason = reason
             _log(record, CaseAction.OVERRIDDEN, dispatcher, f"{priority.value}: {reason}")
             self._store.save_record(case_id, record)
+            self._remember_correction(before, priority, reason)
             return self._view(case_id)
 
     def confirm_safe(self, case_id: str, dispatcher: str) -> CaseView:
@@ -118,6 +121,22 @@ class DispatchService:
             _log(record, CaseAction.CLOSED, dispatcher, "Confirmed safe")
             self._store.save_record(case_id, record)
             return self._view(case_id)
+
+    def _remember_correction(self, before: CaseView, priority: Priority, reason: str) -> None:
+        """Memory is advice for later cases: the dispatcher's decision stands if this fails."""
+        memory = self._deps.corrections
+        if memory is None or before.priority is None or before.priority == priority:
+            return
+        correction = PastCorrection(
+            summary=mask_phones(before.english_summary or ""),
+            first_priority=before.priority,
+            corrected_priority=priority,
+            reason=mask_phones(reason),
+        )
+        try:
+            memory.remember(correction)
+        except Exception as error:
+            logger.warning("correction not remembered: %s", type(error).__name__)
 
     def _as_location_reply(self, message: InboundMessage) -> MessageRecord | None:
         """Resume a case waiting for its location, if this message answers the question."""
