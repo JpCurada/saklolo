@@ -16,7 +16,7 @@ def by_step(trace: list[TraceStep]) -> dict[str, TraceStep]:
 def test_every_step_is_recorded_in_graph_order_with_the_model_named() -> None:
     deps = replace(fake_deps(fake_model()), model_id="apac.amazon.nova-lite-v1:0")
 
-    trace = run_pipeline(message("nasa bubong na kami may baby 09171234567"), deps).trace
+    trace = run_pipeline(message("nasa bubong na kami may baby 09170000000"), deps).trace
 
     assert [s.step for s in trace] == STEP_ORDER
     assert [s.step for s in trace if s.status == TraceStatus.SKIPPED] == ["escalate"]

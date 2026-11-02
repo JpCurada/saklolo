@@ -63,7 +63,7 @@ def test_a_past_date_is_enough_to_flag() -> None:
         "parang ulysses na naman, nasa bubong na kami sto nino purok 1",
         "Calumpang, same spot nung Ulysses, lola and me on the roof now",
         "2 storey house, nasa 2nd floor kami, 7 persons",
-        "nasa bubong kami 09171234567 tulong",
+        "nasa bubong kami 09170000000 tulong",
     ],
 )
 def test_a_storm_name_numbers_or_a_phone_number_are_not_flagged(text: str) -> None:
@@ -85,9 +85,9 @@ def test_spam_and_recycled_reasons_are_both_kept() -> None:
 def test_the_archive_sees_the_text_with_phone_numbers_masked() -> None:
     archive = FakeArchive(None)
 
-    run("nasa bubong kami 09171234567", archive)
+    run("nasa bubong kami 09170000000", archive)
 
-    assert archive.texts and "09171234567" not in archive.texts[0]
+    assert archive.texts and "09170000000" not in archive.texts[0]
 
 
 def test_past_year_reads_years_and_dates_but_not_this_year() -> None:

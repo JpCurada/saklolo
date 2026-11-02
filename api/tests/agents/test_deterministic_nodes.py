@@ -28,11 +28,11 @@ def test_normalize_collapses_whitespace_and_masks_phones() -> None:
 @pytest.mark.parametrize(
     "text",
     [
-        "09171234567",
+        "09170000000",
         "0917 123 4567",
         "0917-123-4567",
         "+63 917 123 4567",
-        "639171234567",
+        "639170000000",
     ],
 )
 def test_every_common_phone_format_is_masked(text: str) -> None:

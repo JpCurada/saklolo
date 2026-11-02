@@ -70,7 +70,7 @@ def test_household_spanning_two_splits_is_rejected() -> None:
 
 
 def test_real_looking_phone_number_in_text_is_rejected() -> None:
-    problems = problems_for(message("msg-0001", "rescue", 9, text="call 09171234567"))
+    problems = problems_for(message("msg-0001", "rescue", 9, text="call 09170000000"))
 
     assert any("outside the fake range" in p for p in problems)
 

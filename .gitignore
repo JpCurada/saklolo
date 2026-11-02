@@ -52,3 +52,6 @@ design/screenshots/*.png
 Thumbs.db
 .idea/
 .vscode/
+
+# Agent worktrees
+.claude/worktrees/

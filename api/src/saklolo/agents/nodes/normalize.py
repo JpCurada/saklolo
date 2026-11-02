@@ -5,8 +5,8 @@ import unicodedata
 
 from saklolo.agents.state import PipelineState
 
-# PH mobile numbers as people type them: 09171234567, 0917 123 4567,
-# 0917-123-4567, +63 917 123 4567, 639171234567.
+# PH mobile numbers as people type them: 09170000000, 0917 123 4567,
+# 0917-123-4567, +63 917 123 4567, 639170000000.
 PHONE = re.compile(r"(?<!\d)(?:\+?63|0)[\s-]?9\d{2}[\s-]?\d{3}[\s-]?\d{4}(?!\d)")
 PHONE_MASK = "[phone]"
 
