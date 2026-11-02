@@ -32,9 +32,9 @@ class Settings(BaseSettings):
     embedding_region: str = "us-east-1"
     location_region: str = "ap-southeast-2"
 
-    # Dedupe (ADR 0003): tune on the dev split only. 0.65 sits between a probe's
-    # same-household pair (0.75) and an unrelated pair (0.40) with Titan V2 at 256 dims.
-    dedupe_similarity_threshold: float = Field(default=0.65, ge=0.0, le=1.0)
+    # Dedupe (ADR 0003): tune on the dev split only. 0.85 won notebook 02's sweep:
+    # no neighboring households merged, best F1 (Titan V2, 256 dims).
+    dedupe_similarity_threshold: float = Field(default=0.85, ge=0.0, le=1.0)
     dedupe_window_hours: float = Field(default=12.0, gt=0)
     dedupe_radius_km: float = Field(default=1.5, gt=0)
 
