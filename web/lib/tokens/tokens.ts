@@ -60,7 +60,10 @@ export const tokens = {
     "phone-messenger-out-fg": "var(--sk-color-phone-messenger-out-fg)",
     "phone-messenger-in": "var(--sk-color-phone-messenger-in)",
     "phone-messenger-in-fg": "var(--sk-color-phone-messenger-in-fg)",
-    "phone-messenger-accent": "var(--sk-color-phone-messenger-accent)"
+    "phone-messenger-accent": "var(--sk-color-phone-messenger-accent)",
+    "map-hazard-low": "var(--sk-color-map-hazard-low)",
+    "map-hazard-medium": "var(--sk-color-map-hazard-medium)",
+    "map-hazard-high": "var(--sk-color-map-hazard-high)"
   },
   "space": {
     "0": "var(--sk-space-0)",

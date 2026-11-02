@@ -8,6 +8,7 @@ from saklolo.domain.ports import (
     CaseStore,
     Embedder,
     Escalation,
+    FloodHazardMap,
     Geocoder,
     PostArchive,
     StructuredModel,
@@ -30,3 +31,5 @@ class PipelineDeps:
     escalation_model_id: str = ""
     # Known past-typhoon posts, for spotting recycled ones; None skips that check.
     archive: PostArchive | None = None
+    # Project NOAH's flood map: context for the dispatcher, never a flag.
+    flood_map: FloodHazardMap | None = None

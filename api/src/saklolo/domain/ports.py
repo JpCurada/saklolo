@@ -92,3 +92,9 @@ class ArchiveMatch:
 
 class PostArchive(Protocol):
     def match(self, text: str) -> ArchiveMatch | None: ...
+
+
+class FloodHazardMap(Protocol):
+    def level_at(self, lat: float, lng: float) -> int | None:
+        """0 none, 1 low, 2 medium, 3 high; None outside the map."""
+        ...

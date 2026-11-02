@@ -126,9 +126,8 @@ def _verify(state: PipelineState, _: PipelineDeps) -> Described:
         notes.append(f"Possible old post: {state.recycled_note}")
     if state.sender_note:
         notes.append(f"Unusual sender: {state.sender_note}")
-    if notes:
-        return f"{'; '.join(notes)}. Flagged, still shown", None
-    return "No sign of an old post", None
+    verdict = f"{'; '.join(notes)}. Flagged, still shown" if notes else "No sign of an old post"
+    return (f"{verdict} · {state.flood_note}" if state.flood_note else verdict), None
 
 
 def _triage(state: PipelineState, deps: PipelineDeps) -> Described:

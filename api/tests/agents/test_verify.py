@@ -130,3 +130,19 @@ def test_a_follow_up_in_the_same_barangay_stays_in_the_case() -> None:
     first, second = reports_from_one_sender("Malanday", "Malanday")
 
     assert first.case_id == second.case_id
+
+
+def test_the_flood_map_adds_context_but_never_flags() -> None:
+    class Dry:
+        def level_at(self, lat: float, lng: float) -> int:
+            return 0
+
+    deps = replace(fake_deps(fake_model()), flood_map=Dry())
+
+    state = run_pipeline(message("nasa bubong kami sa Malanday"), deps)
+
+    assert not state.outcome(0.75).is_suspicious
+    assert step(state, "verify").detail == (
+        "No sign of an old post · "
+        "Flood map: no mapped hazard at this point (100-year, Project NOAH)"
+    )

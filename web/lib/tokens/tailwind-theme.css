@@ -61,6 +61,9 @@
   --color-phone-messenger-in: var(--sk-color-phone-messenger-in);
   --color-phone-messenger-in-fg: var(--sk-color-phone-messenger-in-fg);
   --color-phone-messenger-accent: var(--sk-color-phone-messenger-accent);
+  --color-map-hazard-low: var(--sk-color-map-hazard-low);
+  --color-map-hazard-medium: var(--sk-color-map-hazard-medium);
+  --color-map-hazard-high: var(--sk-color-map-hazard-high);
   --spacing-0: var(--sk-space-0);
   --spacing-1: var(--sk-space-1);
   --spacing-2: var(--sk-space-2);

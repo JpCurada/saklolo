@@ -54,6 +54,7 @@ class PipelineState:
     suspicion_reasons: list[SuspicionReason] = field(default_factory=list)
     recycled_note: str = ""
     sender_note: str = ""
+    flood_note: str = ""
     extraction: ExtractedRequest | None = None
     location: Location = UNKNOWN_LOCATION
     asks_location: bool = False

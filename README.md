@@ -6,7 +6,7 @@ urgent households first. A named human dispatcher always decides who gets sent;
 the system never closes a case or tells a resident help is coming on its own.**
 
 Built with the [Strands Agents SDK](https://strandsagents.com) on AWS for the
-"Strands SDK: Workshop to Ship" hackathon. Copyright 2026 John Paul Curada, licensed under [Apache-2.0](LICENSE).
+"Strands SDK: Workshop to Ship" hackathon. Copyright 2026 John Paul Curada, licensed under [Apache-2.0](LICENSE). Flood-hazard data in `data/hazard/` is from Project NOAH and its contributors, under [ODC-ODbL 1.0](data/hazard/README.md).
 
 ## What happens to a message
 
@@ -47,7 +47,7 @@ Promises enforced in code and tests:
 | Area | Built | Planned |
 |---|---|---|
 | Agents | Strands Graph with conditional edges; Strands Swarm escalation with typed tools; ask-back pause and resume across messages | Escalation on conflicting reports; calibration from dispatcher overrides with AgentCore Memory |
-| Verification | Recycled-post check (known old posts, past dates); sender-pattern check; Corroborated badge for 2+ senders | Flood-hazard-map plausibility |
+| Verification | Recycled-post check (known old posts, past dates); sender-pattern check; Project NOAH flood-hazard map layer and context; Corroborated badge for 2+ senders | Flood-hazard plausibility flag (needs house-level locations) |
 | AWS services | Bedrock (Nova Lite, Titan Text Embeddings V2), Amazon Location Places, DynamoDB (cases, messages, decisions) | AgentCore Runtime and Observability; API Gateway, SQS, and Lambda intake; End User Messaging SMS |
 | Channels | Telegram (long polling), Messenger (signed webhook), and simulated resident phones for demos | Real SMS intake: no two-way SMS in the Philippines through AWS (ADR 0001) |
 | Dashboard | Queue, human review lane, case detail with map, agent trace, decision history, dispatcher on duty, design system with visual regression tests | Sign-in (Amazon Cognito); delivery receipts and team status updates |

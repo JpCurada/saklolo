@@ -21,6 +21,12 @@ from saklolo.domain.models import SuspicionReason
 
 FIRST_YEAR = 1990
 MANY_BARANGAYS = 3
+HAZARD_LABEL = {
+    0: "no mapped hazard at this point",
+    1: "low hazard here",
+    2: "medium hazard here",
+    3: "high hazard here",
+}
 YEAR = re.compile(r"(?<![\d/.-])(19\d{2}|20\d{2})(?![\d/.-]?\d)")
 DATE_YEAR = re.compile(r"\b\d{1,2}[/.-]\d{1,2}[/.-]((?:19|20)\d{2})\b")
 
@@ -28,6 +34,17 @@ DATE_YEAR = re.compile(r"\b\d{1,2}[/.-]\d{1,2}[/.-]((?:19|20)\d{2})\b")
 def verify(state: PipelineState, deps: PipelineDeps) -> None:
     _check_old_post(state, deps)
     _check_sender(state, deps)
+    _note_flood_hazard(state, deps)
+
+
+def _note_flood_hazard(state: PipelineState, deps: PipelineDeps) -> None:
+    """Context only. Locations are barangay centers, too rough to call a report implausible."""
+    lat, lng = state.location.lat, state.location.lng
+    if deps.flood_map is None or lat is None or lng is None:
+        return
+    level = deps.flood_map.level_at(lat, lng)
+    if level is not None:
+        state.flood_note = f"Flood map: {HAZARD_LABEL[level]} (100-year, Project NOAH)"
 
 
 def _check_sender(state: PipelineState, deps: PipelineDeps) -> None:

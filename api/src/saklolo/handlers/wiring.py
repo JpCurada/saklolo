@@ -11,6 +11,7 @@ from saklolo.adapters.archive import JsonlPostArchive
 from saklolo.adapters.call_cache import CachingEmbedder, CachingStructuredModel, JsonlCache
 from saklolo.adapters.dynamodb import DynamoCaseStore, DynamoDispatchStore
 from saklolo.adapters.geocode_cache import CachedGeocoder
+from saklolo.adapters.hazard import GeoJsonFloodMap
 from saklolo.adapters.memory import InMemoryCaseStore
 from saklolo.adapters.offline import NoGeocoder, UnrecordedEmbedder, UnrecordedModel
 from saklolo.adapters.strands_model import StrandsStructuredModel, bedrock_model
@@ -26,6 +27,9 @@ from saklolo.domain.ports import CaseStore, Embedder, StructuredModel
 MODEL_CALLS_FILE = "model_calls.jsonl"
 EMBEDDINGS_FILE = "embeddings.jsonl"
 MANIFEST_FILE = "manifest.json"
+
+
+FLOOD_MAP = REPO_ROOT / "data" / "hazard" / "marikina-flood-100yr.geojson"
 
 
 def dedupe_policy(settings: Settings) -> DedupePolicy:
@@ -78,6 +82,7 @@ def build_pipeline_deps(
         escalation=escalation,
         escalation_model_id=escalation_model_id,
         archive=JsonlPostArchive(REPO_ROOT / "data" / "archive.jsonl"),
+        flood_map=GeoJsonFloodMap(FLOOD_MAP),
     )
 
 
@@ -115,6 +120,7 @@ def recorded_deps(
         prompts=PromptSet.default(),
         model_id=f"{model_id} (recorded)",
         archive=JsonlPostArchive(REPO_ROOT / "data" / "archive.jsonl"),
+        flood_map=GeoJsonFloodMap(FLOOD_MAP),
     )
 
 

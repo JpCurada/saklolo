@@ -5,11 +5,14 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import type { Map as MapLibreMap, Marker } from "maplibre-gl";
 import { useEffect, useRef } from "react";
 
+import { Text } from "@/components/ui";
 import type { CaseView } from "@/lib/api/types";
 
 const MARIKINA: [number, number] = [121.1, 14.65];
 // Copied from the installed package by scripts/copy-map-worker.mjs.
 const WORKER_URL = "/maplibre-gl-worker.mjs";
+const FLOOD_MAP_URL = "/assets/hazard/marikina-flood-100yr.geojson";
+const FLOOD_ATTRIBUTION = "Flood hazard: Project NOAH (ODbL)";
 
 // OpenStreetMap raster tiles: no API key; attribution is required and shown.
 const STYLE = {
@@ -36,6 +39,22 @@ interface CaseMapProps {
   onSelect: (caseId: string) => void;
 }
 
+/** Project NOAH's 100-year flood hazard, under the pins. MapLibre can't read CSS variables. */
+function addFloodLayer(map: MapLibreMap) {
+  const token = (name: string) =>
+    getComputedStyle(document.documentElement).getPropertyValue(`--sk-color-map-hazard-${name}`);
+  map.addSource("flood", { type: "geojson", data: FLOOD_MAP_URL, attribution: FLOOD_ATTRIBUTION });
+  map.addLayer({
+    id: "flood",
+    type: "fill",
+    source: "flood",
+    paint: {
+      "fill-opacity": 0.45,
+      "fill-color": ["match", ["get", "level"], 3, token("high"), 2, token("medium"), token("low")],
+    },
+  });
+}
+
 /** Every located open case as a pin; the selected one is larger and centred. */
 export function CaseMap({ cases, selectedId, onSelect }: CaseMapProps) {
   const container = useRef<HTMLDivElement>(null);
@@ -53,12 +72,14 @@ export function CaseMap({ cases, selectedId, onSelect }: CaseMapProps) {
       if (cancelled || !container.current) return;
       maplibregl.setWorkerUrl(WORKER_URL);
       markerClass.current = maplibregl.Marker;
-      map.current = new maplibregl.Map({
+      const created = new maplibregl.Map({
         container: container.current,
         style: STYLE,
         center: MARIKINA,
         zoom: 13,
       });
+      created.on("load", () => addFloodLayer(created));
+      map.current = created;
     });
     return () => {
       cancelled = true;
@@ -99,7 +120,24 @@ export function CaseMap({ cases, selectedId, onSelect }: CaseMapProps) {
     }
   });
 
-  return <div ref={container} data-testid="case-map" className="h-full w-full" />;
+  return (
+    <div className="relative h-full w-full">
+      <div ref={container} data-testid="case-map" className="h-full w-full" />
+      <dl data-testid="flood-legend" className="sk-map-legend">
+        <dt>
+          <Text variant="caption-bold">Flood hazard</Text>
+        </dt>
+        {(["low", "medium", "high"] as const).map((level) => (
+          <dd key={level} className="flex items-center gap-1">
+            <span aria-hidden className={`sk-map-swatch sk-map-swatch-${level}`} />
+            <Text variant="caption" tone="muted">
+              {level}
+            </Text>
+          </dd>
+        ))}
+      </dl>
+    </div>
+  );
 }
 
 function pinElement(caseId: string, onSelect: (caseId: string) => void) {
