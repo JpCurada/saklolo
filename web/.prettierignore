@@ -1,0 +1,5 @@
+.next
+node_modules
+lib/api/schema.d.ts
+lib/api/openapi.json
+public

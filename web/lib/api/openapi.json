@@ -1,0 +1,1223 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Saklolo demo API",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Health",
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object",
+                  "title": "Response Health Health Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/messages": {
+      "get": {
+        "tags": [
+          "messages"
+        ],
+        "summary": "Messages",
+        "operationId": "messages_messages_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/MessageRecord"
+                  },
+                  "type": "array",
+                  "title": "Response Messages Messages Get"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "messages"
+        ],
+        "summary": "Receive",
+        "operationId": "receive_messages_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MessageIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReceiveResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/outbox": {
+      "get": {
+        "tags": [
+          "messages"
+        ],
+        "summary": "Sent",
+        "operationId": "sent_outbox_get",
+        "parameters": [
+          {
+            "name": "recipient",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Recipient"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OutboundMessage"
+                  },
+                  "title": "Response Sent Outbox Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cases": {
+      "get": {
+        "tags": [
+          "cases"
+        ],
+        "summary": "Cases",
+        "operationId": "cases_cases_get",
+        "parameters": [
+          {
+            "name": "include_closed",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false,
+              "title": "Include Closed"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CaseView"
+                  },
+                  "title": "Response Cases Cases Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cases/{case_id}": {
+      "get": {
+        "tags": [
+          "cases"
+        ],
+        "summary": "Case",
+        "operationId": "case_cases__case_id__get",
+        "parameters": [
+          {
+            "name": "case_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Case Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CaseView"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cases/{case_id}/assign": {
+      "post": {
+        "tags": [
+          "cases"
+        ],
+        "summary": "Assign",
+        "operationId": "assign_cases__case_id__assign_post",
+        "parameters": [
+          {
+            "name": "case_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Case Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssignIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CaseView"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cases/{case_id}/override": {
+      "post": {
+        "tags": [
+          "cases"
+        ],
+        "summary": "Override",
+        "operationId": "override_cases__case_id__override_post",
+        "parameters": [
+          {
+            "name": "case_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Case Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OverrideIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CaseView"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cases/{case_id}/confirm-safe": {
+      "post": {
+        "tags": [
+          "cases"
+        ],
+        "summary": "Confirm Safe",
+        "operationId": "confirm_safe_cases__case_id__confirm_safe_post",
+        "parameters": [
+          {
+            "name": "case_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Case Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CaseView"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/replay": {
+      "get": {
+        "tags": [
+          "replay"
+        ],
+        "summary": "Replay Status",
+        "operationId": "replay_status_replay_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReplayStatus"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "replay"
+        ],
+        "summary": "Start Replay",
+        "operationId": "start_replay_replay_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReplayIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReplayStatus"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "replay"
+        ],
+        "summary": "Stop Replay",
+        "operationId": "stop_replay_replay_delete",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReplayStatus"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AssignIn": {
+        "properties": {
+          "team": {
+            "type": "string",
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Team"
+          }
+        },
+        "type": "object",
+        "required": [
+          "team"
+        ],
+        "title": "AssignIn"
+      },
+      "Badge": {
+        "type": "string",
+        "enum": [
+          "corroborated",
+          "suspicious",
+          "reported_safe",
+          "awaiting_location",
+          "needs_review",
+          "overridden"
+        ],
+        "title": "Badge"
+      },
+      "CaseStatus": {
+        "type": "string",
+        "enum": [
+          "open",
+          "assigned",
+          "closed"
+        ],
+        "title": "CaseStatus"
+      },
+      "CaseView": {
+        "properties": {
+          "case_id": {
+            "type": "string",
+            "title": "Case Id"
+          },
+          "status": {
+            "$ref": "#/components/schemas/CaseStatus"
+          },
+          "priority": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Priority"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "priority_overridden": {
+            "type": "boolean",
+            "title": "Priority Overridden"
+          },
+          "reason": {
+            "type": "string",
+            "title": "Reason"
+          },
+          "english_summary": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "English Summary"
+          },
+          "location": {
+            "$ref": "#/components/schemas/Location"
+          },
+          "people_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "People Count"
+          },
+          "vulnerable": {
+            "items": {
+              "$ref": "#/components/schemas/Vulnerability"
+            },
+            "type": "array",
+            "title": "Vulnerable"
+          },
+          "water_level": {
+            "$ref": "#/components/schemas/WaterLevel"
+          },
+          "medical_emergency": {
+            "type": "boolean",
+            "title": "Medical Emergency"
+          },
+          "badges": {
+            "items": {
+              "$ref": "#/components/schemas/Badge"
+            },
+            "type": "array",
+            "title": "Badges"
+          },
+          "assigned_team": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Assigned Team"
+          },
+          "opened_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Opened At"
+          },
+          "last_seen": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Last Seen"
+          },
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/SourceView"
+            },
+            "type": "array",
+            "title": "Sources"
+          }
+        },
+        "type": "object",
+        "required": [
+          "case_id",
+          "status",
+          "priority",
+          "priority_overridden",
+          "reason",
+          "english_summary",
+          "location",
+          "people_count",
+          "vulnerable",
+          "water_level",
+          "medical_emergency",
+          "badges",
+          "assigned_team",
+          "opened_at",
+          "last_seen",
+          "sources"
+        ],
+        "title": "CaseView"
+      },
+      "Channel": {
+        "type": "string",
+        "enum": [
+          "sms",
+          "messenger",
+          "web"
+        ],
+        "title": "Channel"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "InboundMessage": {
+        "properties": {
+          "sender": {
+            "type": "string",
+            "title": "Sender"
+          },
+          "text": {
+            "type": "string",
+            "title": "Text"
+          },
+          "channel": {
+            "$ref": "#/components/schemas/Channel"
+          },
+          "received_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Received At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "sender",
+          "text",
+          "channel",
+          "received_at"
+        ],
+        "title": "InboundMessage",
+        "description": "What every channel adapter sends to intake (ADR 0001)."
+      },
+      "Location": {
+        "properties": {
+          "barangay": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Barangay"
+          },
+          "lat": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lat"
+          },
+          "lng": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lng"
+          },
+          "source": {
+            "$ref": "#/components/schemas/LocationSource",
+            "default": "unknown"
+          }
+        },
+        "type": "object",
+        "required": [
+          "barangay"
+        ],
+        "title": "Location"
+      },
+      "LocationSource": {
+        "type": "string",
+        "enum": [
+          "text",
+          "geocoder",
+          "reply",
+          "unknown"
+        ],
+        "title": "LocationSource"
+      },
+      "MessageIn": {
+        "properties": {
+          "sender": {
+            "type": "string",
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Sender"
+          },
+          "text": {
+            "type": "string",
+            "maxLength": 1600,
+            "minLength": 1,
+            "title": "Text"
+          },
+          "channel": {
+            "$ref": "#/components/schemas/Channel",
+            "default": "web"
+          },
+          "received_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Received At",
+            "description": "Defaults to now"
+          }
+        },
+        "type": "object",
+        "required": [
+          "sender",
+          "text"
+        ],
+        "title": "MessageIn"
+      },
+      "MessageRecord": {
+        "properties": {
+          "message_id": {
+            "type": "string",
+            "title": "Message Id"
+          },
+          "message": {
+            "$ref": "#/components/schemas/InboundMessage"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/ReceiveKind"
+          },
+          "outcome": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TriageOutcome"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "case_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Case Id"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          }
+        },
+        "type": "object",
+        "required": [
+          "message_id",
+          "message",
+          "kind",
+          "outcome",
+          "case_id"
+        ],
+        "title": "MessageRecord",
+        "description": "One received message and what the pipeline made of it."
+      },
+      "OutboundMessage": {
+        "properties": {
+          "recipient": {
+            "type": "string",
+            "title": "Recipient"
+          },
+          "body": {
+            "type": "string",
+            "title": "Body"
+          },
+          "sent_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Sent At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "recipient",
+          "body",
+          "sent_at"
+        ],
+        "title": "OutboundMessage",
+        "description": "A text sent to a resident (through the Notifier port)."
+      },
+      "OverrideIn": {
+        "properties": {
+          "priority": {
+            "$ref": "#/components/schemas/Priority"
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 1600,
+            "minLength": 1,
+            "title": "Reason"
+          }
+        },
+        "type": "object",
+        "required": [
+          "priority",
+          "reason"
+        ],
+        "title": "OverrideIn"
+      },
+      "Priority": {
+        "type": "string",
+        "enum": [
+          "P1",
+          "P2",
+          "P3",
+          "P4"
+        ],
+        "title": "Priority"
+      },
+      "ReceiveKind": {
+        "type": "string",
+        "enum": [
+          "triaged",
+          "location_reply"
+        ],
+        "title": "ReceiveKind"
+      },
+      "ReceiveResult": {
+        "properties": {
+          "record": {
+            "$ref": "#/components/schemas/MessageRecord"
+          },
+          "replies": {
+            "items": {
+              "$ref": "#/components/schemas/OutboundMessage"
+            },
+            "type": "array",
+            "title": "Replies"
+          }
+        },
+        "type": "object",
+        "required": [
+          "record",
+          "replies"
+        ],
+        "title": "ReceiveResult"
+      },
+      "ReplayIn": {
+        "properties": {
+          "split": {
+            "type": "string",
+            "pattern": "^(dev|calibration)$",
+            "title": "Split",
+            "default": "dev"
+          },
+          "speed": {
+            "type": "number",
+            "exclusiveMinimum": 0.0,
+            "title": "Speed",
+            "description": "Storm seconds per real second",
+            "default": 3600.0
+          },
+          "max_delay_s": {
+            "type": "number",
+            "maximum": 30.0,
+            "minimum": 0.0,
+            "title": "Max Delay S",
+            "default": 2.0
+          }
+        },
+        "type": "object",
+        "title": "ReplayIn"
+      },
+      "ReplayStatus": {
+        "properties": {
+          "running": {
+            "type": "boolean",
+            "title": "Running"
+          },
+          "split": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Split"
+          },
+          "sent": {
+            "type": "integer",
+            "title": "Sent"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          }
+        },
+        "type": "object",
+        "required": [
+          "running",
+          "split",
+          "sent",
+          "total"
+        ],
+        "title": "ReplayStatus"
+      },
+      "SourceView": {
+        "properties": {
+          "message_id": {
+            "type": "string",
+            "title": "Message Id"
+          },
+          "sender": {
+            "type": "string",
+            "title": "Sender"
+          },
+          "channel": {
+            "$ref": "#/components/schemas/Channel"
+          },
+          "received_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Received At"
+          },
+          "text": {
+            "type": "string",
+            "title": "Text",
+            "description": "The resident's original words"
+          },
+          "english_summary": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "English Summary"
+          },
+          "priority": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Priority"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "message_id",
+          "sender",
+          "channel",
+          "received_at",
+          "text",
+          "english_summary",
+          "priority"
+        ],
+        "title": "SourceView"
+      },
+      "SuspicionReason": {
+        "type": "string",
+        "enum": [
+          "recycled",
+          "implausible_location",
+          "spam_pattern"
+        ],
+        "title": "SuspicionReason"
+      },
+      "TriageOutcome": {
+        "properties": {
+          "priority": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Priority"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "None when the message closes a case or is spam"
+          },
+          "is_suspicious": {
+            "type": "boolean",
+            "title": "Is Suspicious"
+          },
+          "suspicion_reasons": {
+            "items": {
+              "$ref": "#/components/schemas/SuspicionReason"
+            },
+            "type": "array",
+            "title": "Suspicion Reasons"
+          },
+          "case_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Case Id",
+            "description": "None for messages that aren't about a household"
+          },
+          "location": {
+            "$ref": "#/components/schemas/Location"
+          },
+          "ask_back_question": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ask Back Question",
+            "description": "Set when the location must be asked"
+          },
+          "english_summary": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "English Summary"
+          },
+          "people_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "People Count"
+          },
+          "vulnerable": {
+            "items": {
+              "$ref": "#/components/schemas/Vulnerability"
+            },
+            "type": "array",
+            "title": "Vulnerable"
+          },
+          "water_level": {
+            "$ref": "#/components/schemas/WaterLevel",
+            "default": "unknown"
+          },
+          "medical_emergency": {
+            "type": "boolean",
+            "title": "Medical Emergency",
+            "default": false
+          },
+          "reports_safe": {
+            "type": "boolean",
+            "title": "Reports Safe",
+            "default": false
+          },
+          "reason": {
+            "type": "string",
+            "title": "Reason"
+          },
+          "confidence": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Confidence"
+          },
+          "needs_escalation": {
+            "type": "boolean",
+            "title": "Needs Escalation"
+          }
+        },
+        "type": "object",
+        "required": [
+          "priority",
+          "is_suspicious",
+          "case_id",
+          "location",
+          "ask_back_question",
+          "english_summary",
+          "reason",
+          "confidence",
+          "needs_escalation"
+        ],
+        "title": "TriageOutcome",
+        "description": "What the pipeline hands to the dispatch queue for one message."
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      },
+      "Vulnerability": {
+        "type": "string",
+        "enum": [
+          "infant",
+          "senior",
+          "pwd",
+          "pregnant",
+          "injured"
+        ],
+        "title": "Vulnerability"
+      },
+      "WaterLevel": {
+        "type": "string",
+        "enum": [
+          "roof",
+          "neck",
+          "chest",
+          "waist",
+          "knee",
+          "unknown"
+        ],
+        "title": "WaterLevel"
+      }
+    }
+  }
+}

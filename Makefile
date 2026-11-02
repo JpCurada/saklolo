@@ -1,4 +1,4 @@
-.PHONY: help install fmt lint test eval demo plan notebooks video-capture
+.PHONY: help install fmt lint test eval demo plan api-types notebooks video-capture
 
 API := api
 WEB := web
@@ -36,6 +36,10 @@ demo: ## Local demo API on :8000 (cached model calls); POST /replay to load the 
 plan: ## terraform plan for infra/
 	terraform -chdir=$(INFRA) init -backend-config=backend.hcl
 	terraform -chdir=$(INFRA) plan -var-file=terraform.tfvars
+
+api-types: ## Regenerate the web client's types from the API schema
+	cd $(API) && uv run python -m saklolo.handlers.openapi_export ../$(WEB)/lib/api/openapi.json
+	cd $(WEB) && npm run gen:api
 
 notebooks: ## Install notebook dependencies into api/.venv
 	cd $(API) && uv sync --group notebooks
