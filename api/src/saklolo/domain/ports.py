@@ -7,7 +7,7 @@ from typing import Protocol
 from pydantic import BaseModel
 
 from saklolo.domain.cases import Case
-from saklolo.domain.models import InboundMessage, Location
+from saklolo.domain.models import InboundMessage, Location, TriageDecision
 
 
 class MessageQueue(Protocol):
@@ -56,3 +56,26 @@ class CaseStore(Protocol):
     def save(self, case: Case) -> None: ...
 
     def next_id(self) -> str: ...
+
+
+@dataclass(frozen=True)
+class PlaceLookup:
+    """One place lookup a reviewer made, and what the geocoder answered."""
+
+    query: str
+    location: Location | None  # None: nothing found, or the service was down
+    unavailable: bool = False
+
+
+@dataclass(frozen=True)
+class EscalationReview:
+    """A second opinion on one low-confidence triage."""
+
+    decision: TriageDecision | None  # None: the reviewers didn't submit one
+    agents: tuple[str, ...]  # who worked on it, in handoff order
+    usage: ModelUsage
+    lookups: tuple[PlaceLookup, ...] = ()
+
+
+class Escalation(Protocol):
+    def review(self, brief: str) -> EscalationReview: ...

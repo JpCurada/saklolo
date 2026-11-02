@@ -48,6 +48,9 @@ class PipelineState:
     usage: list[ModelUsage] = field(default_factory=list)
     dedupe_similarity: float | None = None  # set when merged into an existing case
     dedupe_same_sender: bool = False
+    escalation_agents: list[str] = field(default_factory=list)
+    escalation_note: str = ""
+    escalation_lookups: list[str] = field(default_factory=list)
     trace: list[TraceStep] = field(default_factory=list)
 
     def outcome(self, escalation_threshold: float) -> TriageOutcome:

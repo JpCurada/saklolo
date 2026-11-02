@@ -13,6 +13,7 @@ from saklolo.adapters.memory import InMemoryCaseStore
 from saklolo.adapters.strands_model import StrandsStructuredModel, bedrock_model
 from saklolo.adapters.titan import EMBEDDING_DIMENSIONS, TitanEmbedder
 from saklolo.agents.deps import PipelineDeps
+from saklolo.agents.escalation import StrandsSwarmEscalation
 from saklolo.agents.prompts import PromptSet
 from saklolo.config import Settings
 from saklolo.domain.cases import DedupePolicy
@@ -51,20 +52,24 @@ def build_pipeline_deps(
             f"{settings.embedding_model_id}:{EMBEDDING_DIMENSIONS}",
         )
     geocode_store: dict[str, Location | None] = {}
+    geocoder = CachedGeocoder(
+        AmazonLocationGeocoder(session.client("geo-places", region_name=settings.location_region)),
+        geocode_store,
+    )
+    # The Swarm uses the strong model when one is set (ADR 0002), else the fast one.
+    escalation_model_id = settings.strong_model_id or settings.fast_model_id
+    escalation = StrandsSwarmEscalation(bedrock_model(settings, escalation_model_id), geocoder)
     return PipelineDeps(
         model=model,
-        geocoder=CachedGeocoder(
-            AmazonLocationGeocoder(
-                session.client("geo-places", region_name=settings.location_region)
-            ),
-            geocode_store,
-        ),
+        geocoder=geocoder,
         embedder=embedder,
         cases=cases or InMemoryCaseStore(),
         dedupe=dedupe_policy(settings),
         escalation_threshold=settings.escalation_threshold,
         prompts=prompts or PromptSet.default(),
         model_id=settings.fast_model_id,
+        escalation=escalation,
+        escalation_model_id=escalation_model_id,
     )
 
 

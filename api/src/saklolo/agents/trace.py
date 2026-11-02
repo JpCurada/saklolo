@@ -9,7 +9,7 @@ from saklolo.agents.state import PipelineState, PrefilterVerdict
 from saklolo.domain.models import LocationSource, TraceStatus, TraceStep
 
 # Graph order, so skipped steps can be listed where they would have run.
-STEP_ORDER = ["normalize", "prefilter", "extract", "geolocate", "dedupe", "triage"]
+STEP_ORDER = ["normalize", "prefilter", "extract", "geolocate", "dedupe", "triage", "escalate"]
 
 
 def record(
@@ -23,7 +23,10 @@ def record(
     called_model = len(state.usage) > model_calls_before
     detail, service = _DESCRIBE[step](state, deps)
     if called_model:
-        service = f"Bedrock · {deps.model_id}" if deps.model_id else "Bedrock"
+        model_id = deps.escalation_model_id if step == "escalate" else deps.model_id
+        service = f"Bedrock · {model_id}" if model_id else "Bedrock"
+        if step == "escalate":
+            service = f"Strands Swarm · {service}"
     state.trace.append(
         TraceStep(
             step=step,
@@ -38,16 +41,21 @@ def record(
 def with_skipped(state: PipelineState) -> list[TraceStep]:
     """The trace in graph order, with the steps that didn't run and why."""
     ran = {step.step: step for step in state.trace}
-    reason = (
-        "Skipped: spam stops before any model call"
-        if state.verdict == PrefilterVerdict.SPAM
-        else "Skipped"
-    )
     return [
         ran.get(step)
-        or TraceStep(step=step, status=TraceStatus.SKIPPED, duration_ms=0, detail=reason)
+        or TraceStep(
+            step=step, status=TraceStatus.SKIPPED, duration_ms=0, detail=_skip_reason(step, state)
+        )
         for step in STEP_ORDER
     ]
+
+
+def _skip_reason(step: str, state: PipelineState) -> str:
+    if state.verdict == PrefilterVerdict.SPAM:
+        return "Skipped: spam stops before any model call"
+    if step == "escalate" and state.decision is not None:
+        return "Not needed: triage was confident"
+    return "Skipped"
 
 
 Described = tuple[str, str | None]
@@ -118,6 +126,15 @@ def _triage(state: PipelineState, deps: PipelineDeps) -> Described:
     )
 
 
+def _escalate(state: PipelineState, _: PipelineDeps) -> Described:
+    parts = [state.escalation_note]
+    if state.escalation_agents:
+        parts.append(" → ".join(state.escalation_agents))
+    if state.escalation_lookups:
+        parts.append("Looked up " + "; ".join(state.escalation_lookups))
+    return " · ".join(parts), None
+
+
 _DESCRIBE = {
     "normalize": _normalize,
     "prefilter": _prefilter,
@@ -125,4 +142,5 @@ _DESCRIBE = {
     "geolocate": _geolocate,
     "dedupe": _dedupe,
     "triage": _triage,
+    "escalate": _escalate,
 }

@@ -4,7 +4,7 @@ from dataclasses import dataclass, field
 
 from saklolo.agents.prompts import PromptSet
 from saklolo.domain.cases import DedupePolicy
-from saklolo.domain.ports import CaseStore, Embedder, Geocoder, StructuredModel
+from saklolo.domain.ports import CaseStore, Embedder, Escalation, Geocoder, StructuredModel
 
 
 @dataclass(frozen=True)
@@ -18,3 +18,6 @@ class PipelineDeps:
     prompts: PromptSet = field(default_factory=PromptSet.default)
     # Shown in the agent trace next to steps that called the model.
     model_id: str = ""
+    # Low-confidence triage gets a Swarm review; None sends it straight to a human.
+    escalation: Escalation | None = None
+    escalation_model_id: str = ""

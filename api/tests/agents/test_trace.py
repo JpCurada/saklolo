@@ -19,7 +19,8 @@ def test_every_step_is_recorded_in_graph_order_with_the_model_named() -> None:
     trace = run_pipeline(message("nasa bubong na kami may baby 09171234567"), deps).trace
 
     assert [s.step for s in trace] == STEP_ORDER
-    assert all(s.status == TraceStatus.RAN for s in trace)
+    assert [s.step for s in trace if s.status == TraceStatus.SKIPPED] == ["escalate"]
+    assert by_step(trace)["escalate"].detail == "Not needed: triage was confident"
     steps = by_step(trace)
     assert steps["normalize"].detail == "Cleaned the text; masked 1 phone number(s)"
     assert steps["extract"].service == "Bedrock · apac.amazon.nova-lite-v1:0"
@@ -47,6 +48,6 @@ def test_spam_shows_the_model_steps_as_skipped() -> None:
     steps = by_step(trace)
     assert steps["prefilter"].detail.startswith("Flagged, not deleted")
     skipped = [s.step for s in trace if s.status == TraceStatus.SKIPPED]
-    assert skipped == ["extract", "geolocate", "dedupe", "triage"]
+    assert skipped == ["extract", "geolocate", "dedupe", "triage", "escalate"]
     assert steps["extract"].detail == "Skipped: spam stops before any model call"
     assert model.calls == []
