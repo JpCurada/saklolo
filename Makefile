@@ -1,4 +1,4 @@
-.PHONY: help install fmt lint test eval demo demo-web plan api-types tokens ui-check hooks notebooks video-capture
+.PHONY: help install fmt lint test eval demo demo-offline demo-web plan api-types tokens ui-check hooks notebooks video-capture
 
 API := api
 WEB := web
@@ -32,6 +32,9 @@ eval: ## Run evals against Bedrock (costs money)
 
 demo: ## Local demo API on :8000 (cached model calls); POST /replay to load the dev split
 	cd $(API) && uv run python -m saklolo.handlers.demo_api --call-cache
+
+demo-offline: ## Demo API without AWS: recorded calls from demo/cache
+	cd $(API) && uv run python -m saklolo.handlers.demo_api --offline
 
 demo-web: ## Dashboard on :3000 with the demo tools (replay, /resident phones)
 	cd $(WEB) && NEXT_PUBLIC_DEMO_MODE=true npm run build && npx next start --port 3000

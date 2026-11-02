@@ -6,7 +6,7 @@ urgent households first. A named human dispatcher always decides who gets sent;
 the system never closes a case or tells a resident help is coming on its own.**
 
 Built with the [Strands Agents SDK](https://strandsagents.com) on AWS for the
-"Strands SDK: Workshop to Ship" hackathon.
+"Strands SDK: Workshop to Ship" hackathon. Copyright 2026 John Paul Curada, licensed under [Apache-2.0](LICENSE).
 
 ## What happens to a message
 
@@ -60,8 +60,21 @@ Needs Python 3.12 with [uv](https://docs.astral.sh/uv/), Node 22, and make.
 
 ```bash
 make install       # API (uv) and web (npm) dependencies
-make test          # 148 unit tests: no network, no AWS
+make test          # 151 unit tests: no network, no AWS
 ```
+
+**Offline demo, no AWS account needed.** Model and embedding calls for the synthetic
+dev split are replayed from a recorded cache in [`demo/cache/`](demo/cache/).
+
+```bash
+make demo-offline  # API on :8000
+make demo-web      # dashboard on :3000, with replay and the /resident phones
+```
+
+Open <http://127.0.0.1:3000>, press **Replay dev split**, and open
+<http://127.0.0.1:3000/resident> to send messages. Offline, a message the cache has
+never seen is kept for a human instead of being triaged, places only resolve when the
+barangay is named, and the Swarm is off.
 
 **Live demo, with AWS.** Real Bedrock and Amazon Location calls, which cost money
 (a few cents for a demo run). Needs an AWS profile with Bedrock access to Nova Lite
@@ -70,7 +83,7 @@ in `ap-southeast-1` and Titan embeddings in `us-east-1`; copy `.env.example` to
 
 ```bash
 make demo          # API on :8000, reusing recorded calls where they exist
-make demo-web      # dashboard on :3000, with replay and the /resident phones
+make demo-web
 ```
 
 ## Repo map
@@ -81,6 +94,7 @@ make demo-web      # dashboard on :3000, with replay and the /resident phones
 | [web/](web/) | Dispatcher dashboard and resident phones (Next.js) |
 | [infra/](infra/) | Terraform |
 | [data/](data/) | Synthetic messages and past-typhoon posts |
+| [demo/](demo/) | Recorded calls for the offline demo |
 | [docs/](docs/) | Architecture, triage rubric, dataset spec, decisions (ADRs) |
 | [design/](design/) | Design tokens, rules, and visual regression baselines |
 | [video/](video/) | Storyboard and Playwright capture for the demo video |

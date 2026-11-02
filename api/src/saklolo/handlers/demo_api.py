@@ -1,6 +1,6 @@
 """Local demo API: the dispatcher dashboard and the phone simulator talk to this.
 
-Run:  uv run python -m saklolo.handlers.demo_api [--call-cache] [--port 8000]
+Run:  uv run python -m saklolo.handlers.demo_api [--offline | --call-cache] [--port 8000]
 Docs: http://127.0.0.1:8000/docs
 """
 
@@ -28,7 +28,7 @@ from saklolo.dispatch.models import CaseView, MessageRecord, ReceiveResult
 from saklolo.dispatch.replay import ReplayBusyError, Replayer, ReplayStatus
 from saklolo.dispatch.service import CaseStateError, DispatchService
 from saklolo.domain.models import Channel, InboundMessage, OutboundMessage, Priority
-from saklolo.handlers.wiring import build_pipeline_deps, dynamo_stores
+from saklolo.handlers.wiring import build_offline_deps, build_pipeline_deps, dynamo_stores
 
 Text = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=1600)]
 Name = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=80)]
@@ -214,12 +214,18 @@ def build_notifier(
     return ChannelNotifier(outbox, senders), bot
 
 
+DEMO_CACHE = REPO_ROOT / "demo" / "cache"
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=8000)
     parser.add_argument(
         "--call-cache", action="store_true", help="Reuse cached model and embedding calls"
+    )
+    parser.add_argument(
+        "--offline", action="store_true", help="No AWS: replay the calls recorded in demo/cache"
     )
     args = parser.parse_args()
 
@@ -229,6 +235,14 @@ def main() -> None:
     if problems:
         raise SystemExit("Dataset is invalid; run `python -m saklolo.dataset.validate`.")
     outbox = InMemoryOutbox()
+    if args.offline:
+        print("Saklolo offline: recorded calls, no AWS, no Swarm; state in memory")
+        service = DispatchService(build_offline_deps(settings, DEMO_CACHE), outbox)
+        app = create_app(
+            service, Replayer(service, dataset), outbox, origins=settings.dashboard_origins
+        )
+        uvicorn.run(app, host=args.host, port=args.port)
+        return
     channels = ChannelSettings()
     notifier, bot = build_notifier(outbox, channels, httpx.Client())
     stores = dynamo_stores(settings)

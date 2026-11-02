@@ -1,5 +1,6 @@
-"""Builds the pipeline's real AWS dependencies. Shared by every composition root."""
+"""Builds the pipeline's dependencies. Shared by every composition root."""
 
+import json
 from datetime import timedelta
 from pathlib import Path
 
@@ -11,6 +12,7 @@ from saklolo.adapters.call_cache import CachingEmbedder, CachingStructuredModel,
 from saklolo.adapters.dynamodb import DynamoCaseStore, DynamoDispatchStore
 from saklolo.adapters.geocode_cache import CachedGeocoder
 from saklolo.adapters.memory import InMemoryCaseStore
+from saklolo.adapters.offline import NoGeocoder, UnrecordedEmbedder, UnrecordedModel
 from saklolo.adapters.strands_model import StrandsStructuredModel, bedrock_model
 from saklolo.adapters.titan import EMBEDDING_DIMENSIONS, TitanEmbedder
 from saklolo.agents.deps import PipelineDeps
@@ -20,6 +22,10 @@ from saklolo.config import REPO_ROOT, Settings
 from saklolo.domain.cases import DedupePolicy
 from saklolo.domain.models import Location
 from saklolo.domain.ports import CaseStore, Embedder, StructuredModel
+
+MODEL_CALLS_FILE = "model_calls.jsonl"
+EMBEDDINGS_FILE = "embeddings.jsonl"
+MANIFEST_FILE = "manifest.json"
 
 
 def dedupe_policy(settings: Settings) -> DedupePolicy:
@@ -89,3 +95,36 @@ def dynamo_stores(settings: Settings) -> tuple[DynamoCaseStore, DynamoDispatchSt
     dynamodb = session.resource("dynamodb")
     cases, messages, dispatch = (dynamodb.Table(name) for name in tables)
     return DynamoCaseStore(cases), DynamoDispatchStore(messages, dispatch)
+
+
+def recorded_deps(
+    settings: Settings,
+    model_calls: JsonlCache,
+    embeddings: JsonlCache,
+    model_id: str,
+    embedding_key: str,
+) -> PipelineDeps:
+    """No AWS clients at all: recorded calls, or a miss that keeps the message for a human."""
+    return PipelineDeps(
+        model=CachingStructuredModel(UnrecordedModel(), model_calls, model_id),
+        geocoder=NoGeocoder(),
+        embedder=CachingEmbedder(UnrecordedEmbedder(), embeddings, embedding_key),
+        cases=InMemoryCaseStore(),
+        dedupe=dedupe_policy(settings),
+        escalation_threshold=settings.escalation_threshold,
+        prompts=PromptSet.default(),
+        model_id=f"{model_id} (recorded)",
+        archive=JsonlPostArchive(REPO_ROOT / "data" / "archive.jsonl"),
+    )
+
+
+def build_offline_deps(settings: Settings, cache_dir: Path) -> PipelineDeps:
+    """The offline demo: calls recorded by handlers/record_demo_cache.py."""
+    manifest = json.loads((cache_dir / MANIFEST_FILE).read_text(encoding="utf-8"))
+    return recorded_deps(
+        settings,
+        JsonlCache(cache_dir / MODEL_CALLS_FILE),
+        JsonlCache(cache_dir / EMBEDDINGS_FILE),
+        manifest["model_id"],
+        manifest["embedding_key"],
+    )
