@@ -123,40 +123,43 @@ service("architecture-service/AmazonBedrock.svg", 1930, 190, "Titan Embeddings",
 service("architecture-service/AmazonLocationService.svg", 2220, 190, "Amazon Location", "Places, ap-southeast-2")
 
 # The agents, inside the worker: the Graph, then the Swarm for unsure cases
-out.append('<rect x="945" y="380" width="530" height="335" rx="10" fill="#f2fbf4" stroke="#1fb954" stroke-width="2"/>')
-picture("strands.png", 961, 392, 34)
-text(1005, 417, "Strands Agents", 22, 700, anchor="start")
-text(1459, 417, "Graph", 18, 600, MUTED, anchor="end")
+out.append('<rect x="945" y="390" width="1385" height="315" rx="10" fill="#f2fbf4" stroke="#1fb954" stroke-width="2"/>')
+picture("strands.png", 961, 402, 34)
+text(1005, 427, "Strands Agents", 22, 700, anchor="start")
+text(2314, 427, "runs in the worker Lambda", 18, 400, MUTED, anchor="end", italic=True)
 
 
-def pill(x, y, width, label, strong=False):
+def pill(x, y, width, label, strong=False, quiet=False, size=17):
     fill, color = ("#232f3e", "#ffffff") if strong else ("#ffffff", INK)
-    out.append(f'<rect x="{x}" y="{y}" width="{width}" height="40" rx="8" fill="{fill}" stroke="#9fd9b4" stroke-width="2"/>')
-    text(x + width / 2, y + 26, label, 17, 600, color)
+    border = "#c8ccd0" if quiet else "#9fd9b4"
+    out.append(f'<rect x="{x}" y="{y}" width="{width}" height="40" rx="8" fill="{fill}" stroke="{border}" stroke-width="2"/>')
+    text(x + width / 2, y + 26, label, size, 400 if quiet else 600, MUTED if quiet else color, italic=quiet)
 
 
-for i, step in enumerate(["normalize", "prefilter", "extract", "geolocate"]):
-    x = 957 + i * 132
-    pill(x, 438, 110, step)
-    if i < 3:
-        arrow([(x + 110, 458), (x + 132, 458)])
-arrow([(1408, 478), (1408, 510)])
-for x, step in [(1353, "dedupe"), (1221, "verify"), (1089, "triage")]:
-    pill(x, 510, 110, step)
-arrow([(1353, 530), (1331, 530)])
-arrow([(1221, 530), (1199, 530)])
-arrow([(1144, 550), (1144, 594)])
-text(1156, 578, "low confidence", 16, 400, MUTED, anchor="start", italic=True)
+text(961, 470, "Graph", 18, 700, anchor="start")
+steps = ["normalize", "prefilter", "extract", "geolocate", "dedupe", "verify", "triage"]
+for i, step in enumerate(steps):
+    x = 975 + i * 182
+    pill(x, 482, 140, step)
+    if i < len(steps) - 1:
+        arrow([(x + 140, 502), (x + 182, 502)])
+# Where the Graph stops or pauses instead of guessing
+arrow([(1227, 522), (1227, 572)])
+pill(1097, 572, 260, "spam: flagged, never deleted", quiet=True, size=15)
+arrow([(1591, 522), (1591, 572)])
+pill(1451, 572, 280, "no place: ask one question, resume", quiet=True, size=15)
+arrow([(2137, 522), (2137, 566)])
+text(2127, 552, "low confidence", 16, 400, MUTED, anchor="end", italic=True)
 
-out.append('<rect x="957" y="594" width="506" height="110" rx="8" fill="#e6f6eb" stroke="#9fd9b4" stroke-width="2"/>')
-text(970, 618, "Swarm", 18, 700, anchor="start")
-text(1450, 618, "Still unsure: a human decides", 15, 400, MUTED, anchor="end", italic=True)
-pill(969, 640, 140, "location resolver")
-pill(1131, 640, 158, "triage reviewer", strong=True)
-pill(1311, 640, 140, "conflict resolver")
+out.append('<rect x="1780" y="566" width="536" height="126" rx="8" fill="#e6f6eb" stroke="#9fd9b4" stroke-width="2"/>')
+text(1794, 590, "Swarm", 18, 700, anchor="start")
+pill(1792, 604, 156, "location resolver", size=16)
+pill(1966, 604, 168, "triage reviewer", strong=True, size=16)
+pill(2152, 604, 156, "conflict resolver", size=16)
 # Handoffs go both ways between the reviewer and each specialist.
-for x0, x1 in [(1109, 1131), (1289, 1311)]:
-    out.append(f'<line x1="{x0}" y1="660" x2="{x1}" y2="660" stroke="{LINE}" stroke-width="3"/>')
+for x0, x1 in [(1948, 1966), (2134, 2152)]:
+    out.append(f'<line x1="{x0}" y1="624" x2="{x1}" y2="624" stroke="{LINE}" stroke-width="3"/>')
+text(2048, 676, "Still unsure: a human decides", 15, 400, MUTED, italic=True)
 
 service("architecture-service/AmazonCloudFront.svg", 720, 800, "Amazon CloudFront", "Dashboard and /api/*")
 service("architecture-service/AmazonSimpleStorageService.svg", 1010, 800, "Amazon S3", "Dashboard build")
@@ -211,11 +214,12 @@ arrow([(1930, 135), (2220, 135), (2220, 190)])
 badge(6, 1640, 135)
 note(1790, 122, "dedupe")
 note(2080, 122, "geolocate")
-# 7 Cases and corrections
-arrow([(1350, 255), (1500, 255), (1500, 850), (1350, 850)])
-arrow([(1500, 850), (1590, 850)])
-badge(7, 1500, 620)
-note(1522, 690, "cases, corrections", "start")
+# 7 The agents keep cases and read past corrections
+arrow([(1325, 705), (1325, 800)])
+badge(7, 1325, 752)
+note(1349, 760, "cases", "start")
+arrow([(1640, 705), (1640, 800)], both=True)
+note(1660, 760, "corrections", "start")
 # 8 The API reads cases and records decisions
 arrow([(770, 245), (900, 245), (900, 740), (1275, 740), (1275, 800)], both=True)
 badge(8, 1000, 740)
