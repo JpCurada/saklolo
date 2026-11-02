@@ -1,0 +1,642 @@
+{
+  "set": "set-a",
+  "provisional": "Priorities are the generator's intent until human labels exist.",
+  "messages": [
+    "msg-0001",
+    "msg-0005",
+    "msg-0006",
+    "msg-0007",
+    "msg-0010",
+    "msg-0011",
+    "msg-0013",
+    "msg-0014",
+    "msg-0015",
+    "msg-0017",
+    "msg-0019",
+    "msg-0020",
+    "msg-0021",
+    "msg-0022",
+    "msg-0027",
+    "msg-0030",
+    "msg-0031",
+    "msg-0032",
+    "msg-0037",
+    "msg-0041",
+    "msg-0043",
+    "msg-0045",
+    "msg-0046",
+    "msg-0048",
+    "msg-0049",
+    "msg-0051",
+    "msg-0052",
+    "msg-0054",
+    "msg-0055",
+    "msg-0057",
+    "msg-0058",
+    "msg-0066",
+    "msg-0068",
+    "msg-0079",
+    "msg-0082",
+    "msg-0083",
+    "msg-0085",
+    "msg-0086",
+    "msg-0087",
+    "msg-0088",
+    "msg-0090",
+    "msg-0093",
+    "msg-0097",
+    "msg-0098",
+    "msg-0099",
+    "msg-0100",
+    "msg-0102",
+    "msg-0103",
+    "msg-0105",
+    "msg-0106",
+    "msg-0108",
+    "msg-0109",
+    "msg-0110",
+    "msg-0111",
+    "msg-0112",
+    "msg-0113",
+    "msg-0118",
+    "msg-0119",
+    "msg-0121",
+    "msg-0123",
+    "msg-0128",
+    "msg-0129",
+    "msg-0130",
+    "msg-0131",
+    "msg-0132",
+    "msg-0134",
+    "msg-0135",
+    "msg-0136",
+    "msg-0138",
+    "msg-0139",
+    "msg-0141",
+    "msg-0143",
+    "msg-0144",
+    "msg-0148",
+    "msg-0150"
+  ],
+  "households": {
+    "hh-0042": {
+      "critical": false,
+      "message_ids": [
+        "msg-0010",
+        "msg-0030",
+        "msg-0098"
+      ]
+    },
+    "hh-0048": {
+      "critical": false,
+      "message_ids": [
+        "msg-0011"
+      ]
+    },
+    "hh-0055": {
+      "critical": false,
+      "message_ids": [
+        "msg-0013",
+        "msg-0032"
+      ]
+    },
+    "hh-0020": {
+      "critical": false,
+      "message_ids": [
+        "msg-0014",
+        "msg-0099"
+      ]
+    },
+    "hh-0044": {
+      "critical": false,
+      "message_ids": [
+        "msg-0015",
+        "msg-0031"
+      ]
+    },
+    "hh-0053": {
+      "critical": false,
+      "message_ids": [
+        "msg-0017"
+      ]
+    },
+    "hh-0051": {
+      "critical": false,
+      "message_ids": [
+        "msg-0019",
+        "msg-0052"
+      ]
+    },
+    "hh-0072": {
+      "critical": false,
+      "message_ids": [
+        "msg-0020"
+      ]
+    },
+    "hh-0001": {
+      "critical": true,
+      "message_ids": [
+        "msg-0021",
+        "msg-0134"
+      ]
+    },
+    "hh-0019": {
+      "critical": false,
+      "message_ids": [
+        "msg-0022",
+        "msg-0051",
+        "msg-0113"
+      ]
+    },
+    "hh-0052": {
+      "critical": false,
+      "message_ids": [
+        "msg-0027"
+      ]
+    },
+    "hh-0063": {
+      "critical": true,
+      "message_ids": [
+        "msg-0037"
+      ]
+    },
+    "hh-0013": {
+      "critical": true,
+      "message_ids": [
+        "msg-0041"
+      ]
+    },
+    "hh-0030": {
+      "critical": false,
+      "message_ids": [
+        "msg-0043"
+      ]
+    },
+    "hh-0045": {
+      "critical": false,
+      "message_ids": [
+        "msg-0045"
+      ]
+    },
+    "hh-0054": {
+      "critical": false,
+      "message_ids": [
+        "msg-0046",
+        "msg-0097"
+      ]
+    },
+    "hh-0065": {
+      "critical": true,
+      "message_ids": [
+        "msg-0048"
+      ]
+    },
+    "hh-0070": {
+      "critical": false,
+      "message_ids": [
+        "msg-0049"
+      ]
+    },
+    "hh-0002": {
+      "critical": true,
+      "message_ids": [
+        "msg-0054",
+        "msg-0068",
+        "msg-0083",
+        "msg-0130"
+      ]
+    },
+    "hh-0057": {
+      "critical": false,
+      "message_ids": [
+        "msg-0055"
+      ]
+    },
+    "hh-0003": {
+      "critical": true,
+      "message_ids": [
+        "msg-0058",
+        "msg-0135"
+      ]
+    },
+    "hh-0062": {
+      "critical": true,
+      "message_ids": [
+        "msg-0066"
+      ]
+    },
+    "hh-0006": {
+      "critical": true,
+      "message_ids": [
+        "msg-0079",
+        "msg-0106",
+        "msg-0131"
+      ]
+    },
+    "hh-0074": {
+      "critical": false,
+      "message_ids": [
+        "msg-0082"
+      ]
+    },
+    "hh-0004": {
+      "critical": true,
+      "message_ids": [
+        "msg-0086",
+        "msg-0105"
+      ]
+    },
+    "hh-0010": {
+      "critical": true,
+      "message_ids": [
+        "msg-0087"
+      ]
+    },
+    "hh-0018": {
+      "critical": true,
+      "message_ids": [
+        "msg-0088"
+      ]
+    },
+    "hh-0027": {
+      "critical": false,
+      "message_ids": [
+        "msg-0090"
+      ]
+    },
+    "hh-0059": {
+      "critical": false,
+      "message_ids": [
+        "msg-0093"
+      ]
+    },
+    "hh-0014": {
+      "critical": true,
+      "message_ids": [
+        "msg-0102"
+      ]
+    },
+    "hh-0037": {
+      "critical": false,
+      "message_ids": [
+        "msg-0103",
+        "msg-0123"
+      ]
+    },
+    "hh-0011": {
+      "critical": true,
+      "message_ids": [
+        "msg-0109",
+        "msg-0138"
+      ]
+    },
+    "hh-0016": {
+      "critical": true,
+      "message_ids": [
+        "msg-0110"
+      ]
+    },
+    "hh-0025": {
+      "critical": false,
+      "message_ids": [
+        "msg-0111",
+        "msg-0132"
+      ]
+    },
+    "hh-0036": {
+      "critical": false,
+      "message_ids": [
+        "msg-0112",
+        "msg-0139"
+      ]
+    },
+    "hh-0041": {
+      "critical": false,
+      "message_ids": [
+        "msg-0118"
+      ]
+    },
+    "hh-0021": {
+      "critical": true,
+      "message_ids": [
+        "msg-0121",
+        "msg-0136"
+      ]
+    },
+    "hh-0039": {
+      "critical": false,
+      "message_ids": [
+        "msg-0129",
+        "msg-0141"
+      ]
+    }
+  },
+  "recycled": [
+    "msg-0057",
+    "msg-0085",
+    "msg-0100",
+    "msg-0108"
+  ],
+  "index": {
+    "msg-0001": {
+      "sender": "+639000000118",
+      "text": "test"
+    },
+    "msg-0005": {
+      "sender": "+639000000092",
+      "text": "saan po ang evacuation center na pinakamalapit sa nangka?"
+    },
+    "msg-0006": {
+      "sender": "+639000000119",
+      "text": "gm po sa lahat \ud83c\udf1e"
+    },
+    "msg-0007": {
+      "sender": "+639000000091",
+      "text": "san po pwede kumuha ng tubig at pagkain dito sa concepcion uno? wla na kami supply"
+    },
+    "msg-0010": {
+      "sender": "+639000000042",
+      "text": "tumana po hanggang tuhod na sa kalsada, gusto na namin lumikas pero walang masakyan, 4 kami"
+    },
+    "msg-0011": {
+      "sender": "+639000000048",
+      "text": "malanday gusto na po namin lumikas bago lumala, 4 kami walang bata"
+    },
+    "msg-0013": {
+      "sender": "+639000000055",
+      "text": "Tumana purok 3, 7 kami magpapasundo na po, hanggang tuhod pa lang"
+    },
+    "msg-0014": {
+      "sender": "+639000000020",
+      "text": "may senior kami 75 dito malanday pero hanggang tuhod pa lang, baka po pwede ilikas na kami bago lumala"
+    },
+    "msg-0015": {
+      "sender": "+639000000044",
+      "text": "nangka purok 1 hanggang tuhod pa lang pero lumalalim, 5 kami pwede na po ba kami sunduin"
+    },
+    "msg-0017": {
+      "sender": "+639000000053",
+      "text": "jdp 5 kami gusto na lumikas, ok pa naman kami"
+    },
+    "msg-0019": {
+      "sender": "+639000000051",
+      "text": "barangka riverbanks area knee deep na sa kalye, 2 kami, need ng sundo papunta evacuation center"
+    },
+    "msg-0020": {
+      "sender": "+639000000072",
+      "text": "gusto na namin lumikas, dito lang kami sa may bakery"
+    },
+    "msg-0021": {
+      "sender": "+639000000001",
+      "text": "HELP PO tumana purok 4 malapit tumana bridge 6 kami may lola 85 bedridden hanggang dibdib na tubig 09000000001"
+    },
+    "msg-0022": {
+      "sender": "+639000000019",
+      "text": "trapped kami sa 2nd floor tumana purok 2, 4 kami ok pa naman pero di makababa"
+    },
+    "msg-0027": {
+      "sender": "+639000000052",
+      "text": "calumpang 4 kami pa-evacuate sana, tuhod lang tubig"
+    },
+    "msg-0030": {
+      "sender": "+639000000042",
+      "text": "tumana po kami ulit, pa-sundo na sana 4 kami"
+    },
+    "msg-0031": {
+      "sender": "+639000000085",
+      "text": "taga nangka purok 1 kapitbahay ko 5 sila gusto lumikas"
+    },
+    "msg-0032": {
+      "sender": "+639000000088",
+      "text": "tumana purok 3, 8 kami pala kasama pinsan, pasundo po"
+    },
+    "msg-0037": {
+      "sender": "+639000000063",
+      "text": "dito sa amin malapit sa ilog, may baby kami, hanggang dibdib na"
+    },
+    "msg-0041": {
+      "sender": "+639000000013",
+      "text": "help po lola ko 78 nadulas may sugat sa binti, nasa ibabaw kami ng mesa hanggang dibdib na tubig, tumana malapit health center"
+    },
+    "msg-0043": {
+      "sender": "+639000000030",
+      "text": "Tumana purok 5, trapped kami sa ikalawang palapag, 5 katao, ok pa"
+    },
+    "msg-0045": {
+      "sender": "+639000000045",
+      "text": "marikina heights malapit sa main road, baha na sa daan, 2 kami gusto lumikas"
+    },
+    "msg-0046": {
+      "sender": "+639000000054",
+      "text": "sta elena po near shoe museum, tuhod deep sa kalye, pa-assist po papunta evacuation"
+    },
+    "msg-0048": {
+      "sender": "+639000000065",
+      "text": "nasa bubong kami 4 tao, banda sa may tulay pa-ilog, wala na signal"
+    },
+    "msg-0049": {
+      "sender": "+639000000070",
+      "text": "may baby kami, malapit sa covered court, tuhod pa lang tubig"
+    },
+    "msg-0051": {
+      "sender": "+639000000080",
+      "text": "tumana purok 2 po yung pamilya ng kaibigan ko 4 sila trapped 2nd floor"
+    },
+    "msg-0052": {
+      "sender": "+639000000087",
+      "text": "kapatid ko sa barangka malapit riverbanks 2 sila need sundo"
+    },
+    "msg-0054": {
+      "sender": "+639000000002",
+      "text": "pls help po malanday likod ng kapilya sa jp rizal, 5 kami may baby 4 months at lolo ko 81. nasa bubong na kami di na kaya umakyat pa"
+    },
+    "msg-0055": {
+      "sender": "+639000000057",
+      "text": "IVC 4 kami need sundo papunta evac, baha na sa labas"
+    },
+    "msg-0057": {
+      "sender": "+639000000106",
+      "text": "URGENT!!! Tumana area 3 families nasa bubong na, may mga bata at senior. Nov 12 2020 #RescuePH #UlyssesPH"
+    },
+    "msg-0058": {
+      "sender": "+639000000003",
+      "text": "URGENT nangka purok 6 asawa ko buntis 8 months hanggang leeg na tubig sa loob ng bahay pls rescue 09000000003"
+    },
+    "msg-0066": {
+      "sender": "+639000000062",
+      "text": "likod ng simbahan po kami, lola ko 80 hanggang leeg na tubig PLS"
+    },
+    "msg-0068": {
+      "sender": "+639000000076",
+      "text": "pls help mama ko si Nena Dizon sa malanday likod ng kapilya, 5 sila may baby at si lolo, nasa bubong na raw. hindi na makontak"
+    },
+    "msg-0079": {
+      "sender": "+639000000006",
+      "text": "My parents are trapped in Jesus dela Pe\u00f1a near the chapel, both seniors, papa is on a wheelchair. Water is neck level inside. Please help. 09000000006"
+    },
+    "msg-0082": {
+      "sender": "+639000000074",
+      "text": "parang tumataas na tubig dito sa subdivision, pa evacuate po kami"
+    },
+    "msg-0083": {
+      "sender": "+639000000077",
+      "text": "PAKI-SHARE: pls help po malanday likod ng kapilya sa jp rizal, 5 kami may baby 4 months at lolo ko 81. nasa bubong na kami"
+    },
+    "msg-0085": {
+      "sender": "+639000000109",
+      "text": "repost lang po: Nangka purok 5, may bedridden na lola, hanggang leeg na tubig. PAKI SHARE"
+    },
+    "msg-0086": {
+      "sender": "+639000000004",
+      "text": "nasa bubong na po kami 7 katao may 2 bata isa sanggol. sto nino likod ng sports center. wala na kami makapitan"
+    },
+    "msg-0087": {
+      "sender": "+639000000010",
+      "text": "san roque po malapit brgy hall, may 1 yr old kami, hanggang dibdib na at tumataas pa. 2loy2 ulan"
+    },
+    "msg-0088": {
+      "sender": "+639000000018",
+      "text": "Calumpang, same spot nung Ulysses, lola and me on the roof now. please send boat 09000000018"
+    },
+    "msg-0090": {
+      "sender": "+639000000027",
+      "text": "JDP 7 kami trapped, waist level sa baba, safe pa sa taas"
+    },
+    "msg-0093": {
+      "sender": "+639000000059",
+      "text": "taga parang po kami 2 tao, gusto na po lumikas"
+    },
+    "msg-0097": {
+      "sender": "+639000000054",
+      "text": "sta elena near shoe museum follow up 3 kami"
+    },
+    "msg-0098": {
+      "sender": "+639000000042",
+      "text": "nakalikas na po kami tumana, nasa evacuation center na"
+    },
+    "msg-0099": {
+      "sender": "+639000000020",
+      "text": "malanday nakalikas na kami ni lola"
+    },
+    "msg-0100": {
+      "sender": "+639000000108",
+      "text": "[screenshot] Sto. Ni\u00f1o near the river, elderly couple trapped, water above 2nd floor. Please share! 11/12/2020"
+    },
+    "msg-0102": {
+      "sender": "+639000000014",
+      "text": "parang ulysses na naman \ud83d\ude2d nasa bubong na kami sto nino purok 1 tabi ilog, 4 kami may senior"
+    },
+    "msg-0103": {
+      "sender": "+639000000037",
+      "text": "barangka, buntis asawa ko 7 months, hanggang bewang na sa labas, nasa taas kami"
+    },
+    "msg-0105": {
+      "sender": "+639000000078",
+      "text": "yung kapitbahay namin sa likod ng sports center sto nino, 6 sila nasa bubong may sanggol"
+    },
+    "msg-0106": {
+      "sender": "+639000000006",
+      "text": "Follow up po sa parents ko sa Jesus dela Pe\u00f1a, wheelchair si papa, hanggang dibdib na raw ang tubig"
+    },
+    "msg-0108": {
+      "sender": "+639000000110",
+      "text": "Barangka, 10 people trapped, 2 infants, water rising fast #RescuePH Nov 12"
+    },
+    "msg-0109": {
+      "sender": "+639000000011",
+      "text": "barangka near riverbanks 6 kami nasa bubong na, wala na kami madaanan. pls"
+    },
+    "msg-0110": {
+      "sender": "+639000000016",
+      "text": "JDP po kami malapit sa daan papuntang barangka, buntis ate ko manganganak na ata, hanggang dibdib tubig. 6 kami may baby din"
+    },
+    "msg-0111": {
+      "sender": "+639000000025",
+      "text": "san roque 4 kami sa 2nd floor hanggang bewang ung baha sa baba, stable naman, pero brownout at walang signal minsan"
+    },
+    "msg-0112": {
+      "sender": "+639000000036",
+      "text": "brgy parang po kami, trapped sa 2nd floor pero baha lang sa baba, 4 kami"
+    },
+    "msg-0113": {
+      "sender": "+639000000019",
+      "text": "ok na po kami tumana purok 2 nakababa na kami sa bangka"
+    },
+    "msg-0118": {
+      "sender": "+639000000041",
+      "text": "malanday likod din ng kapilya, ibang pamilya po kami sa nauna, 8 kami trapped sa 2 storey ng tito ko"
+    },
+    "msg-0119": {
+      "sender": "+639000000115",
+      "text": "Donate po para sa flood victims, send sa GCash 09000000115 (Marikina Relief Ops)"
+    },
+    "msg-0121": {
+      "sender": "+639000000021",
+      "text": "nangka 6 kami nasa taas ng bahay, hanggang bewang sa baba hindi na tumataas, pero wala na kami pagkain"
+    },
+    "msg-0123": {
+      "sender": "+639000000037",
+      "text": "barangka asawa ko buntis 7 months follow up po, nasa taas pa rin"
+    },
+    "msg-0128": {
+      "sender": "+639000000104",
+      "text": "may volunteer po kami 5 tao may bangka, saan kami pwede tumulong?"
+    },
+    "msg-0129": {
+      "sender": "+639000000039",
+      "text": "calumpang 6 kami nasa second floor, hindi na tumataas tubig, waist level sa baba"
+    },
+    "msg-0130": {
+      "sender": "+639000000002",
+      "text": "SALAMAT PO nasundo na kami malanday kapilya \ud83d\ude4f"
+    },
+    "msg-0131": {
+      "sender": "+639000000006",
+      "text": "My parents have been rescued, thank you so much"
+    },
+    "msg-0132": {
+      "sender": "+639000000025",
+      "text": "san roque ubos na tubig inumin namin, may lagnat na bata"
+    },
+    "msg-0134": {
+      "sender": "+639000000001",
+      "text": "na rescue na po kami salamat sa team, tumana purok 4"
+    },
+    "msg-0135": {
+      "sender": "+639000000003",
+      "text": "nasundo na kami nangka, salamat po"
+    },
+    "msg-0136": {
+      "sender": "+639000000021",
+      "text": "nangka ulit, tumataas na ulit tubig, umaabot na sa 2nd floor"
+    },
+    "msg-0138": {
+      "sender": "+639000000011",
+      "text": "barangka riverbanks rescued na kami salamat"
+    },
+    "msg-0139": {
+      "sender": "+639000000036",
+      "text": "brgy parang humupa na po, pwede na kami bumaba mag isa"
+    },
+    "msg-0141": {
+      "sender": "+639000000039",
+      "text": "calumpang bumaba na ung tubig, ok na kami pero kailangan ng pagkain"
+    },
+    "msg-0143": {
+      "sender": "+639000000093",
+      "text": "may relief po ba sa marikina sports center ngayon?"
+    },
+    "msg-0144": {
+      "sender": "+639000000094",
+      "text": "need po namin ng diapers at gatas para sa baby, nasa evac kami sa malanday"
+    },
+    "msg-0148": {
+      "sender": "+639000000100",
+      "text": "wala na kaming tubig inumin dito sa parang, may water station po ba?"
+    },
+    "msg-0150": {
+      "sender": "+639000000102",
+      "text": "kailan po babalik ang kuryente sa san roque?"
+    }
+  }
+}

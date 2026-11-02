@@ -1,0 +1,75 @@
+{"id": "msg-0001", "scenario_hour": 1.0, "channel": "web", "sender": "+639000000118", "text": "test"}
+{"id": "msg-0005", "scenario_hour": 5.0, "channel": "sms", "sender": "+639000000092", "text": "saan po ang evacuation center na pinakamalapit sa nangka?"}
+{"id": "msg-0006", "scenario_hour": 5.5, "channel": "messenger", "sender": "+639000000119", "text": "gm po sa lahat 🌞"}
+{"id": "msg-0007", "scenario_hour": 6.0, "channel": "sms", "sender": "+639000000091", "text": "san po pwede kumuha ng tubig at pagkain dito sa concepcion uno? wla na kami supply"}
+{"id": "msg-0010", "scenario_hour": 7.0, "channel": "sms", "sender": "+639000000042", "text": "tumana po hanggang tuhod na sa kalsada, gusto na namin lumikas pero walang masakyan, 4 kami"}
+{"id": "msg-0011", "scenario_hour": 7.0, "channel": "sms", "sender": "+639000000048", "text": "malanday gusto na po namin lumikas bago lumala, 4 kami walang bata"}
+{"id": "msg-0013", "scenario_hour": 7.5, "channel": "sms", "sender": "+639000000055", "text": "Tumana purok 3, 7 kami magpapasundo na po, hanggang tuhod pa lang"}
+{"id": "msg-0014", "scenario_hour": 8.0, "channel": "sms", "sender": "+639000000020", "text": "may senior kami 75 dito malanday pero hanggang tuhod pa lang, baka po pwede ilikas na kami bago lumala"}
+{"id": "msg-0015", "scenario_hour": 8.0, "channel": "sms", "sender": "+639000000044", "text": "nangka purok 1 hanggang tuhod pa lang pero lumalalim, 5 kami pwede na po ba kami sunduin"}
+{"id": "msg-0017", "scenario_hour": 8.0, "channel": "sms", "sender": "+639000000053", "text": "jdp 5 kami gusto na lumikas, ok pa naman kami"}
+{"id": "msg-0019", "scenario_hour": 8.5, "channel": "sms", "sender": "+639000000051", "text": "barangka riverbanks area knee deep na sa kalye, 2 kami, need ng sundo papunta evacuation center"}
+{"id": "msg-0020", "scenario_hour": 8.5, "channel": "sms", "sender": "+639000000072", "text": "gusto na namin lumikas, dito lang kami sa may bakery"}
+{"id": "msg-0021", "scenario_hour": 9.0, "channel": "sms", "sender": "+639000000001", "text": "HELP PO tumana purok 4 malapit tumana bridge 6 kami may lola 85 bedridden hanggang dibdib na tubig 09000000001"}
+{"id": "msg-0022", "scenario_hour": 9.0, "channel": "sms", "sender": "+639000000019", "text": "trapped kami sa 2nd floor tumana purok 2, 4 kami ok pa naman pero di makababa"}
+{"id": "msg-0027", "scenario_hour": 9.0, "channel": "sms", "sender": "+639000000052", "text": "calumpang 4 kami pa-evacuate sana, tuhod lang tubig"}
+{"id": "msg-0030", "scenario_hour": 9.0, "channel": "sms", "sender": "+639000000042", "text": "tumana po kami ulit, pa-sundo na sana 4 kami"}
+{"id": "msg-0031", "scenario_hour": 9.0, "channel": "sms", "sender": "+639000000085", "text": "taga nangka purok 1 kapitbahay ko 5 sila gusto lumikas"}
+{"id": "msg-0032", "scenario_hour": 9.0, "channel": "sms", "sender": "+639000000088", "text": "tumana purok 3, 8 kami pala kasama pinsan, pasundo po"}
+{"id": "msg-0037", "scenario_hour": 9.5, "channel": "messenger", "sender": "+639000000063", "text": "dito sa amin malapit sa ilog, may baby kami, hanggang dibdib na"}
+{"id": "msg-0041", "scenario_hour": 10.0, "channel": "sms", "sender": "+639000000013", "text": "help po lola ko 78 nadulas may sugat sa binti, nasa ibabaw kami ng mesa hanggang dibdib na tubig, tumana malapit health center"}
+{"id": "msg-0043", "scenario_hour": 10.0, "channel": "messenger", "sender": "+639000000030", "text": "Tumana purok 5, trapped kami sa ikalawang palapag, 5 katao, ok pa"}
+{"id": "msg-0045", "scenario_hour": 10.0, "channel": "web", "sender": "+639000000045", "text": "marikina heights malapit sa main road, baha na sa daan, 2 kami gusto lumikas"}
+{"id": "msg-0046", "scenario_hour": 10.0, "channel": "web", "sender": "+639000000054", "text": "sta elena po near shoe museum, tuhod deep sa kalye, pa-assist po papunta evacuation"}
+{"id": "msg-0048", "scenario_hour": 10.0, "channel": "sms", "sender": "+639000000065", "text": "nasa bubong kami 4 tao, banda sa may tulay pa-ilog, wala na signal"}
+{"id": "msg-0049", "scenario_hour": 10.0, "channel": "sms", "sender": "+639000000070", "text": "may baby kami, malapit sa covered court, tuhod pa lang tubig"}
+{"id": "msg-0051", "scenario_hour": 10.0, "channel": "sms", "sender": "+639000000080", "text": "tumana purok 2 po yung pamilya ng kaibigan ko 4 sila trapped 2nd floor"}
+{"id": "msg-0052", "scenario_hour": 10.0, "channel": "sms", "sender": "+639000000087", "text": "kapatid ko sa barangka malapit riverbanks 2 sila need sundo"}
+{"id": "msg-0054", "scenario_hour": 10.5, "channel": "sms", "sender": "+639000000002", "text": "pls help po malanday likod ng kapilya sa jp rizal, 5 kami may baby 4 months at lolo ko 81. nasa bubong na kami di na kaya umakyat pa"}
+{"id": "msg-0055", "scenario_hour": 10.5, "channel": "sms", "sender": "+639000000057", "text": "IVC 4 kami need sundo papunta evac, baha na sa labas"}
+{"id": "msg-0057", "scenario_hour": 10.5, "channel": "messenger", "sender": "+639000000106", "text": "URGENT!!! Tumana area 3 families nasa bubong na, may mga bata at senior. Nov 12 2020 #RescuePH #UlyssesPH"}
+{"id": "msg-0058", "scenario_hour": 11.0, "channel": "messenger", "sender": "+639000000003", "text": "URGENT nangka purok 6 asawa ko buntis 8 months hanggang leeg na tubig sa loob ng bahay pls rescue 09000000003"}
+{"id": "msg-0066", "scenario_hour": 11.0, "channel": "sms", "sender": "+639000000062", "text": "likod ng simbahan po kami, lola ko 80 hanggang leeg na tubig PLS"}
+{"id": "msg-0068", "scenario_hour": 11.0, "channel": "messenger", "sender": "+639000000076", "text": "pls help mama ko si Nena Dizon sa malanday likod ng kapilya, 5 sila may baby at si lolo, nasa bubong na raw. hindi na makontak"}
+{"id": "msg-0079", "scenario_hour": 11.5, "channel": "web", "sender": "+639000000006", "text": "My parents are trapped in Jesus dela Peña near the chapel, both seniors, papa is on a wheelchair. Water is neck level inside. Please help. 09000000006"}
+{"id": "msg-0082", "scenario_hour": 11.5, "channel": "sms", "sender": "+639000000074", "text": "parang tumataas na tubig dito sa subdivision, pa evacuate po kami"}
+{"id": "msg-0083", "scenario_hour": 11.5, "channel": "messenger", "sender": "+639000000077", "text": "PAKI-SHARE: pls help po malanday likod ng kapilya sa jp rizal, 5 kami may baby 4 months at lolo ko 81. nasa bubong na kami"}
+{"id": "msg-0085", "scenario_hour": 11.5, "channel": "sms", "sender": "+639000000109", "text": "repost lang po: Nangka purok 5, may bedridden na lola, hanggang leeg na tubig. PAKI SHARE"}
+{"id": "msg-0086", "scenario_hour": 12.0, "channel": "sms", "sender": "+639000000004", "text": "nasa bubong na po kami 7 katao may 2 bata isa sanggol. sto nino likod ng sports center. wala na kami makapitan"}
+{"id": "msg-0087", "scenario_hour": 12.0, "channel": "sms", "sender": "+639000000010", "text": "san roque po malapit brgy hall, may 1 yr old kami, hanggang dibdib na at tumataas pa. 2loy2 ulan"}
+{"id": "msg-0088", "scenario_hour": 12.0, "channel": "web", "sender": "+639000000018", "text": "Calumpang, same spot nung Ulysses, lola and me on the roof now. please send boat 09000000018"}
+{"id": "msg-0090", "scenario_hour": 12.0, "channel": "messenger", "sender": "+639000000027", "text": "JDP 7 kami trapped, waist level sa baba, safe pa sa taas"}
+{"id": "msg-0093", "scenario_hour": 12.0, "channel": "sms", "sender": "+639000000059", "text": "taga parang po kami 2 tao, gusto na po lumikas"}
+{"id": "msg-0097", "scenario_hour": 12.0, "channel": "web", "sender": "+639000000054", "text": "sta elena near shoe museum follow up 3 kami"}
+{"id": "msg-0098", "scenario_hour": 12.0, "channel": "sms", "sender": "+639000000042", "text": "nakalikas na po kami tumana, nasa evacuation center na"}
+{"id": "msg-0099", "scenario_hour": 12.0, "channel": "sms", "sender": "+639000000020", "text": "malanday nakalikas na kami ni lola"}
+{"id": "msg-0100", "scenario_hour": 12.0, "channel": "messenger", "sender": "+639000000108", "text": "[screenshot] Sto. Niño near the river, elderly couple trapped, water above 2nd floor. Please share! 11/12/2020"}
+{"id": "msg-0102", "scenario_hour": 12.5, "channel": "messenger", "sender": "+639000000014", "text": "parang ulysses na naman 😭 nasa bubong na kami sto nino purok 1 tabi ilog, 4 kami may senior"}
+{"id": "msg-0103", "scenario_hour": 12.5, "channel": "sms", "sender": "+639000000037", "text": "barangka, buntis asawa ko 7 months, hanggang bewang na sa labas, nasa taas kami"}
+{"id": "msg-0105", "scenario_hour": 12.5, "channel": "sms", "sender": "+639000000078", "text": "yung kapitbahay namin sa likod ng sports center sto nino, 6 sila nasa bubong may sanggol"}
+{"id": "msg-0106", "scenario_hour": 12.5, "channel": "web", "sender": "+639000000006", "text": "Follow up po sa parents ko sa Jesus dela Peña, wheelchair si papa, hanggang dibdib na raw ang tubig"}
+{"id": "msg-0108", "scenario_hour": 12.5, "channel": "messenger", "sender": "+639000000110", "text": "Barangka, 10 people trapped, 2 infants, water rising fast #RescuePH Nov 12"}
+{"id": "msg-0109", "scenario_hour": 13.0, "channel": "sms", "sender": "+639000000011", "text": "barangka near riverbanks 6 kami nasa bubong na, wala na kami madaanan. pls"}
+{"id": "msg-0110", "scenario_hour": 13.0, "channel": "sms", "sender": "+639000000016", "text": "JDP po kami malapit sa daan papuntang barangka, buntis ate ko manganganak na ata, hanggang dibdib tubig. 6 kami may baby din"}
+{"id": "msg-0111", "scenario_hour": 13.0, "channel": "sms", "sender": "+639000000025", "text": "san roque 4 kami sa 2nd floor hanggang bewang ung baha sa baba, stable naman, pero brownout at walang signal minsan"}
+{"id": "msg-0112", "scenario_hour": 13.0, "channel": "messenger", "sender": "+639000000036", "text": "brgy parang po kami, trapped sa 2nd floor pero baha lang sa baba, 4 kami"}
+{"id": "msg-0113", "scenario_hour": 13.0, "channel": "sms", "sender": "+639000000019", "text": "ok na po kami tumana purok 2 nakababa na kami sa bangka"}
+{"id": "msg-0118", "scenario_hour": 13.5, "channel": "sms", "sender": "+639000000041", "text": "malanday likod din ng kapilya, ibang pamilya po kami sa nauna, 8 kami trapped sa 2 storey ng tito ko"}
+{"id": "msg-0119", "scenario_hour": 13.5, "channel": "messenger", "sender": "+639000000115", "text": "Donate po para sa flood victims, send sa GCash 09000000115 (Marikina Relief Ops)"}
+{"id": "msg-0121", "scenario_hour": 14.0, "channel": "sms", "sender": "+639000000021", "text": "nangka 6 kami nasa taas ng bahay, hanggang bewang sa baba hindi na tumataas, pero wala na kami pagkain"}
+{"id": "msg-0123", "scenario_hour": 14.0, "channel": "sms", "sender": "+639000000037", "text": "barangka asawa ko buntis 7 months follow up po, nasa taas pa rin"}
+{"id": "msg-0128", "scenario_hour": 14.5, "channel": "messenger", "sender": "+639000000104", "text": "may volunteer po kami 5 tao may bangka, saan kami pwede tumulong?"}
+{"id": "msg-0129", "scenario_hour": 15.0, "channel": "sms", "sender": "+639000000039", "text": "calumpang 6 kami nasa second floor, hindi na tumataas tubig, waist level sa baba"}
+{"id": "msg-0130", "scenario_hour": 15.0, "channel": "sms", "sender": "+639000000002", "text": "SALAMAT PO nasundo na kami malanday kapilya 🙏"}
+{"id": "msg-0131", "scenario_hour": 15.0, "channel": "web", "sender": "+639000000006", "text": "My parents have been rescued, thank you so much"}
+{"id": "msg-0132", "scenario_hour": 15.0, "channel": "sms", "sender": "+639000000025", "text": "san roque ubos na tubig inumin namin, may lagnat na bata"}
+{"id": "msg-0134", "scenario_hour": 16.0, "channel": "sms", "sender": "+639000000001", "text": "na rescue na po kami salamat sa team, tumana purok 4"}
+{"id": "msg-0135", "scenario_hour": 16.0, "channel": "messenger", "sender": "+639000000003", "text": "nasundo na kami nangka, salamat po"}
+{"id": "msg-0136", "scenario_hour": 16.0, "channel": "sms", "sender": "+639000000021", "text": "nangka ulit, tumataas na ulit tubig, umaabot na sa 2nd floor"}
+{"id": "msg-0138", "scenario_hour": 17.0, "channel": "sms", "sender": "+639000000011", "text": "barangka riverbanks rescued na kami salamat"}
+{"id": "msg-0139", "scenario_hour": 17.0, "channel": "messenger", "sender": "+639000000036", "text": "brgy parang humupa na po, pwede na kami bumaba mag isa"}
+{"id": "msg-0141", "scenario_hour": 18.0, "channel": "sms", "sender": "+639000000039", "text": "calumpang bumaba na ung tubig, ok na kami pero kailangan ng pagkain"}
+{"id": "msg-0143", "scenario_hour": 19.0, "channel": "messenger", "sender": "+639000000093", "text": "may relief po ba sa marikina sports center ngayon?"}
+{"id": "msg-0144", "scenario_hour": 20.0, "channel": "sms", "sender": "+639000000094", "text": "need po namin ng diapers at gatas para sa baby, nasa evac kami sa malanday"}
+{"id": "msg-0148", "scenario_hour": 24.0, "channel": "sms", "sender": "+639000000100", "text": "wala na kaming tubig inumin dito sa parang, may water station po ba?"}
+{"id": "msg-0150", "scenario_hour": 28.0, "channel": "sms", "sender": "+639000000102", "text": "kailan po babalik ang kuryente sa san roque?"}
