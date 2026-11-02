@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 
+import { Badge, Button, Select, Text } from "@/components/ui";
 import { api } from "@/lib/api/client";
 import { usePolling } from "@/lib/usePolling";
 
@@ -16,10 +17,13 @@ const SPEEDS = [
 export function ReplayControls({ onTick }: { onTick: () => void }) {
   const [speed, setSpeed] = useState(3600);
   const [error, setError] = useState<string>();
+  const [busy, setBusy] = useState(false);
   const status = usePolling(api.replay);
   const running = status.data?.running ?? false;
+  const total = status.data?.total ?? 0;
 
   async function run(action: () => Promise<unknown>) {
+    setBusy(true);
     try {
       await action();
       setError(undefined);
@@ -27,59 +31,70 @@ export function ReplayControls({ onTick }: { onTick: () => void }) {
       onTick();
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : String(caught));
+    } finally {
+      setBusy(false);
     }
   }
 
   return (
-    <div data-testid="replay-controls" className="flex items-center gap-2 text-xs">
-      <span
-        data-testid="sped-up-label"
-        className="rounded bg-amber-400 px-2 py-0.5 font-bold text-slate-950"
-      >
-        REPLAY · SPED UP · SYNTHETIC DATA
-      </span>
+    <div data-testid="replay-controls" className="sk-replay">
+      <Badge tone="none" testId="sped-up-label">
+        Replay · sped up · synthetic data
+      </Badge>
       <label className="sr-only" htmlFor="replay-speed">
         Replay speed
       </label>
-      <select
+      <Select
         id="replay-speed"
-        data-testid="replay-speed"
+        testId="replay-speed"
         value={speed}
         onChange={(event) => setSpeed(Number(event.target.value))}
         disabled={running}
-        className="rounded border border-slate-700 bg-slate-950 px-2 py-1"
       >
         {SPEEDS.map((option) => (
           <option key={option.value} value={option.value}>
             {option.label}
           </option>
         ))}
-      </select>
+      </Select>
       {running ? (
-        <button
-          type="button"
-          data-testid="replay-stop"
+        <Button
+          variant="secondary"
+          size="sm"
+          testId="replay-stop"
+          loading={busy}
           onClick={() => void run(api.stopReplay)}
-          className="rounded border border-slate-600 px-3 py-1 hover:bg-slate-800"
         >
           Stop
-        </button>
+        </Button>
       ) : (
-        <button
-          type="button"
-          data-testid="replay-start"
+        <Button
+          variant="secondary"
+          size="sm"
+          testId="replay-start"
+          loading={busy}
           onClick={() => void run(() => api.startReplay({ split: "dev", speed, max_delay_s: 2 }))}
-          className="rounded bg-sky-600 px-3 py-1 font-semibold text-white hover:bg-sky-500"
         >
           Replay dev split
-        </button>
+        </Button>
       )}
-      <span data-testid="replay-status" className="tabular-nums text-slate-400">
-        {status.data ? `${status.data.sent} / ${status.data.total} messages` : "–"}
+      {total > 0 && (
+        <progress
+          data-testid="replay-progress"
+          aria-label="Replay progress"
+          className="sk-replay-progress"
+          value={status.data?.sent ?? 0}
+          max={total}
+        />
+      )}
+      <span data-testid="replay-status" className="tabular-nums">
+        <Text variant="caption" tone="muted">
+          {status.data ? `${status.data.sent} / ${status.data.total} messages` : "–"}
+        </Text>
       </span>
       {error && (
-        <span role="alert" className="text-red-400">
-          {error}
+        <span role="alert">
+          <Text variant="caption-bold">{error}</Text>
         </span>
       )}
     </div>

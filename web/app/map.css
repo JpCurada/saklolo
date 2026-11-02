@@ -1,0 +1,53 @@
+/* Map pins are DOM elements made outside React, so their styling lives here. */
+.sk-pin {
+  display: flex;
+  z-index: 0;
+  align-items: center;
+  justify-content: center;
+  width: var(--sk-space-6);
+  height: var(--sk-space-6);
+  padding: 0;
+  border: var(--sk-stroke-2) solid var(--sk-color-canvas);
+  border-radius: var(--sk-radius-pill);
+  background: var(--sk-color-ink-faint);
+  color: var(--sk-color-ink-on-status);
+  font-size: var(--sk-text-caption-bold-size);
+  font-weight: var(--sk-text-caption-bold-weight);
+  cursor: pointer;
+}
+
+.sk-pin[data-priority="P1"] {
+  background: var(--sk-color-status-critical);
+}
+
+.sk-pin[data-priority="P2"] {
+  background: var(--sk-color-status-high);
+}
+
+.sk-pin[data-priority="P3"] {
+  background: var(--sk-color-status-moderate);
+}
+
+.sk-pin[data-priority="P4"] {
+  background: var(--sk-color-status-info);
+}
+
+.sk-pin[data-selected="true"] {
+  z-index: 1;
+  width: var(--sk-space-8);
+  height: var(--sk-space-8);
+  border-color: var(--sk-color-ink);
+}
+
+/* MapLibre owns the pin's transform. */
+.sk-pin-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--sk-radius-pill);
+  background: var(--sk-color-status-critical);
+  pointer-events: none;
+}
+
+.sk-pin-label {
+  position: relative;
+}

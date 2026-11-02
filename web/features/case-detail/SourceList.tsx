@@ -1,37 +1,33 @@
-import { PriorityBadge } from "@/components/PriorityBadge";
+import { PriorityBadge, Text, Tile } from "@/components/ui";
 import type { SourceView } from "@/lib/api/types";
-import { clockTime, shortSender } from "@/lib/format";
+import { CHANNEL_LABEL, clockTime, shortSender } from "@/lib/format";
+
+import { AgentTrace } from "./AgentTrace";
 
 /** Every message merged into the case: the resident's words next to the English reading. */
 export function SourceList({ sources }: { sources: SourceView[] }) {
+  // The newest message with a trace is open; older ones stay one click away.
+  const newestTraced = sources.findLastIndex((source) => (source.trace ?? []).length > 0);
   return (
     <ol data-testid="source-list" className="space-y-2">
-      {sources.map((source) => (
-        <li
-          key={source.message_id}
-          data-testid="source-item"
-          className="grid grid-cols-2 gap-3 rounded-md border border-slate-800 bg-slate-950/60 p-3"
-        >
-          <div>
-            <p className="mb-1 text-[11px] uppercase tracking-wide text-slate-500">
-              Original · {shortSender(source.sender)} · {source.channel} ·{" "}
-              {clockTime(source.received_at)}
-            </p>
-            <p data-testid="source-original" lang="fil" className="text-sm text-slate-200">
-              {source.text}
-            </p>
-          </div>
-          <div>
-            <div className="mb-1 flex items-center gap-2">
-              <span className="text-[11px] uppercase tracking-wide text-slate-500">
-                English summary
-              </span>
+      {sources.map((source, index) => (
+        <li key={source.message_id} data-testid="source-item" className="grid grid-cols-2 gap-2">
+          <Tile
+            label={`Original · ${shortSender(source.sender)} · ${CHANNEL_LABEL[source.channel]} · ${clockTime(source.received_at)}`}
+          >
+            <span data-testid="source-original">
+              <Text lang="fil">{source.text}</Text>
+            </span>
+          </Tile>
+          <Tile label="English summary">
+            <span className="flex flex-col items-start gap-1">
               {source.priority && <PriorityBadge priority={source.priority} />}
-            </div>
-            <p data-testid="source-summary" className="text-sm text-slate-300">
-              {source.english_summary ?? "Location reply (no summary)"}
-            </p>
-          </div>
+              <span data-testid="source-summary">
+                <Text>{source.english_summary ?? "Location reply (no summary)"}</Text>
+              </span>
+            </span>
+          </Tile>
+          <AgentTrace trace={source.trace ?? []} open={index === newestTraced} />
         </li>
       ))}
     </ol>

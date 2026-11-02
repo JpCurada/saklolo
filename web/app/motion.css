@@ -1,0 +1,125 @@
+/* Motion explains a change (design/DESIGN.md, R18 to R21). Timing comes from tokens. */
+@keyframes sk-enter {
+  from {
+    opacity: 0;
+    transform: translateY(calc(var(--sk-space-2) * -1));
+  }
+}
+
+@keyframes sk-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes sk-pop {
+  from {
+    transform: scale(0.96);
+  }
+  50% {
+    transform: scale(1.04);
+  }
+}
+
+/* An outline, not a shadow (R2). One cycle per loop token: well under 3 flashes a second. */
+@keyframes sk-pulse-critical {
+  from {
+    outline-color: var(--sk-color-status-critical);
+    outline-offset: 0;
+  }
+  to {
+    outline-color: transparent;
+    outline-offset: var(--sk-space-1);
+  }
+}
+
+@keyframes sk-skeleton {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: -100% 0;
+  }
+}
+
+@keyframes sk-ping {
+  from {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(2.4);
+  }
+}
+
+@keyframes sk-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.sk-enter {
+  animation: sk-enter var(--sk-motion-base) var(--sk-motion-enter) backwards;
+}
+
+.sk-fade {
+  animation: sk-fade var(--sk-motion-base) var(--sk-motion-standard) backwards;
+}
+
+.sk-pop {
+  animation: sk-pop var(--sk-motion-slow) var(--sk-motion-standard);
+}
+
+.sk-pulse-critical {
+  outline: var(--sk-stroke-2) solid transparent;
+  animation: sk-pulse-critical var(--sk-motion-loop) var(--sk-motion-standard) infinite;
+}
+
+.sk-skeleton {
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--sk-color-ink) 10%, transparent) 25%,
+    color-mix(in srgb, var(--sk-color-ink) 4%, transparent) 50%,
+    color-mix(in srgb, var(--sk-color-ink) 10%, transparent) 75%
+  );
+  background-size: 200% 100%;
+  animation: sk-skeleton var(--sk-motion-loop) linear infinite;
+}
+
+/* On a ring behind a map pin, which sizes and colors it. */
+.sk-ping {
+  animation: sk-ping var(--sk-motion-loop) var(--sk-motion-enter) infinite;
+}
+
+.sk-spin {
+  animation: sk-spin var(--sk-motion-loop) linear infinite;
+}
+
+/* Width and height, because MapLibre owns the pin's transform. */
+.sk-pin {
+  transition:
+    width var(--sk-motion-base) var(--sk-motion-standard),
+    height var(--sk-motion-base) var(--sk-motion-standard);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sk-enter,
+  .sk-fade,
+  .sk-pop,
+  .sk-pulse-critical,
+  .sk-skeleton,
+  .sk-ping,
+  .sk-spin {
+    animation: none;
+  }
+
+  .sk-pin {
+    transition: none;
+  }
+
+  /* The signal stays, without the movement. */
+  .sk-pulse-critical {
+    outline-color: var(--sk-color-status-critical);
+  }
+}

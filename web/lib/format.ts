@@ -1,11 +1,18 @@
 // Display helpers shared by the dashboard. All UI copy is English.
-import type { Badge, Priority } from "./api/types";
+import type { Badge, Channel, Priority } from "./api/types";
 
 export const PRIORITY_LABEL: Record<Priority, string> = {
   P1: "P1 Critical",
   P2: "P2 High",
   P3: "P3 Moderate",
   P4: "P4 Info",
+};
+
+export const CHANNEL_LABEL: Record<Channel, string> = {
+  sms: "SMS",
+  messenger: "Messenger",
+  telegram: "Telegram",
+  web: "Web",
 };
 
 export const BADGE_LABEL: Record<Badge, string> = {

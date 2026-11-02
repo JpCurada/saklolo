@@ -1,11 +1,18 @@
 @import "tailwindcss";
+@import "../lib/tokens/tokens.css";
+@import "../lib/tokens/tailwind-theme.css";
+@import "./motion.css";
+@import "./map.css";
 
 @theme inline {
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-/* The dispatcher screen is dark-only: it's built for an ops room and the demo video. */
+/* Light is the default theme. Dark stays available: set data-theme="dark" on <html>. */
 :root {
+  color-scheme: light;
+}
+:root[data-theme="dark"] {
   color-scheme: dark;
 }

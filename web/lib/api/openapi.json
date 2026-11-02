@@ -355,6 +355,16 @@
             }
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DispatcherIn"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Successful Response",
@@ -463,6 +473,13 @@
     "schemas": {
       "AssignIn": {
         "properties": {
+          "dispatcher": {
+            "type": "string",
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Dispatcher",
+            "description": "Who made the decision; recorded in the case history"
+          },
           "team": {
             "type": "string",
             "maxLength": 80,
@@ -472,6 +489,7 @@
         },
         "type": "object",
         "required": [
+          "dispatcher",
           "team"
         ],
         "title": "AssignIn"
@@ -487,6 +505,44 @@
           "overridden"
         ],
         "title": "Badge"
+      },
+      "CaseAction": {
+        "type": "string",
+        "enum": [
+          "assigned",
+          "overridden",
+          "closed"
+        ],
+        "title": "CaseAction"
+      },
+      "CaseEvent": {
+        "properties": {
+          "action": {
+            "$ref": "#/components/schemas/CaseAction"
+          },
+          "dispatcher": {
+            "type": "string",
+            "title": "Dispatcher"
+          },
+          "at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "At"
+          },
+          "detail": {
+            "type": "string",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "required": [
+          "action",
+          "dispatcher",
+          "at",
+          "detail"
+        ],
+        "title": "CaseEvent",
+        "description": "One dispatcher decision, kept so every change has a named person behind it."
       },
       "CaseStatus": {
         "type": "string",
@@ -597,6 +653,13 @@
             },
             "type": "array",
             "title": "Sources"
+          },
+          "history": {
+            "items": {
+              "$ref": "#/components/schemas/CaseEvent"
+            },
+            "type": "array",
+            "title": "History"
           }
         },
         "type": "object",
@@ -616,7 +679,8 @@
           "assigned_team",
           "opened_at",
           "last_seen",
-          "sources"
+          "sources",
+          "history"
         ],
         "title": "CaseView"
       },
@@ -625,9 +689,26 @@
         "enum": [
           "sms",
           "messenger",
+          "telegram",
           "web"
         ],
         "title": "Channel"
+      },
+      "DispatcherIn": {
+        "properties": {
+          "dispatcher": {
+            "type": "string",
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Dispatcher",
+            "description": "Who made the decision; recorded in the case history"
+          }
+        },
+        "type": "object",
+        "required": [
+          "dispatcher"
+        ],
+        "title": "DispatcherIn"
       },
       "HTTPValidationError": {
         "properties": {
@@ -809,6 +890,13 @@
               }
             ],
             "title": "Error"
+          },
+          "trace": {
+            "items": {
+              "$ref": "#/components/schemas/TraceStep"
+            },
+            "type": "array",
+            "title": "Trace"
           }
         },
         "type": "object",
@@ -849,6 +937,13 @@
       },
       "OverrideIn": {
         "properties": {
+          "dispatcher": {
+            "type": "string",
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Dispatcher",
+            "description": "Who made the decision; recorded in the case history"
+          },
           "priority": {
             "$ref": "#/components/schemas/Priority"
           },
@@ -861,6 +956,7 @@
         },
         "type": "object",
         "required": [
+          "dispatcher",
           "priority",
           "reason"
         ],
@@ -1008,6 +1104,13 @@
                 "type": "null"
               }
             ]
+          },
+          "trace": {
+            "items": {
+              "$ref": "#/components/schemas/TraceStep"
+            },
+            "type": "array",
+            "title": "Trace"
           }
         },
         "type": "object",
@@ -1030,6 +1133,53 @@
           "spam_pattern"
         ],
         "title": "SuspicionReason"
+      },
+      "TraceStatus": {
+        "type": "string",
+        "enum": [
+          "ran",
+          "skipped"
+        ],
+        "title": "TraceStatus"
+      },
+      "TraceStep": {
+        "properties": {
+          "step": {
+            "type": "string",
+            "title": "Step"
+          },
+          "status": {
+            "$ref": "#/components/schemas/TraceStatus"
+          },
+          "duration_ms": {
+            "type": "integer",
+            "title": "Duration Ms"
+          },
+          "detail": {
+            "type": "string",
+            "title": "Detail"
+          },
+          "service": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Service"
+          }
+        },
+        "type": "object",
+        "required": [
+          "step",
+          "status",
+          "duration_ms",
+          "detail"
+        ],
+        "title": "TraceStep",
+        "description": "One Graph step's work on one message, shown to the dispatcher."
       },
       "TriageOutcome": {
         "properties": {

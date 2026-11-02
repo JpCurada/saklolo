@@ -1,31 +1,57 @@
 # web
 
-Next.js dispatcher dashboard: queue, human review lane, case detail with map,
-phone simulator, live message feed, and replay controls. Built for 1920×1080.
+Next.js dispatcher dashboard: queue, human review lane, case detail with map, and
+the live message feed. Built for 1920×1080. In demo mode it adds storm replay and
+the resident phones at `/resident`.
 Rules: [typescript/web](../.agents/rules/typescript-web.md). Skill: `web-ui`.
 
 This is Next.js 16: read [AGENTS.md](AGENTS.md) before changing framework code.
 
-## Run
+## Run the demo
 
-The dashboard needs the demo API on port 8000 (`make demo` from the repo root).
+The dashboard needs the demo API on port 8000. From the repo root:
 
 ```bash
-npm install
-npm run build && npx next start --port 3000
+make demo        # API
+make demo-web    # dashboard on :3000, with replay and /resident
 ```
 
-Open <http://127.0.0.1:3000>. Set `NEXT_PUBLIC_API_URL` at build time to use
-another API address. `npm run dev` also works; on a machine low on memory, its
-Turbopack helper processes can fail to start (exit code `0xc0000142`), and the
-production build avoids that.
+Open <http://127.0.0.1:3000>, and <http://127.0.0.1:3000/resident> for the phones.
+`npm run dev` also works; on a machine low on memory, its Turbopack helper processes
+can fail to start (exit code `0xc0000142`), and the production build avoids that.
+
+## Deploy
+
+Settings are read at build time; copy `.env.example` to `.env.local`.
+
+| Variable | Deployment value |
+|---|---|
+| `NEXT_PUBLIC_API_URL` | The API's public HTTPS address. Unset, the build warns and uses 127.0.0.1. |
+| `NEXT_PUBLIC_DEMO_MODE` | Unset. `true` adds the demo tools, which a dispatcher must never see. |
+
+```bash
+npm ci
+npm run build
+npx next start --port 3000
+```
+
+Any Node host that runs `next start` works, including AWS Amplify Hosting with `web`
+as the app root. On the API side, add the dashboard's address to
+`SAKLOLO_DASHBOARD_ORIGINS`.
+
+Every response carries security headers and `noindex`, and `robots.txt` blocks
+crawlers. `/resident` is a 404 outside demo mode.
+
+**Before real users:** the API has no sign-in yet, so anyone who can reach it can
+read cases and act on them. Deploy only with synthetic data until Cognito sign-in
+is in. A Content Security Policy still needs to be written and tested against the map.
 
 ## Layout
 
 ```
-app/          the one route; a thin page
-components/   presentational: PriorityBadge, CaseBadges, Panel
-features/     dashboard, queue, case-detail, simulator, replay, feed
+app/          routes (/, /resident in demo mode), robots, icon, security headers
+components/ui/  the design system's components
+features/     dashboard, queue, case-detail, dispatcher, simulator, replay, feed
 lib/api/      typed client; types generated from the API schema
 lib/          usePolling (every 2 seconds), display helpers
 scripts/      copies MapLibre's web worker into public/

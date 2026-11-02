@@ -1,0 +1,120 @@
+/* Page layout for the dashboard: the shell and the regions only the shell arranges.
+   Components own their own styling (design/DESIGN.md, R3). */
+.sk-page {
+  background: var(--sk-color-canvas);
+  color: var(--sk-color-ink);
+}
+
+.sk-shell {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sk-space-3);
+  height: 100vh;
+  padding: var(--sk-space-3);
+}
+
+.sk-header {
+  display: flex;
+  align-items: center;
+  gap: var(--sk-space-6);
+  padding: var(--sk-space-2) var(--sk-space-4);
+  border-radius: var(--sk-radius-tile);
+  background: var(--sk-color-surface);
+}
+
+.sk-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--sk-space-2);
+}
+
+.sk-stats {
+  display: flex;
+  gap: var(--sk-space-5);
+}
+
+.sk-board {
+  display: grid;
+  flex: 1;
+  grid-template-columns: 30fr 42fr 28fr;
+  gap: var(--sk-space-3);
+  min-height: 0;
+}
+
+.sk-column-center,
+.sk-column-side {
+  display: grid;
+  gap: var(--sk-space-3);
+  min-height: 0;
+}
+
+.sk-column-center {
+  grid-template-rows: 3fr 2fr;
+}
+
+.sk-column-side {
+  grid-template-rows: 1fr;
+}
+
+.sk-map-frame {
+  min-height: 0;
+  overflow: hidden;
+  border-radius: var(--sk-radius-tile);
+}
+
+.sk-row-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sk-space-1);
+  margin-top: var(--sk-space-1);
+}
+
+.sk-queue-hint {
+  padding: var(--sk-space-3) var(--sk-space-4);
+}
+
+.sk-replay {
+  display: flex;
+  align-items: center;
+  gap: var(--sk-space-2);
+}
+
+.sk-replay-progress {
+  width: var(--sk-space-16);
+  height: var(--sk-space-1);
+  overflow: hidden;
+  border: 0;
+  border-radius: var(--sk-radius-pill);
+  background: var(--sk-color-canvas);
+  appearance: none;
+}
+
+.sk-replay-progress::-webkit-progress-bar {
+  background: var(--sk-color-canvas);
+}
+
+.sk-replay-progress::-webkit-progress-value {
+  background: var(--sk-color-accent);
+  transition: width var(--sk-motion-base) var(--sk-motion-standard);
+}
+
+.sk-replay-progress::-moz-progress-bar {
+  background: var(--sk-color-accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sk-replay-progress::-webkit-progress-value {
+    transition: none;
+  }
+}
+
+/* The resident page: three phones side by side. */
+.sk-phones {
+  /* About a real phone's width: 25 × 16px. */
+  --sk-phone-width: calc(var(--sk-space-4) * 25);
+  display: grid;
+  flex: 1;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--sk-space-3);
+  min-height: 0;
+}

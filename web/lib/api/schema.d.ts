@@ -166,6 +166,11 @@ export interface components {
     schemas: {
         /** AssignIn */
         AssignIn: {
+            /**
+             * Dispatcher
+             * @description Who made the decision; recorded in the case history
+             */
+            dispatcher: string;
             /** Team */
             team: string;
         };
@@ -174,6 +179,27 @@ export interface components {
          * @enum {string}
          */
         Badge: "corroborated" | "suspicious" | "reported_safe" | "awaiting_location" | "needs_review" | "overridden";
+        /**
+         * CaseAction
+         * @enum {string}
+         */
+        CaseAction: "assigned" | "overridden" | "closed";
+        /**
+         * CaseEvent
+         * @description One dispatcher decision, kept so every change has a named person behind it.
+         */
+        CaseEvent: {
+            action: components["schemas"]["CaseAction"];
+            /** Dispatcher */
+            dispatcher: string;
+            /**
+             * At
+             * Format: date-time
+             */
+            at: string;
+            /** Detail */
+            detail: string;
+        };
         /**
          * CaseStatus
          * @enum {string}
@@ -215,12 +241,22 @@ export interface components {
             last_seen: string;
             /** Sources */
             sources: components["schemas"]["SourceView"][];
+            /** History */
+            history: components["schemas"]["CaseEvent"][];
         };
         /**
          * Channel
          * @enum {string}
          */
-        Channel: "sms" | "messenger" | "web";
+        Channel: "sms" | "messenger" | "telegram" | "web";
+        /** DispatcherIn */
+        DispatcherIn: {
+            /**
+             * Dispatcher
+             * @description Who made the decision; recorded in the case history
+             */
+            dispatcher: string;
+        };
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
@@ -286,6 +322,8 @@ export interface components {
             case_id: string | null;
             /** Error */
             error?: string | null;
+            /** Trace */
+            trace?: components["schemas"]["TraceStep"][];
         };
         /**
          * OutboundMessage
@@ -304,6 +342,11 @@ export interface components {
         };
         /** OverrideIn */
         OverrideIn: {
+            /**
+             * Dispatcher
+             * @description Who made the decision; recorded in the case history
+             */
+            dispatcher: string;
             priority: components["schemas"]["Priority"];
             /** Reason */
             reason: string;
@@ -374,12 +417,34 @@ export interface components {
             /** English Summary */
             english_summary: string | null;
             priority: components["schemas"]["Priority"] | null;
+            /** Trace */
+            trace?: components["schemas"]["TraceStep"][];
         };
         /**
          * SuspicionReason
          * @enum {string}
          */
         SuspicionReason: "recycled" | "implausible_location" | "spam_pattern";
+        /**
+         * TraceStatus
+         * @enum {string}
+         */
+        TraceStatus: "ran" | "skipped";
+        /**
+         * TraceStep
+         * @description One Graph step's work on one message, shown to the dispatcher.
+         */
+        TraceStep: {
+            /** Step */
+            step: string;
+            status: components["schemas"]["TraceStatus"];
+            /** Duration Ms */
+            duration_ms: number;
+            /** Detail */
+            detail: string;
+            /** Service */
+            service?: string | null;
+        };
         /**
          * TriageOutcome
          * @description What the pipeline hands to the dispatch queue for one message.
@@ -706,7 +771,11 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DispatcherIn"];
+            };
+        };
         responses: {
             /** @description Successful Response */
             200: {

@@ -42,10 +42,13 @@ export const api = {
   outbox: (recipient: string) =>
     request<OutboundMessage[]>(`/outbox?recipient=${encodeURIComponent(recipient)}`),
   send: (message: MessageIn) => post<ReceiveResult>("/messages", message),
-  assign: (caseId: string, team: string) => post<CaseView>(`/cases/${caseId}/assign`, { team }),
-  override: (caseId: string, priority: Priority, reason: string) =>
-    post<CaseView>(`/cases/${caseId}/override`, { priority, reason }),
-  confirmSafe: (caseId: string) => post<CaseView>(`/cases/${caseId}/confirm-safe`),
+  // Every decision names the dispatcher who made it; the API records it in the case history.
+  assign: (caseId: string, team: string, dispatcher: string) =>
+    post<CaseView>(`/cases/${caseId}/assign`, { team, dispatcher }),
+  override: (caseId: string, priority: Priority, reason: string, dispatcher: string) =>
+    post<CaseView>(`/cases/${caseId}/override`, { priority, reason, dispatcher }),
+  confirmSafe: (caseId: string, dispatcher: string) =>
+    post<CaseView>(`/cases/${caseId}/confirm-safe`, { dispatcher }),
   replay: () => request<ReplayStatus>("/replay"),
   startReplay: (settings: ReplayIn) => post<ReplayStatus>("/replay", settings),
   stopReplay: () => request<ReplayStatus>("/replay", { method: "DELETE" }),
