@@ -59,6 +59,7 @@ class SuspicionReason(StrEnum):
     RECYCLED = "recycled"
     IMPLAUSIBLE_LOCATION = "implausible_location"
     SPAM_PATTERN = "spam_pattern"
+    SENDER_PATTERN = "sender_pattern"
 
 
 class Channel(StrEnum):

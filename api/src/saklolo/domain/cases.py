@@ -46,18 +46,32 @@ def find_matching_case(
     now: datetime,
     policy: DedupePolicy,
 ) -> CaseMatch | None:
-    """Best open case for a message: the sender's own case, else the most similar nearby one."""
+    """Best open case for a message: the sender's own case, else the most similar nearby one.
+
+    A sender's own case must be in the same barangay: a volunteer reporting a second
+    household elsewhere gets a second case. An extra case is cheap; a household merged
+    out of the queue is not.
+    """
     recent = [c for c in open_cases if not c.closed and now - c.last_seen <= policy.window]
-    own = [c for c in recent if sender in c.senders]
+    own = [c for c in recent if sender in c.senders and same_barangay(c.location, location)]
     if own:
         return CaseMatch(max(own, key=lambda c: c.last_seen), similarity=1.0, same_sender=True)
 
-    nearby = [c for c in recent if is_nearby(c.location, location, policy.radius_km)]
+    nearby = [
+        c
+        for c in recent
+        if sender not in c.senders and is_nearby(c.location, location, policy.radius_km)
+    ]
     scored = [CaseMatch(c, cosine_similarity(c.embedding, embedding)) for c in nearby]
     best = max(scored, key=lambda m: m.similarity, default=None)
     if best is None or best.similarity < policy.similarity_threshold:
         return None
     return best
+
+
+def same_barangay(a: Location, b: Location) -> bool:
+    """Unknown locations can't rule a case out: an update rarely repeats the place."""
+    return a.barangay is None or b.barangay is None or a.barangay == b.barangay
 
 
 def is_nearby(a: Location, b: Location, radius_km: float) -> bool:

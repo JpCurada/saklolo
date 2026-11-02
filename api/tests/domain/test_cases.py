@@ -17,9 +17,17 @@ def case(case_id: str, sender: str, location: Location, hours_ago: float = 1) ->
 def test_senders_own_open_case_matches_regardless_of_text() -> None:
     cases = [case("a", "+639000000001", MALANDAY)]
 
-    match = find_matching_case(cases, "+639000000001", [0.0, 1.0], FORTUNE, NOW, POLICY)
+    match = find_matching_case(cases, "+639000000001", [0.0, 1.0], MALANDAY, NOW, POLICY)
 
     assert match is not None and match.same_sender
+
+
+def test_a_sender_in_another_barangay_is_a_different_household() -> None:
+    cases = [case("a", "+639000000001", MALANDAY)]
+
+    match = find_matching_case(cases, "+639000000001", [1.0, 0.0], FORTUNE, NOW, POLICY)
+
+    assert match is None  # even with identical text: a volunteer may report both
 
 
 def test_similar_nearby_case_matches() -> None:

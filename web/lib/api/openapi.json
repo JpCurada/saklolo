@@ -1130,7 +1130,8 @@
         "enum": [
           "recycled",
           "implausible_location",
-          "spam_pattern"
+          "spam_pattern",
+          "sender_pattern"
         ],
         "title": "SuspicionReason"
       },

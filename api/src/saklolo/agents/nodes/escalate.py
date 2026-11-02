@@ -85,7 +85,8 @@ def brief(state: PipelineState, decision: TriageDecision) -> str:
     return (
         f"{message_block(state.model_text)}\n"
         f"<facts>\n{facts}\nbarangay: {place}\ncase: {merged}\n"
-        f"old post check: {state.recycled_note or 'no sign of an old post'}\n</facts>\n"
+        f"old post check: {state.recycled_note or 'no sign of an old post'}\n"
+        f"sender check: {state.sender_note or 'nothing unusual'}\n</facts>\n"
         f"<first_triage>\n{decision.model_dump_json()}\n</first_triage>"
     )
 

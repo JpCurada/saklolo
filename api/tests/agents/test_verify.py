@@ -7,10 +7,10 @@ import pytest
 
 from saklolo.agents.graph import run_pipeline
 from saklolo.agents.nodes.verify import past_year
-from saklolo.domain.models import Priority, SuspicionReason
+from saklolo.domain.models import ExtractedRequest, Priority, SuspicionReason
 from saklolo.domain.ports import ArchiveMatch
 from tests.agents.fakes import fake_deps
-from tests.agents.test_graph import fake_model, message
+from tests.agents.test_graph import ROOF_REQUEST, fake_model, message
 
 
 class FakeArchive:
@@ -95,3 +95,38 @@ def test_past_year_reads_years_and_dates_but_not_this_year() -> None:
     assert past_year("please share! 11/12/2020", 2026) == 2020
     assert past_year("bagyo ngayong 2026, nasa bubong", 2026) is None
     assert past_year("10 people, 2 infants", 2026) is None
+
+
+def reports_from_one_sender(*barangays: str) -> list:
+    model = fake_model()
+    deps = fake_deps(model)
+    states = []
+    for barangay in barangays:
+        model.outputs[ExtractedRequest] = ROOF_REQUEST.model_copy(update={"barangay": barangay})
+        states.append(run_pipeline(message(f"nasa bubong kami sa {barangay}"), deps))
+    return states
+
+
+def test_a_second_household_elsewhere_gets_its_own_case() -> None:
+    first, second = reports_from_one_sender("Malanday", "Tumana")
+
+    assert first.case_id != second.case_id
+    assert not second.outcome(0.75).is_suspicious  # two places can be a volunteer
+
+
+def test_a_sender_in_three_barangays_is_flagged_but_keeps_every_case() -> None:
+    states = reports_from_one_sender("Malanday", "Tumana", "Barangka")
+
+    assert len({state.case_id for state in states}) == 3
+    outcome = states[-1].outcome(0.75)
+    assert outcome.suspicion_reasons == [SuspicionReason.SENDER_PATTERN]
+    assert outcome.priority == Priority.CRITICAL
+    assert step(states[-1], "verify").detail == (
+        "Unusual sender: Same sender reported 3 barangays. Flagged, still shown"
+    )
+
+
+def test_a_follow_up_in_the_same_barangay_stays_in_the_case() -> None:
+    first, second = reports_from_one_sender("Malanday", "Malanday")
+
+    assert first.case_id == second.case_id

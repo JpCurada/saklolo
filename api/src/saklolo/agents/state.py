@@ -53,6 +53,7 @@ class PipelineState:
     injection_suspected: bool = False  # flagged for the dispatcher; the model still reads it
     suspicion_reasons: list[SuspicionReason] = field(default_factory=list)
     recycled_note: str = ""
+    sender_note: str = ""
     extraction: ExtractedRequest | None = None
     location: Location = UNKNOWN_LOCATION
     asks_location: bool = False

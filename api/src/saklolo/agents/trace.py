@@ -121,8 +121,13 @@ def _dedupe(state: PipelineState, _: PipelineDeps) -> Described:
 
 
 def _verify(state: PipelineState, _: PipelineDeps) -> Described:
+    notes = []
     if state.recycled_note:
-        return f"Possible old post: {state.recycled_note}. Flagged, still shown", None
+        notes.append(f"Possible old post: {state.recycled_note}")
+    if state.sender_note:
+        notes.append(f"Unusual sender: {state.sender_note}")
+    if notes:
+        return f"{'; '.join(notes)}. Flagged, still shown", None
     return "No sign of an old post", None
 
 

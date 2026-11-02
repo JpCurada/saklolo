@@ -30,7 +30,7 @@ def extraction_for(prompt: str) -> ExtractedRequest:
         people_count=5,
         water_level=WaterLevel.ROOF if "bubong" in text else WaterLevel.KNEE,
         location_text="tapat ng 7-11" if vague else "likod ng kapilya",
-        barangay=None if vague else ("Fortune" if "tuhod" in text else "Malanday"),
+        barangay=None if vague else ("Fortune" if "fortune" in text else "Malanday"),
         english_summary="5 people on the roof" if "bubong" in text else "Family, knee-deep",
         confidence=0.9,
     )
@@ -76,7 +76,7 @@ def test_rescue_request_is_queued_and_acknowledged_honestly() -> None:
 
 def test_queue_puts_the_most_urgent_case_first() -> None:
     service, _ = make_service()
-    service.receive(message("tubig hanggang tuhod", sender=MARK))
+    service.receive(message("tubig hanggang tuhod sa fortune", sender=MARK))
     service.receive(message("nasa bubong kami", minutes=5))
 
     assert [c.priority for c in service.cases()] == [Priority.CRITICAL, Priority.HIGH]

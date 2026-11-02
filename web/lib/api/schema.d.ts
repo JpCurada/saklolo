@@ -424,7 +424,7 @@ export interface components {
          * SuspicionReason
          * @enum {string}
          */
-        SuspicionReason: "recycled" | "implausible_location" | "spam_pattern";
+        SuspicionReason: "recycled" | "implausible_location" | "spam_pattern" | "sender_pattern";
         /**
          * TraceStatus
          * @enum {string}
