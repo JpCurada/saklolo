@@ -1,12 +1,37 @@
+<div align="center">
+
+<img src="web/public/assets/logo-mark.svg" width="96" alt="Saklolo logo: a beacon over a wave">
+
 # Saklolo
 
-**Saklolo turns the flood of messy, Taglish typhoon rescue requests into a ranked,
-deduplicated, mapped dispatch queue for Marikina City, so responders see the most
-urgent households first. A named human dispatcher always decides who gets sent;
-the system never closes a case or tells a resident help is coming on its own.**
+**When a typhoon floods the city, every plea reaches the right person first.**
 
-Built with the [Strands Agents SDK](https://strandsagents.com) on AWS for the
-"Strands SDK: Workshop to Ship" hackathon. Copyright 2026 John Paul Curada, licensed under [Apache-2.0](LICENSE). Flood-hazard data in `data/hazard/` is from Project NOAH and its contributors, under [ODC-ODbL 1.0](data/hazard/README.md).
+Saklolo turns floods of messy, Taglish rescue messages into a ranked, deduplicated,
+mapped dispatch queue. Agents read and sort. A named human decides.
+
+[![API checks](https://github.com/JpCurada/saklolo/actions/workflows/api.yml/badge.svg)](https://github.com/JpCurada/saklolo/actions/workflows/api.yml)
+[![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
+[![Built with Strands Agents](https://img.shields.io/badge/built%20with-Strands%20Agents-orange.svg)](https://strandsagents.com)
+[![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)](api/pyproject.toml)
+
+[See it](#see-it) · [How it works](#what-happens-to-a-message) · [Try it offline](#quick-start) · [What's built](#built-and-planned) · [Architecture](docs/architecture.md)
+
+<img src="docs/images/dashboard.webp" width="100%" alt="The dispatcher dashboard: a ranked queue, a case with its original Taglish and English summary, a map with a flood-hazard layer, and the incoming message feed">
+
+</div>
+
+*Saklolo* means "help" or "rescue" in Filipino. It's built for Marikina City, which
+floods badly, and every safety promise below is enforced in code and tests. The system
+never closes a case, and never tells a resident help is coming on its own.
+
+> **Status:** a hackathon project for "Strands SDK: Workshop to Ship". It runs on
+> synthetic data and hasn't been used in a real response.
+
+## See it
+
+| How the agents decided | Resident phones (simulated) |
+|---|---|
+| <img src="docs/images/agent-trace.webp" alt="The agent trace: every step, how long it took, which model it called, and what it decided"> | <img src="docs/images/resident-phones.webp" alt="Three simulated phones for SMS, Telegram-style, and Messenger-style chats"> |
 
 ## What happens to a message
 
@@ -14,10 +39,23 @@ A resident writes by SMS, Telegram, or Messenger, for example *"nasa bubong na k
 5 kami, may lola"*. Each message runs through a **Strands Graph**
 ([`api/src/saklolo/agents/graph.py`](api/src/saklolo/agents/graph.py)):
 
-```
-normalize → prefilter ─(not spam)→ extract → geolocate → dedupe → verify → triage
-                                                                            │
-                                         (confidence < 0.75) ─► escalate: Strands Swarm
+```mermaid
+flowchart LR
+    M([Message]) --> N[normalize] --> P{prefilter}
+    P -- spam --> F[[flagged, still shown]]
+    P -- needs a model --> E[extract] --> G[geolocate]
+    G -- no place --> A[[ask one question, resume on reply]]
+    G --> D[dedupe] --> V[verify] --> T[triage]
+    T -- confident --> Q([Dispatch queue])
+    T -- unsure --> S
+    subgraph S [Strands Swarm]
+        R[triage reviewer] <--> L[location resolver]
+        R <--> C[conflict resolver]
+    end
+    MEM[(AgentCore Memory: past corrections)] -.-> S
+    S --> Q
+    Q --> H{{Human dispatcher decides}}
+    H -. corrections .-> MEM
 ```
 
 | Step | What it does | Calls |
@@ -27,7 +65,7 @@ normalize → prefilter ─(not spam)→ extract → geolocate → dedupe → ve
 | extract | Reads people, vulnerable members, water level, place words, and an English summary | Bedrock (Nova Lite), structured output |
 | geolocate | Finds the barangay from the text or Amazon Location; if none, asks the resident one question | Amazon Location |
 | dedupe | Merges reports of the same household: same sender, or similar text nearby within a time window | Titan embeddings |
-| verify | Flags recycled posts: copies of known past-typhoon posts, or a date in an earlier year | code |
+| verify | Flags recycled posts and unusual senders, and adds Project NOAH flood-hazard context | code |
 | triage | Sets P1–P4 with a one-line reason a dispatcher can check | Bedrock (Nova Lite) |
 | escalate | Unsure cases go to a Swarm: a triage reviewer, a location resolver with a lookup tool, and a conflict resolver. It may raise a priority, never lower one; still unsure means a human decides | Strands Swarm on Bedrock |
 
@@ -60,7 +98,7 @@ Needs Python 3.12 with [uv](https://docs.astral.sh/uv/), Node 22, and make.
 
 ```bash
 make install       # API (uv) and web (npm) dependencies
-make test          # 151 unit tests: no network, no AWS
+make test          # unit tests: no network, no AWS
 ```
 
 **Offline demo, no AWS account needed.** Model and embedding calls for the synthetic
@@ -99,9 +137,16 @@ make demo-web
 | [design/](design/) | Design tokens, rules, and visual regression baselines |
 | [video/](video/) | Storyboard and Playwright capture for the demo video |
 
-Contributors (human or AI): start with [AGENTS.md](AGENTS.md).
+Want to help? See [CONTRIBUTING.md](CONTRIBUTING.md). Found a security problem? See
+[SECURITY.md](SECURITY.md).
 
 ## Data notice
 
 All rescue messages in this repository are **synthetic**. They follow the patterns of
 public typhoon posts but contain no real names, numbers, or posts.
+
+## License
+
+Code: [Apache-2.0](LICENSE), copyright 2026 John Paul Curada. Flood-hazard data in
+[`data/hazard/`](data/hazard/) is from Project NOAH and its contributors, under
+[ODC-ODbL 1.0](data/hazard/README.md).
