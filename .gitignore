@@ -36,6 +36,8 @@ video/playwright-report/
 
 # Eval runs (keep only curated results)
 eval/runs/
+# Cached model and embedding calls from experiments
+eval/cache/
 
 # Claude Code personal settings
 .claude/settings.local.json

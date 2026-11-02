@@ -1,4 +1,4 @@
-.PHONY: help install fmt lint test eval demo plan video-capture
+.PHONY: help install fmt lint test eval demo plan notebooks video-capture
 
 API := api
 WEB := web
@@ -19,6 +19,7 @@ fmt: ## Format all code
 
 lint: ## Lint and type-check all code
 	cd $(API) && uv run ruff format --check . && uv run ruff check . && uv run mypy src
+	cd $(API) && uv run ruff check --config pyproject.toml ../notebooks
 	terraform -chdir=$(INFRA) fmt -check -recursive
 	terraform -chdir=$(INFRA) validate
 	@if [ -f $(WEB)/package.json ]; then cd $(WEB) && npm run lint && npm run typecheck; fi
@@ -35,6 +36,9 @@ demo: ## Local end-to-end demo with synthetic data
 plan: ## terraform plan for infra/
 	terraform -chdir=$(INFRA) init -backend-config=backend.hcl
 	terraform -chdir=$(INFRA) plan -var-file=terraform.tfvars
+
+notebooks: ## Install notebook dependencies into api/.venv
+	cd $(API) && uv sync --group notebooks
 
 video-capture: ## Record product footage with Playwright (run `make demo` first)
 	cd $(VIDEO) && npx playwright test
