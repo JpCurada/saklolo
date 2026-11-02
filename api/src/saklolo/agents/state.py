@@ -40,6 +40,8 @@ class PipelineState:
     verdict: PrefilterVerdict = PrefilterVerdict.NEEDS_MODEL
     verdict_reason: str = ""
     injection_suspected: bool = False  # flagged for the dispatcher; the model still reads it
+    suspicion_reasons: list[SuspicionReason] = field(default_factory=list)
+    recycled_note: str = ""
     extraction: ExtractedRequest | None = None
     location: Location = UNKNOWN_LOCATION
     asks_location: bool = False
@@ -54,13 +56,15 @@ class PipelineState:
     trace: list[TraceStep] = field(default_factory=list)
 
     def outcome(self, escalation_threshold: float) -> TriageOutcome:
-        suspicious = self.verdict == PrefilterVerdict.SPAM or self.injection_suspected
+        reasons = list(self.suspicion_reasons)
+        if self.verdict == PrefilterVerdict.SPAM or self.injection_suspected:
+            reasons.insert(0, SuspicionReason.SPAM_PATTERN)
         decision = self.decision
         extraction = self.extraction
         return TriageOutcome(
             priority=decision.priority if decision else None,
-            is_suspicious=suspicious,
-            suspicion_reasons=[SuspicionReason.SPAM_PATTERN] if suspicious else [],
+            is_suspicious=bool(reasons),
+            suspicion_reasons=reasons,
             case_id=self.case_id,
             location=self.location,
             ask_back_question=ASK_BACK_QUESTION if self.asks_location else None,

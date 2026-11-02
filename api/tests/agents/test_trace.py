@@ -48,6 +48,6 @@ def test_spam_shows_the_model_steps_as_skipped() -> None:
     steps = by_step(trace)
     assert steps["prefilter"].detail.startswith("Flagged, not deleted")
     skipped = [s.step for s in trace if s.status == TraceStatus.SKIPPED]
-    assert skipped == ["extract", "geolocate", "dedupe", "triage", "escalate"]
+    assert skipped == ["extract", "geolocate", "dedupe", "verify", "triage", "escalate"]
     assert steps["extract"].detail == "Skipped: spam stops before any model call"
     assert model.calls == []

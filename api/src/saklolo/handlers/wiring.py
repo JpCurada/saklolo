@@ -6,6 +6,7 @@ from pathlib import Path
 import boto3
 
 from saklolo.adapters.amazon_location import AmazonLocationGeocoder
+from saklolo.adapters.archive import JsonlPostArchive
 from saklolo.adapters.call_cache import CachingEmbedder, CachingStructuredModel, JsonlCache
 from saklolo.adapters.dynamodb import DynamoCaseStore, DynamoDispatchStore
 from saklolo.adapters.geocode_cache import CachedGeocoder
@@ -15,7 +16,7 @@ from saklolo.adapters.titan import EMBEDDING_DIMENSIONS, TitanEmbedder
 from saklolo.agents.deps import PipelineDeps
 from saklolo.agents.escalation import StrandsSwarmEscalation
 from saklolo.agents.prompts import PromptSet
-from saklolo.config import Settings
+from saklolo.config import REPO_ROOT, Settings
 from saklolo.domain.cases import DedupePolicy
 from saklolo.domain.models import Location
 from saklolo.domain.ports import CaseStore, Embedder, StructuredModel
@@ -70,6 +71,7 @@ def build_pipeline_deps(
         model_id=settings.fast_model_id,
         escalation=escalation,
         escalation_model_id=escalation_model_id,
+        archive=JsonlPostArchive(REPO_ROOT / "data" / "archive.jsonl"),
     )
 
 

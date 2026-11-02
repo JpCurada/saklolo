@@ -4,7 +4,14 @@ from dataclasses import dataclass, field
 
 from saklolo.agents.prompts import PromptSet
 from saklolo.domain.cases import DedupePolicy
-from saklolo.domain.ports import CaseStore, Embedder, Escalation, Geocoder, StructuredModel
+from saklolo.domain.ports import (
+    CaseStore,
+    Embedder,
+    Escalation,
+    Geocoder,
+    PostArchive,
+    StructuredModel,
+)
 
 
 @dataclass(frozen=True)
@@ -21,3 +28,5 @@ class PipelineDeps:
     # Low-confidence triage gets a Swarm review; None sends it straight to a human.
     escalation: Escalation | None = None
     escalation_model_id: str = ""
+    # Known past-typhoon posts, for spotting recycled ones; None skips that check.
+    archive: PostArchive | None = None

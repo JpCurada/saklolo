@@ -1,7 +1,7 @@
 """Interfaces the domain and agents depend on. Adapters implement them."""
 
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import date, datetime
 from typing import Protocol
 
 from pydantic import BaseModel
@@ -79,3 +79,16 @@ class EscalationReview:
 
 class Escalation(Protocol):
     def review(self, brief: str) -> EscalationReview: ...
+
+
+@dataclass(frozen=True)
+class ArchiveMatch:
+    """A known past-typhoon post that a new message copies."""
+
+    archive_id: str
+    posted: date
+    similarity: float
+
+
+class PostArchive(Protocol):
+    def match(self, text: str) -> ArchiveMatch | None: ...

@@ -1,12 +1,11 @@
 """The triage pipeline as a Strands Graph.
 
-normalize → prefilter ─(not spam)→ extract → geolocate → dedupe → triage
+normalize → prefilter ─(not spam)→ extract → geolocate → dedupe → verify → triage
                                                      ─(low confidence)→ escalate (Swarm)
 
 Nodes share one PipelineState through invocation_state instead of passing text
 between them, so every step reads and writes typed data. A node runs when any
 satisfied edge reaches it.
-Verify is added in a later step (docs/architecture.md).
 """
 
 import asyncio
@@ -27,6 +26,7 @@ from saklolo.agents.nodes.geolocate import geolocate
 from saklolo.agents.nodes.normalize import normalize
 from saklolo.agents.nodes.prefilter import needs_model, prefilter
 from saklolo.agents.nodes.triage import triage
+from saklolo.agents.nodes.verify import verify
 from saklolo.agents.state import STATE_KEY, PipelineState, pipeline_state
 from saklolo.agents.trace import record, with_skipped
 from saklolo.domain.errors import PipelineError
@@ -79,6 +79,7 @@ def build_triage_graph(deps: PipelineDeps) -> Graph:
         "extract": lambda s: extract(s, deps.model, deps.prompts.extract),
         "geolocate": lambda s: geolocate(s, deps.geocoder),
         "dedupe": lambda s: dedupe(s, deps),
+        "verify": lambda s: verify(s, deps),
         "triage": lambda s: triage(s, deps.model, deps.prompts.triage),
         "escalate": lambda s: escalate(s, deps),
     }
@@ -89,7 +90,8 @@ def build_triage_graph(deps: PipelineDeps) -> Graph:
     builder.add_edge("prefilter", "extract", condition=_passes_prefilter)
     builder.add_edge("extract", "geolocate")
     builder.add_edge("geolocate", "dedupe")
-    builder.add_edge("dedupe", "triage")
+    builder.add_edge("dedupe", "verify")
+    builder.add_edge("verify", "triage")
     builder.add_edge("triage", "escalate", condition=_unsure(deps))
     builder.set_entry_point("normalize")
     builder.set_max_node_executions(MAX_NODE_EXECUTIONS)

@@ -9,7 +9,16 @@ from saklolo.agents.state import PipelineState, PrefilterVerdict
 from saklolo.domain.models import LocationSource, TraceStatus, TraceStep
 
 # Graph order, so skipped steps can be listed where they would have run.
-STEP_ORDER = ["normalize", "prefilter", "extract", "geolocate", "dedupe", "triage", "escalate"]
+STEP_ORDER = [
+    "normalize",
+    "prefilter",
+    "extract",
+    "geolocate",
+    "dedupe",
+    "verify",
+    "triage",
+    "escalate",
+]
 
 
 def record(
@@ -111,6 +120,12 @@ def _dedupe(state: PipelineState, _: PipelineDeps) -> Described:
     )
 
 
+def _verify(state: PipelineState, _: PipelineDeps) -> Described:
+    if state.recycled_note:
+        return f"Possible old post: {state.recycled_note}. Flagged, still shown", None
+    return "No sign of an old post", None
+
+
 def _triage(state: PipelineState, deps: PipelineDeps) -> Described:
     decision = state.decision
     if decision is None:
@@ -141,6 +156,7 @@ _DESCRIBE = {
     "extract": _extract,
     "geolocate": _geolocate,
     "dedupe": _dedupe,
+    "verify": _verify,
     "triage": _triage,
     "escalate": _escalate,
 }
