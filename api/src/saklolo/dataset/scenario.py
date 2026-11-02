@@ -1,4 +1,4 @@
-"""The synthetic storm's clock (docs/dataset-spec.md section 2)."""
+"""The synthetic storm's clock."""
 
 from datetime import datetime, timedelta, timezone
 

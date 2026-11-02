@@ -1,4 +1,4 @@
-"""Low-confidence triage gets a second opinion from a Swarm (ADR 0002).
+"""Low-confidence triage gets a second opinion from a Swarm.
 
 A barangay the reviewers found with the geocoder replaces an unknown location: it is
 the geocoder's answer, not the model's words. The ask-back still goes out, so the

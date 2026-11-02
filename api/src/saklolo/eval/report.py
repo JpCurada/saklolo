@@ -1,4 +1,4 @@
-"""Render metrics in the run-evals skill's report format."""
+"""Render metrics as a Markdown report."""
 
 from saklolo.eval.metrics import Metric
 

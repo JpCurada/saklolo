@@ -1,4 +1,4 @@
-"""Load data/*.jsonl into typed rows (docs/dataset-spec.md §1)."""
+"""Load data/*.jsonl into typed rows."""
 
 from collections.abc import Iterable
 from dataclasses import dataclass

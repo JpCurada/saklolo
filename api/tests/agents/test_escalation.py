@@ -1,4 +1,4 @@
-"""Swarm escalation for low-confidence triage (ADR 0002), with a fake Swarm."""
+"""Swarm escalation for low-confidence triage, with a fake Swarm."""
 
 from dataclasses import dataclass, field, replace
 

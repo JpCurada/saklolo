@@ -14,9 +14,9 @@ mapped dispatch queue. Agents read and sort. A named human decides.
 [![Built with Strands Agents](https://img.shields.io/badge/built%20with-Strands%20Agents-orange.svg)](https://strandsagents.com)
 [![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)](api/pyproject.toml)
 
-[See it](#see-it) · [How it works](#what-happens-to-a-message) · [Try it offline](#quick-start) · [What's built](#built-and-planned) · [Architecture](docs/architecture.md)
+[See it](#see-it) · [How it works](#what-happens-to-a-message) · [Try it](#quick-start) · [What's built](#built-and-planned)
 
-<img src="docs/images/dashboard.webp" width="100%" alt="The dispatcher dashboard: a ranked queue, a case with its original Taglish and English summary, a map with a flood-hazard layer, and the incoming message feed">
+<img src=".github/assets/dashboard.webp" width="100%" alt="The dispatcher dashboard: a ranked queue, a case with its original Taglish and English summary, a map with a flood-hazard layer, and the incoming message feed">
 
 </div>
 
@@ -31,7 +31,7 @@ never closes a case, and never tells a resident help is coming on its own.
 
 | How the agents decided | Resident phones (simulated) |
 |---|---|
-| <img src="docs/images/agent-trace.webp" alt="The agent trace: every step, how long it took, which model it called, and what it decided"> | <img src="docs/images/resident-phones.webp" alt="Three simulated phones for SMS, Telegram-style, and Messenger-style chats"> |
+| <img src=".github/assets/agent-trace.webp" alt="The agent trace: every step, how long it took, which model it called, and what it decided"> | <img src=".github/assets/resident-phones.webp" alt="Three simulated phones for SMS, Telegram-style, and Messenger-style chats"> |
 
 ## What happens to a message
 
@@ -101,20 +101,7 @@ make install       # API (uv) and web (npm) dependencies
 make test          # unit tests: no network, no AWS
 ```
 
-**Offline demo, no AWS account needed.** Model and embedding calls for the synthetic
-dev split are replayed from a recorded cache in [`demo/cache/`](demo/cache/).
-
-```bash
-make demo-offline  # API on :8000
-make demo-web      # dashboard on :3000, with replay and the /resident phones
-```
-
-Open <http://127.0.0.1:3000>, press **Replay dev split**, and open
-<http://127.0.0.1:3000/resident> to send messages. Offline, a message the cache has
-never seen is kept for a human instead of being triaged, places only resolve when the
-barangay is named, and the Swarm is off.
-
-**Live demo, with AWS.** Real Bedrock and Amazon Location calls, which cost money
+**Run the demo.** Real Bedrock and Amazon Location calls, which cost money
 (a few cents for a demo run). Needs an AWS profile with Bedrock access to Nova Lite
 in `ap-southeast-1` and Titan embeddings in `us-east-1`; copy `.env.example` to
 `.env` and fill it in.
@@ -132,10 +119,7 @@ make demo-web
 | [web/](web/) | Dispatcher dashboard and resident phones (Next.js) |
 | [infra/](infra/) | Terraform |
 | [data/](data/) | Synthetic messages and past-typhoon posts |
-| [demo/](demo/) | Recorded calls for the offline demo |
-| [docs/](docs/) | Architecture, triage rubric, dataset spec, decisions (ADRs) |
 | [design/](design/) | Design tokens, rules, and visual regression baselines |
-| [video/](video/) | Storyboard and Playwright capture for the demo video |
 
 Want to help? See [CONTRIBUTING.md](CONTRIBUTING.md). Found a security problem? See
 [SECURITY.md](SECURITY.md).

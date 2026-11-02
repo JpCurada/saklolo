@@ -1,1 +1,1 @@
-"""Synthetic dataset schema and validation (docs/dataset-spec.md)."""
+"""Synthetic dataset schema and validation."""

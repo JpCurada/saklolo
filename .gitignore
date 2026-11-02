@@ -39,13 +39,11 @@ video/playwright-report/
 eval/runs/
 # Cached model and embedding calls from experiments
 eval/cache/
-# Working screenshots from the ui-* skills
+# Working screenshots
 eval/screenshots/
 # Latest ui:check screenshots, rewritten every run (baselines stay tracked)
 design/screenshots/*.png
 
-# Claude Code personal settings
-.claude/settings.local.json
 
 # OS / editors
 .DS_Store
@@ -53,8 +51,16 @@ Thumbs.db
 .idea/
 .vscode/
 
-# Agent worktrees
-.claude/worktrees/
 
 # Local Terraform state until the S3 backend exists
 infra/backend_override.tf
+
+# Private working files, kept out of the public repo
+docs/
+demo/
+video/
+.claude/
+.agents/
+CLAUDE.md
+AGENTS.md
+design/reference/

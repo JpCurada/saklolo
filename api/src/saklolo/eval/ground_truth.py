@@ -16,7 +16,7 @@ class MissingLabelsError(Exception):
     def __init__(self, unlabeled: int) -> None:
         super().__init__(
             f"{unlabeled} messages have no human labels yet. Label them "
-            "(docs/dataset-spec.md, section 10) or pass --ground-truth intent for a "
+            "or pass --ground-truth intent for a "
             "provisional score."
         )
 

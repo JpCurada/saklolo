@@ -2,7 +2,7 @@
 
 Chat apps identify residents by an app-specific ID, so their sender is stored as
 `<channel>:<id>` (for example `telegram:12345`). Phone numbers have no prefix and
-stay with the SMS path (ADR 0001).
+stay with the SMS path.
 """
 
 import logging

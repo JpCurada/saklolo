@@ -1,4 +1,4 @@
-"""Row schemas for data/*.jsonl (docs/dataset-spec.md §3)."""
+"""Row schemas for data/*.jsonl."""
 
 from datetime import date
 from typing import Literal

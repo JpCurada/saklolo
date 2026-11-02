@@ -264,7 +264,7 @@ export interface components {
         };
         /**
          * InboundMessage
-         * @description What every channel adapter sends to intake (ADR 0001).
+         * @description What every channel adapter sends to intake.
          */
         InboundMessage: {
             /** Sender */

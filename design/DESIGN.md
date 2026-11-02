@@ -9,7 +9,7 @@ We follow the reference's language only. Never copy its name, mascot, or illustr
 
 ## Rules
 
-Each rule is checked by `design-reviewer`. Lint enforces R1 to R3.
+Lint enforces R1 to R3.
 
 ### Values
 - **R1. Tokens only.** No raw colors, arbitrary values, or inline styles. If a value is

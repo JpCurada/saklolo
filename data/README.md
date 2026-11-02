@@ -9,6 +9,4 @@
 | `psgc/` | PSGC barangay list for geocoding (public data) |
 | `hazards/` | Flood hazard polygons for verification |
 
-**Synthetic only.** Format and labeling: [docs/dataset-spec.md](../docs/dataset-spec.md).
-Definitions: [docs/triage-rubric.md](../docs/triage-rubric.md). Never add anything
-[security-privacy rules](../.agents/rules/security-privacy.md) forbid.
+**Synthetic only.** Never add real names, phone numbers, or posts.

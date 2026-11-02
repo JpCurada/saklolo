@@ -75,7 +75,7 @@ def build_pipeline_deps(
             settings.memory_id,
             settings.memory_strategy_id or None,
         )
-    # The Swarm uses the strong model when one is set (ADR 0002), else the fast one.
+    # The Swarm uses the strong model when one is set, else the fast one.
     escalation_model_id = settings.strong_model_id or settings.fast_model_id
     escalation = StrandsSwarmEscalation(bedrock_model(settings, escalation_model_id), geocoder)
     return PipelineDeps(

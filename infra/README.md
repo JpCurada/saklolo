@@ -1,6 +1,6 @@
 # infra
 
-Terraform for Saklolo's AWS resources. Rules: [.agents/rules/terraform.md](../.agents/rules/terraform.md).
+Terraform for Saklolo's AWS resources.
 
 ## First-time setup
 1. Create an S3 bucket for state (once, manually).

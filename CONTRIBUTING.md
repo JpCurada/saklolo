@@ -20,14 +20,7 @@ make test
 make ui-check    # after any UI change
 ```
 
-`make demo-offline` and `make demo-web` run everything without an AWS account.
-
 ## Commits
 
 Use `type(scope): description`, for example `fix(agents): keep a sender's second
 household`. Branch from `dev` and open pull requests against `dev`.
-
-## Where to read next
-
-[Architecture](docs/architecture.md), [triage rubric](docs/triage-rubric.md),
-[design rules](design/DESIGN.md), and the [decision records](docs/adr/).

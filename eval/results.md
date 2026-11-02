@@ -1,7 +1,7 @@
 # Eval results
 
 Curated results for the article and video. Copied from a run in `eval/runs/`
-(gitignored) by the `run-evals` skill. Nothing here is real until a run fills it.
+(gitignored). Nothing here is real until a run fills it.
 
 | Metric | Value | n |
 |---|---|---|

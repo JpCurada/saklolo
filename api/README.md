@@ -1,7 +1,6 @@
 # api
 
 Python backend: intake handlers and the Strands agent pipeline.
-Rules: [python](../.agents/rules/python.md), [AI engineering](../.agents/rules/ai-engineering.md).
 
 ```bash
 uv sync          # install

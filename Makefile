@@ -1,9 +1,8 @@
-.PHONY: help install fmt lint test eval demo demo-offline demo-web plan api-types tokens ui-check hooks notebooks video-capture
+.PHONY: help install fmt lint test eval demo demo-offline demo-web plan api-types tokens ui-check hooks notebooks
 
 API := api
 WEB := web
 INFRA := infra
-VIDEO := video
 
 help: ## List targets
 	@grep -E '^[a-z-]+:.*## ' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  %-14s %s\n", $$1, $$2}'
@@ -58,6 +57,3 @@ api-types: ## Regenerate the web client's types from the API schema
 
 notebooks: ## Install notebook dependencies into api/.venv
 	cd $(API) && uv sync --group notebooks
-
-video-capture: ## Record product footage with Playwright (run `make demo` first)
-	cd $(VIDEO) && npx playwright test

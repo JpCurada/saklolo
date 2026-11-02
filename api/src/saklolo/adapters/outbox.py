@@ -1,6 +1,6 @@
 """Notifier that keeps outgoing texts in memory, for the demo's phone simulator.
 
-AWS End User Messaging replaces it for real SMS (ADR 0001).
+AWS End User Messaging replaces it for real SMS.
 """
 
 from datetime import UTC, datetime

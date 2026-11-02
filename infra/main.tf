@@ -33,7 +33,7 @@ module "dispatch_table" {
   hash_key = "case_id"
 }
 
-# Past dispatcher corrections, found by meaning for unsure cases (ADR 0007).
+# Past dispatcher corrections, found by meaning for unsure cases.
 resource "aws_bedrockagentcore_memory" "corrections" {
   name                  = "${replace(local.name_prefix, "-", "_")}_corrections"
   description           = "Dispatcher priority corrections, consulted by the escalation Swarm."
@@ -49,4 +49,3 @@ resource "aws_bedrockagentcore_memory_strategy" "corrections" {
 
 # Next: API Gateway + intake Lambda, worker Lambda, AgentCore runtime,
 # Location Service place index, geocode cache table, IAM roles.
-# Use the terraform-aws skill and have infra-reviewer check each addition.

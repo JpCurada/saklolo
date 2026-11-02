@@ -1,4 +1,4 @@
-"""Cases and the rule for whether a new message belongs to an open one (ADR 0003)."""
+"""Cases and the rule for whether a new message belongs to an open one."""
 
 import math
 from dataclasses import dataclass, field

@@ -750,7 +750,7 @@
           "received_at"
         ],
         "title": "InboundMessage",
-        "description": "What every channel adapter sends to intake (ADR 0001)."
+        "description": "What every channel adapter sends to intake."
       },
       "Location": {
         "properties": {

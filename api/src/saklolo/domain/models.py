@@ -1,4 +1,4 @@
-"""Core data shapes. Labels, prompts, and the API all use these (docs/triage-rubric.md)."""
+"""Core data shapes. Labels, prompts, and the API all use these."""
 
 from datetime import datetime
 from enum import StrEnum
@@ -89,7 +89,7 @@ UNKNOWN_LOCATION = Location(barangay=None)
 
 
 class InboundMessage(BaseModel):
-    """What every channel adapter sends to intake (ADR 0001)."""
+    """What every channel adapter sends to intake."""
 
     sender: str
     text: str

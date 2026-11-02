@@ -1,4 +1,4 @@
-"""Attach the message to an open case or open a new one (ADR 0003).
+"""Attach the message to an open case or open a new one.
 
 Messages that aren't about a household (questions, relief requests) get no case.
 Nothing here closes a case: "rescued na" marks it reported safe for a dispatcher

@@ -3,6 +3,8 @@
 import json
 from datetime import UTC, datetime
 
+import pytest
+
 from saklolo.adapters.outbox import InMemoryOutbox
 from saklolo.config import REPO_ROOT, Settings
 from saklolo.dataset.io import load_dataset
@@ -11,6 +13,7 @@ from saklolo.domain.models import Channel, InboundMessage
 from saklolo.handlers.wiring import build_offline_deps
 
 DEMO_CACHE = REPO_ROOT / "demo" / "cache"
+pytestmark = pytest.mark.skipif(not DEMO_CACHE.exists(), reason="no recorded calls")
 
 
 def offline_service() -> DispatchService:

@@ -27,12 +27,12 @@ class Settings(BaseSettings):
     escalation_threshold: float = Field(default=0.75, ge=0.0, le=1.0)
 
     # Titan embeddings and Amazon Location geocoding aren't offered in every
-    # region, so each has its own region setting (ADR 0005).
+    # region, so each has its own region setting.
     embedding_model_id: str = "amazon.titan-embed-text-v2:0"
     embedding_region: str = "us-east-1"
     location_region: str = "ap-southeast-2"
 
-    # Dedupe (ADR 0003): tune on the dev split only. 0.85 won notebook 02's sweep:
+    # Dedupe: tune on the dev split only. 0.85 won notebook 02's sweep:
     # no neighboring households merged, best F1 (Titan V2, 256 dims).
     dedupe_similarity_threshold: float = Field(default=0.85, ge=0.0, le=1.0)
     dedupe_window_hours: float = Field(default=12.0, gt=0)
@@ -54,7 +54,7 @@ class Settings(BaseSettings):
 
 
 class ChannelSettings(BaseSettings):
-    """Chat-app channels. Each is on only when its secrets are set (docs/channels.md)."""
+    """Chat-app channels. Each is on only when its secrets are set."""
 
     model_config = SettingsConfigDict(
         env_prefix="SAKLOLO_", env_file=REPO_ROOT / ".env", extra="ignore", env_ignore_empty=True

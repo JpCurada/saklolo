@@ -5,7 +5,7 @@ loading, and error states. It's all hand-authored for Saklolo. Nothing is copied
 `design/reference/`, and the images contain no text or real logos.
 
 These are flat, layered vector scenes for the dark theme, drawn as night scenes. On the light theme, the default, they read as framed images. They don't attempt the
-reference's isometric clay style, which the `illustration` skill covers.
+reference's isometric clay style.
 
 ## Rebuild
 

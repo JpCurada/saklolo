@@ -1,4 +1,4 @@
-"""Human labeling for data/messages.jsonl (docs/dataset-spec.md §10, docs/labeling.md).
+"""Human labeling for data/messages.jsonl.
 
 Three steps, each a subcommand:
 

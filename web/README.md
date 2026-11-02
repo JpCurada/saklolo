@@ -3,9 +3,8 @@
 Next.js dispatcher dashboard: queue, human review lane, case detail with map, and
 the live message feed. Built for 1920×1080. In demo mode it adds storm replay and
 the resident phones at `/resident`.
-Rules: [typescript/web](../.agents/rules/typescript-web.md). Skill: `web-ui`.
 
-This is Next.js 16: read [AGENTS.md](AGENTS.md) before changing framework code.
+This is Next.js 16: check its docs in `node_modules/next/dist/docs/` before changing framework code.
 
 ## Run the demo
 
@@ -62,7 +61,7 @@ API types are generated, never hand-written. After changing the API, run
 
 ## Test IDs for video capture
 
-Playwright specs in `video/capture/` select by these `data-testid` values only.
+Playwright specs select by these `data-testid` values only.
 
 | Area               | IDs                                                                                                                                  |
 | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------ |

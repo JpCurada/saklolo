@@ -1,4 +1,4 @@
-"""Validate data/*.jsonl against docs/dataset-spec.md §11.
+"""Validate data/*.jsonl.
 
 Usage: uv run python -m saklolo.dataset.validate [--data-dir PATH]
 Exits non-zero and lists every problem if the dataset is invalid.
@@ -16,7 +16,6 @@ from saklolo.dataset.schema import ArchivePost, DatasetMessage, Household, Label
 from saklolo.domain.models import MessageType, StatusUpdateKind
 from saklolo.domain.places import MARIKINA_BARANGAYS
 
-# docs/dataset-spec.md §4
 TARGET_MIX: dict[str, dict[MessageType, int]] = {
     "dev": {
         MessageType.RESCUE: 60,

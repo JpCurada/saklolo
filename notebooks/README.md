@@ -36,5 +36,5 @@ An experiment changes nothing on its own. To adopt a winner:
 1. Copy the setting into `.env.example` / `config.py`, or the prompt into
    `api/src/saklolo/agents/prompts/`.
 2. Run `make eval` (ask first: it costs money) and paste the before/after table
-   in the PR (`run-evals` skill).
-3. Record anything architectural as an ADR (`write-adr` skill).
+   in the PR.
+3. Write down anything architectural.
