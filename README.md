@@ -39,24 +39,17 @@ A resident writes by SMS, Telegram, or Messenger, for example *"nasa bubong na k
 5 kami, may lola"*. Each message runs through a **Strands Graph**
 ([`api/src/saklolo/agents/graph.py`](api/src/saklolo/agents/graph.py)):
 
-```mermaid
-flowchart LR
-    M([Message]) --> N[normalize] --> P{prefilter}
-    P -- spam --> F[[flagged, still shown]]
-    P -- needs a model --> E[extract] --> G[geolocate]
-    G -- no place --> A[[ask one question, resume on reply]]
-    G --> D[dedupe] --> V[verify] --> T[triage]
-    T -- confident --> Q([Dispatch queue])
-    T -- unsure --> S
-    subgraph S [Strands Swarm]
-        R[triage reviewer] <--> L[location resolver]
-        R <--> C[conflict resolver]
-    end
-    MEM[(AgentCore Memory: past corrections)] -.-> S
-    S --> Q
-    Q --> H{{Human dispatcher decides}}
-    H -. corrections .-> MEM
-```
+<img src=".github/assets/architecture.png" width="100%" alt="Saklolo architecture: residents and a dispatcher reach the Saklolo API and dashboard; the API calls Amazon Bedrock, Titan embeddings, Amazon Location, AgentCore Memory, and DynamoDB; Telegram, Messenger, Project NOAH, and OpenStreetMap are outside AWS">
+
+1. A resident writes on Telegram or Messenger (or a simulated phone), and the message reaches the Saklolo API.
+2. The dispatcher works in the dashboard, which polls the API every 2 seconds.
+3. The Strands Graph calls Amazon Nova Lite on Bedrock to extract details and set a priority. Unsure cases go to a Strands Swarm of three agents.
+4. Titan embeddings let dedupe merge reports of the same household.
+5. Amazon Location finds the barangay from landmarks, for geolocate and the Swarm's lookup tool.
+6. DynamoDB keeps cases, messages, and every dispatcher decision.
+7. AgentCore Memory stores dispatcher corrections. Only unsure cases search it.
+8. Replies go back through the app the resident used. Project NOAH's flood map and OpenStreetMap tiles appear on the dashboard map.
+
 
 | Step | What it does | Calls |
 |---|---|---|
