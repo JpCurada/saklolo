@@ -38,6 +38,7 @@ def build_case_view(case: Case, record: DispatchRecord, sources: list[MessageRec
         opened_at=case.opened_at,
         last_seen=case.last_seen,
         sources=[_source(s) for s in sources],
+        history=list(record.history),
     )
 
 
@@ -78,4 +79,5 @@ def _source(record: MessageRecord) -> SourceView:
         text=record.message.text,
         english_summary=outcome.english_summary if outcome else None,
         priority=priority,
+        trace=record.trace,
     )

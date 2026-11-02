@@ -25,6 +25,14 @@ module "cases_table" {
   hash_key = "case_id"
 }
 
+# One row per case with the dispatcher's decisions and who made each one.
+module "dispatch_table" {
+  source = "./modules/dynamodb_table"
+
+  name     = "${local.name_prefix}-dispatch"
+  hash_key = "case_id"
+}
+
 # Next: API Gateway + intake Lambda, worker Lambda, AgentCore runtime,
 # Location Service place index, geocode cache table, IAM roles.
 # Use the terraform-aws skill and have infra-reviewer check each addition.

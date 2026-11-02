@@ -4,7 +4,7 @@ import pytest
 
 from saklolo.adapters.outbox import InMemoryOutbox
 from saklolo.dispatch import replies
-from saklolo.dispatch.models import Badge, CaseStatus, ReceiveKind
+from saklolo.dispatch.models import Badge, CaseAction, CaseStatus, ReceiveKind
 from saklolo.dispatch.service import CaseStateError, DispatchService
 from saklolo.domain.models import (
     Channel,
@@ -88,7 +88,7 @@ def test_assigning_a_team_tells_every_sender_on_the_case() -> None:
     service.receive(message("pamilya ko nasa bubong", sender=MARK, minutes=10))
     [case] = service.cases()
 
-    assigned = service.assign(case.case_id, "Team Bravo")
+    assigned = service.assign(case.case_id, "Team Bravo", "Ana")
 
     assert assigned.status == CaseStatus.ASSIGNED
     assert Badge.CORROBORATED in assigned.badges
@@ -101,12 +101,12 @@ def test_only_a_dispatcher_closes_a_case() -> None:
     service.receive(message("nasa bubong kami"))
     [case] = service.cases()
 
-    service.confirm_safe(case.case_id)
+    service.confirm_safe(case.case_id, "Ana")
 
     assert service.cases() == []
     assert service.cases(include_closed=True)[0].status == CaseStatus.CLOSED
     with pytest.raises(CaseStateError):
-        service.assign(case.case_id, "Team Bravo")
+        service.assign(case.case_id, "Team Bravo", "Ana")
 
 
 def test_override_sets_priority_and_badge() -> None:
@@ -114,7 +114,7 @@ def test_override_sets_priority_and_badge() -> None:
     service.receive(message("nasa bubong kami"))
     [case] = service.cases()
 
-    overridden = service.override(case.case_id, Priority.HIGH, "Already on a safe roof deck")
+    overridden = service.override(case.case_id, Priority.HIGH, "Already on a safe roof deck", "Ana")
 
     assert overridden.priority == Priority.HIGH
     assert overridden.reason == "Already on a safe roof deck"
@@ -135,6 +135,10 @@ def test_location_reply_resumes_the_case_without_a_model_call() -> None:
     assert Badge.AWAITING_LOCATION not in case.badges
     assert len(service._deps.model.calls) == calls_before  # type: ignore[attr-defined]
     assert outbox.sent(NENA)[-1].body == replies.LOCATION_RECEIVED
+    [resumed] = reply.record.trace
+    assert resumed.step == "resume"
+    assert resumed.detail.startswith(f"Resumed the paused case: {case.case_id} is in Malanday")
+    assert first.record.trace[0].step == "normalize"
 
 
 def test_an_update_from_a_sender_awaiting_location_is_not_mistaken_for_a_reply() -> None:
@@ -178,3 +182,19 @@ def test_summary_explains_the_most_urgent_message_not_the_latest() -> None:
 
     assert case.priority == Priority.CRITICAL
     assert case.english_summary == "5 people on the roof"
+
+
+def test_every_decision_is_recorded_with_who_made_it() -> None:
+    service, _ = make_service()
+    service.receive(message("nasa bubong kami"))
+    [case] = service.cases()
+
+    service.override(case.case_id, Priority.HIGH, "Safe roof deck", "Ana")
+    service.assign(case.case_id, "Team Bravo", "Ben")
+    closed = service.confirm_safe(case.case_id, "Ana")
+
+    assert [(e.action, e.dispatcher, e.detail) for e in closed.history] == [
+        (CaseAction.OVERRIDDEN, "Ana", "P2: Safe roof deck"),
+        (CaseAction.ASSIGNED, "Ben", "Team Bravo"),
+        (CaseAction.CLOSED, "Ana", "Confirmed safe"),
+    ]

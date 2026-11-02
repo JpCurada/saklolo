@@ -3,7 +3,7 @@
 from functools import lru_cache
 from pathlib import Path
 
-from pydantic import Field
+from pydantic import Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
@@ -38,9 +38,36 @@ class Settings(BaseSettings):
     dedupe_window_hours: float = Field(default=12.0, gt=0)
     dedupe_radius_km: float = Field(default=1.5, gt=0)
 
+    # Browsers allowed to call the API: the dashboard's address once deployed.
+    dashboard_origins: list[str] = ["http://localhost:3000", "http://127.0.0.1:3000"]
+
     intake_queue_url: str = ""
+    # DynamoDB tables from `terraform output`. All three set: the demo API keeps its
+    # state there. All empty: everything stays in memory.
     cases_table: str = ""
     messages_table: str = ""
+    dispatch_table: str = ""
+
+
+class ChannelSettings(BaseSettings):
+    """Chat-app channels. Each is on only when its secrets are set (docs/channels.md)."""
+
+    model_config = SettingsConfigDict(
+        env_prefix="SAKLOLO_", env_file=REPO_ROOT / ".env", extra="ignore", env_ignore_empty=True
+    )
+
+    telegram_bot_token: SecretStr | None = None
+    messenger_page_token: SecretStr | None = None
+    messenger_app_secret: SecretStr | None = None
+    messenger_verify_token: SecretStr | None = None
+    # Check https://developers.facebook.com/docs/graph-api/changelog for the current version.
+    messenger_graph_version: str = "v23.0"
+
+    @property
+    def messenger_ready(self) -> bool:
+        return all(
+            (self.messenger_page_token, self.messenger_app_secret, self.messenger_verify_token)
+        )
 
 
 @lru_cache

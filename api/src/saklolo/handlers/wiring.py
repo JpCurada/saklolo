@@ -7,6 +7,7 @@ import boto3
 
 from saklolo.adapters.amazon_location import AmazonLocationGeocoder
 from saklolo.adapters.call_cache import CachingEmbedder, CachingStructuredModel, JsonlCache
+from saklolo.adapters.dynamodb import DynamoCaseStore, DynamoDispatchStore
 from saklolo.adapters.geocode_cache import CachedGeocoder
 from saklolo.adapters.memory import InMemoryCaseStore
 from saklolo.adapters.strands_model import StrandsStructuredModel, bedrock_model
@@ -63,4 +64,21 @@ def build_pipeline_deps(
         dedupe=dedupe_policy(settings),
         escalation_threshold=settings.escalation_threshold,
         prompts=prompts or PromptSet.default(),
+        model_id=settings.fast_model_id,
     )
+
+
+def dynamo_stores(settings: Settings) -> tuple[DynamoCaseStore, DynamoDispatchStore] | None:
+    """DynamoDB stores when all three tables are configured; None keeps state in memory."""
+    tables = (settings.cases_table, settings.messages_table, settings.dispatch_table)
+    if not any(tables):
+        return None
+    if not all(tables):
+        raise ValueError(
+            "Set all of SAKLOLO_CASES_TABLE, SAKLOLO_MESSAGES_TABLE, and SAKLOLO_DISPATCH_TABLE, "
+            "or none of them."
+        )
+    session = boto3.Session(profile_name=settings.aws_profile, region_name=settings.aws_region)
+    dynamodb = session.resource("dynamodb")
+    cases, messages, dispatch = (dynamodb.Table(name) for name in tables)
+    return DynamoCaseStore(cases), DynamoDispatchStore(messages, dispatch)

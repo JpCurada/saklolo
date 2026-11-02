@@ -49,7 +49,9 @@ def test_message_to_queue_to_assignment() -> None:
 
     posted = client.post("/messages", json={"sender": "+639000000001", "text": "nasa bubong kami"})
     queue = client.get("/cases").json()
-    assigned = client.post(f"/cases/{queue[0]['case_id']}/assign", json={"team": "Team Bravo"})
+    assigned = client.post(
+        f"/cases/{queue[0]['case_id']}/assign", json={"team": "Team Bravo", "dispatcher": "Ana"}
+    )
 
     assert posted.status_code == 201
     assert queue[0]["priority"] == "P1"
@@ -62,9 +64,11 @@ def test_unknown_case_is_404_and_closed_case_is_409() -> None:
     client.post("/messages", json={"sender": "+639000000001", "text": "nasa bubong kami"})
     case_id = client.get("/cases").json()[0]["case_id"]
 
-    missing = client.post("/cases/case-9999/assign", json={"team": "Team Bravo"})
-    client.post(f"/cases/{case_id}/confirm-safe")
-    late = client.post(f"/cases/{case_id}/assign", json={"team": "Team Bravo"})
+    missing = client.post(
+        "/cases/case-9999/assign", json={"team": "Team Bravo", "dispatcher": "Ana"}
+    )
+    client.post(f"/cases/{case_id}/confirm-safe", json={"dispatcher": "Ana"})
+    late = client.post(f"/cases/{case_id}/assign", json={"team": "Team Bravo", "dispatcher": "Ana"})
 
     assert missing.status_code == 404
     assert late.status_code == 409
@@ -87,3 +91,19 @@ def test_replay_sends_messages_and_the_ask_back_reply() -> None:
     [case] = client.get("/cases").json()
     assert status == {"running": False, "split": "dev", "sent": 2, "total": 2}
     assert case["location"]["barangay"] == "Malanday"
+
+
+def test_decisions_need_a_dispatcher_name() -> None:
+    client, _ = client_and_replayer()
+    client.post("/messages", json={"sender": "+639000000001", "text": "nasa bubong kami"})
+    case_id = client.get("/cases").json()[0]["case_id"]
+
+    nameless = client.post(f"/cases/{case_id}/confirm-safe", json={})
+    blank = client.post(f"/cases/{case_id}/assign", json={"team": "Team Bravo", "dispatcher": " "})
+    named = client.post(
+        f"/cases/{case_id}/assign", json={"team": "Team Bravo", "dispatcher": "Ana"}
+    )
+
+    assert nameless.status_code == 422
+    assert blank.status_code == 422
+    assert named.json()["history"][0]["dispatcher"] == "Ana"

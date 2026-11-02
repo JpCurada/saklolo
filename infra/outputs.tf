@@ -8,6 +8,11 @@ output "messages_table_name" {
   value       = module.messages_table.name
 }
 
+output "dispatch_table_name" {
+  description = "Dispatch decisions table name (SAKLOLO_DISPATCH_TABLE)."
+  value       = module.dispatch_table.name
+}
+
 output "cases_table_name" {
   description = "Cases table name (SAKLOLO_CASES_TABLE)."
   value       = module.cases_table.name

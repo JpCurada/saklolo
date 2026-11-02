@@ -10,7 +10,7 @@ from saklolo.adapters.memory import InMemoryCaseStore
 from saklolo.agents.deps import PipelineDeps
 from saklolo.domain.cases import DedupePolicy
 from saklolo.domain.models import Location
-from saklolo.domain.ports import ModelCall, ModelUsage
+from saklolo.domain.ports import CaseStore, ModelCall, ModelUsage
 
 TEST_POLICY = DedupePolicy(similarity_threshold=0.8, window=timedelta(hours=12), radius_km=1.5)
 
@@ -71,7 +71,7 @@ def fake_deps(
     model: FakeStructuredModel,
     geocoder: FakeGeocoder | None = None,
     embedder: FakeEmbedder | None = None,
-    cases: InMemoryCaseStore | None = None,
+    cases: CaseStore | None = None,
 ) -> PipelineDeps:
     return PipelineDeps(
         model=model,
