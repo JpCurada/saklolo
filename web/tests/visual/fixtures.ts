@@ -62,6 +62,12 @@ const critical: CaseView = {
           service: "Titan embeddings",
         },
         {
+          step: "verify",
+          status: "ran",
+          duration_ms: 1,
+          detail: "No sign of an old post",
+        },
+        {
           step: "triage",
           status: "ran",
           duration_ms: 1105,
@@ -125,6 +131,12 @@ const review: CaseView = {
           duration_ms: 290,
           detail: "Opened case-0002",
           service: "Titan embeddings",
+        },
+        {
+          step: "verify",
+          status: "ran",
+          duration_ms: 1,
+          detail: "No sign of an old post",
         },
         {
           step: "triage",

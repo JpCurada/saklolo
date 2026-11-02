@@ -262,7 +262,8 @@ test("the case shows how the agents decided, step by step", async ({ page }) => 
   const trace = page.getByTestId("agent-trace");
   await expect(trace).toHaveCount(1);
   await expect(trace).toHaveAttribute("open", "");
-  await expect(trace.getByTestId("trace-step")).toHaveCount(7);
+  await expect(trace.getByTestId("trace-step")).toHaveCount(8);
+  await expect(trace.locator("[data-step=verify]")).toContainText("Check for old posts");
   await expect(trace.locator("[data-step=escalate]")).toHaveAttribute("data-status", "skipped");
   await expect(trace).toContainText("2 model calls");
   await expect(trace.locator("[data-step=dedupe]")).toContainText("Titan embeddings");

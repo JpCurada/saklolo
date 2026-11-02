@@ -8,6 +8,7 @@ const STEP_LABEL: Record<string, string> = {
   extract: "Read the message",
   geolocate: "Find the place",
   dedupe: "Match to a case",
+  verify: "Check for old posts",
   triage: "Set the priority",
   escalate: "Second opinion (Swarm)",
   resume: "Resume after asking",
