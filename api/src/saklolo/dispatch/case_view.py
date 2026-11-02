@@ -25,7 +25,9 @@ def build_case_view(case: Case, record: DispatchRecord, sources: list[MessageRec
         priority=record.override or (top.priority if top else None),
         priority_overridden=record.override is not None,
         reason=record.override_reason or (top.reason if top else ""),
-        english_summary=_latest(o.english_summary for o in outcomes),
+        # The row must explain its priority; later updates show up as badges and sources.
+        english_summary=(top.english_summary if top else None)
+        or _latest(o.english_summary for o in outcomes),
         location=case.location,
         people_count=_latest(o.people_count for o in outcomes),
         vulnerable=sorted({v for o in outcomes for v in o.vulnerable}),

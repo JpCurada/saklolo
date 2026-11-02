@@ -167,3 +167,14 @@ def test_spam_gets_no_reply_and_no_case() -> None:
     assert result.replies == []
     assert outbox.sent() == []
     assert service.cases() == []
+
+
+def test_summary_explains_the_most_urgent_message_not_the_latest() -> None:
+    service, _ = make_service()
+    service.receive(message("nasa bubong kami"))
+    service.receive(message("tubig hanggang tuhod na lang", minutes=30))
+
+    [case] = service.cases()
+
+    assert case.priority == Priority.CRITICAL
+    assert case.english_summary == "5 people on the roof"
