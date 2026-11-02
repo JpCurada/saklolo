@@ -1,6 +1,10 @@
 import type { ReactNode } from "react";
 
 const VARIANT = {
+  display:
+    "text-(length:--sk-text-display-size) font-(weight:--sk-text-display-weight) leading-(--sk-text-display-line-height) tracking-(--sk-text-display-tracking)",
+  "title-l":
+    "text-(length:--sk-text-title-l-size) font-(weight:--sk-text-title-l-weight) leading-(--sk-text-title-l-line-height) tracking-(--sk-text-title-l-tracking)",
   "title-m":
     "text-(length:--sk-text-title-m-size) font-(weight:--sk-text-title-m-weight) leading-(--sk-text-title-m-line-height) tracking-(--sk-text-title-m-tracking)",
   "body-bold":
@@ -19,7 +23,7 @@ const TONE = {
 };
 
 interface TextProps {
-  as?: "span" | "p" | "h1" | "h2";
+  as?: "span" | "p" | "h1" | "h2" | "h3";
   variant?: keyof typeof VARIANT;
   tone?: keyof typeof TONE;
   /** Clamp to two lines, for rows of untrusted-length text. */

@@ -12,6 +12,11 @@ const SIZE = {
   md: "px-(--sk-space-4) py-(--sk-space-2) text-(length:--sk-text-body-bold-size) font-(weight:--sk-text-body-bold-weight)",
 };
 
+/** The classes a button of this variant and size uses, for links that look like buttons. */
+export function buttonClasses(variant: keyof typeof VARIANT = "primary", size: keyof typeof SIZE = "md") {
+  return `inline-flex shrink-0 items-center whitespace-nowrap justify-center gap-(--sk-space-2) rounded-(--sk-radius-pill) focus-visible:outline-(length:--sk-stroke-2) focus-visible:outline-offset-(--sk-stroke-2) focus-visible:outline-(--sk-color-accent) ${VARIANT[variant]} ${SIZE[size]}`;
+}
+
 interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "className" | "style"> {
   variant?: keyof typeof VARIANT;
   size?: keyof typeof SIZE;

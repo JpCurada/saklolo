@@ -1,0 +1,250 @@
+/* The public front page. Roomier than the dashboard (R13 is about the ops screen). */
+.sk-landing {
+  --sk-landing-width: calc(var(--sk-space-16) * 18);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sk-space-16);
+  max-width: var(--sk-landing-width);
+  margin: 0 auto;
+  padding: var(--sk-space-4);
+}
+
+.sk-landing main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sk-space-16);
+}
+
+.sk-landing-nav,
+.sk-landing-nav-links,
+.sk-landing-actions,
+.sk-landing-case-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sk-space-2);
+}
+
+.sk-landing-nav {
+  justify-content: space-between;
+}
+
+.sk-landing-actions {
+  gap: var(--sk-space-3);
+}
+
+.sk-landing-case-head {
+  justify-content: space-between;
+}
+
+.sk-landing-hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: var(--sk-space-12);
+  padding: var(--sk-space-12);
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  border-radius: var(--sk-radius-sheet);
+  background: var(--sk-color-surface);
+}
+
+/* The storm, faded behind the hero so the text stays AA on the surface tone. */
+.sk-landing-hero-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  opacity: 0.14;
+}
+
+.sk-landing-hero-backdrop img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.sk-landing-hero-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sk-space-5);
+}
+
+/* The plea, then the case it became: one message's whole trip in a glance. */
+.sk-landing-plea {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sk-space-3);
+  color: var(--sk-color-ink-faint);
+}
+
+/* 16:9, for the YouTube demo video. */
+.sk-landing-video {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border: 0;
+  border-radius: var(--sk-radius-card);
+  background: var(--sk-color-inverse);
+}
+
+.sk-landing-video img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.sk-landing-video-label {
+  position: absolute;
+  inset: auto auto var(--sk-space-4) var(--sk-space-4);
+  display: flex;
+  align-items: center;
+  gap: var(--sk-space-2);
+  padding: var(--sk-space-2) var(--sk-space-4) var(--sk-space-2) var(--sk-space-2);
+  border-radius: var(--sk-radius-pill);
+  background: var(--sk-color-canvas);
+  color: var(--sk-color-ink);
+}
+
+.sk-landing-video-label svg {
+  color: var(--sk-color-accent);
+}
+
+.sk-landing-chat {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: var(--sk-space-4);
+  border-radius: var(--sk-radius-card);
+  background: var(--sk-color-phone-telegram-bg);
+  animation: sk-enter var(--sk-motion-slow) var(--sk-motion-enter) both;
+}
+
+.sk-landing-plea > svg {
+  transform: rotate(90deg);
+}
+
+.sk-landing-case {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sk-space-1);
+  width: 100%;
+  padding: var(--sk-space-4);
+  border-radius: var(--sk-radius-card);
+  background: var(--sk-color-canvas);
+  animation: sk-enter var(--sk-motion-slow) var(--sk-motion-enter) var(--sk-motion-slow) both;
+}
+
+.sk-landing-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sk-space-6);
+}
+
+.sk-landing-grid-3,
+.sk-landing-grid-4,
+.sk-landing-steps {
+  display: grid;
+  gap: var(--sk-space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sk-landing-grid-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.sk-landing-grid-4,
+.sk-landing-steps {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.sk-landing-card,
+.sk-landing-step {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sk-space-2);
+  margin: 0;
+  padding: var(--sk-space-6);
+  border-radius: var(--sk-radius-card);
+  background: var(--sk-color-surface);
+}
+
+.sk-landing-card > svg {
+  color: var(--sk-color-accent);
+}
+
+.sk-landing-card a {
+  text-decoration: underline;
+  text-underline-offset: var(--sk-space-1);
+}
+
+.sk-landing-shot {
+  width: 100%;
+  height: auto;
+  border-radius: var(--sk-radius-tile);
+}
+
+.sk-landing-services {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sk-space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sk-landing-closing {
+  align-items: center;
+  padding: var(--sk-space-12);
+  border-radius: var(--sk-radius-sheet);
+  background: var(--sk-color-surface);
+  text-align: center;
+}
+
+.sk-landing-footer {
+  padding-bottom: var(--sk-space-8);
+  text-align: center;
+}
+
+@media (max-width: 1024px) {
+  .sk-landing-hero {
+    grid-template-columns: 1fr;
+    padding: var(--sk-space-6);
+  }
+
+  .sk-landing-grid-4,
+  .sk-landing-steps {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .sk-landing-grid-3 {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .sk-landing {
+    gap: var(--sk-space-10);
+  }
+
+  .sk-landing-grid-4,
+  .sk-landing-steps {
+    grid-template-columns: 1fr;
+  }
+
+  .sk-landing-closing {
+    padding: var(--sk-space-6);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sk-landing-chat,
+  .sk-landing-case {
+    animation: none;
+  }
+}
